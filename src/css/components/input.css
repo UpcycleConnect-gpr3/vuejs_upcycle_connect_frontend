@@ -1,4 +1,4 @@
-input[type='text'], input[type='password'], input[type='email'] {
+input[type='text'], input[type='password'], input[type='email'], textarea {
     height: var(--input-height);
     width: var(--input-width);
 
@@ -68,4 +68,9 @@ input[type='text'], input[type='password'], input[type='email'] {
             var(--input-box-shadow-transition-timing-function),
             outline var(--input-outline-transition-duration) var(--input-outline-transition-timing-function);
     cursor: pointer;
+}
+
+textarea {
+    min-height: var(--textarea-min-height, 120px);
+    resize: vertical;
 }

@@ -1,4 +1,4 @@
-input[type='text'], input[type='password'], input[type='email'] {
+input[type='text'], input[type='password'], input[type='email'], textarea {
     --input-width: var(--width-component);
 
     --input-padding-top: var(--padding-small);
