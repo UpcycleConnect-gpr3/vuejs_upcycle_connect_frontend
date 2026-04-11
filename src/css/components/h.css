@@ -4,6 +4,7 @@ h1 {
     font-weight: var(--h1-font-weight);
     font-style: var(--h1-font-style);
     text-align: var(--h1-text-align);
+    color: var(--h1-color, inherit);
 }
 
 h2 {
@@ -12,6 +13,7 @@ h2 {
     font-weight: var(--h2-font-weight);
     font-style: var(--h2-font-style);
     text-align: var(--h2-text-align);
+    color: var(--h2-color, inherit);
 }
 
 h3 {
@@ -20,6 +22,7 @@ h3 {
     font-weight: var(--h3-font-weight);
     font-style: var(--h3-font-style);
     text-align: var(--h3-text-align);
+    color: var(--h3-color, inherit);
 }
 
 h4 {
