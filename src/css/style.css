@@ -12,17 +12,17 @@
 
 body {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     background-color: var(--background-color);
     color: var(--foreground-color);
 }
 
 div#app {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .layout-app {
@@ -65,6 +65,10 @@ div#app {
     justify-content: center;
 }
 
+.layout-justify-between {
+    justify-content: space-between;
+}
+
 .layout-gap-small {
     gap: var(--gap-small);
 }
@@ -98,16 +102,12 @@ div#app {
 }
 
 .container {
+    width: 100%;
     margin-inline: auto;
+    padding-inline: var(--container-padding-x);
 
     @media (min-width: 1280px) {
-        max-width: 80rem;
-
-        /*plus petit pour le mac 13'*/
+        max-width: var(--container-max-width);
+        padding-inline: var(--container-padding-x-lg);
     }
-    @media (min-width: 1536px) {
-        max-width: 96rem;
-    }
-
-
 }
