@@ -19,4 +19,8 @@ p {
     &.large {
         --p-font-size: var(--font-size-large);
     }
+
+    &.left {
+        --p-text-align: left;
+    }
 }
