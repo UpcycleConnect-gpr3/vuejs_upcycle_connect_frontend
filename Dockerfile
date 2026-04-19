@@ -1,4 +1,4 @@
-FROM oven/bun:1.1.12 AS dev
+FROM oven/bun:1 AS dev
 
 WORKDIR /app
 COPY package.json bun.lock ./
@@ -8,7 +8,7 @@ EXPOSE 5173
 CMD ["bun", "run", "dev", "--host"]
 
 
-FROM oven/bun:1.1.12 AS builder
+FROM oven/bun:1 AS builder
 
 WORKDIR /app
 COPY package.json bun.lock ./
