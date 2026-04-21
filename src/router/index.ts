@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { HomePage, ForumPage } from '@/pages'
+import { HomePage, ForumPage, PricingPage } from '@/pages'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,6 +11,10 @@ const router = createRouter({
     {
       path: '/forum',
       component: ForumPage,
+    },
+    {
+      path: '/pricing',
+      component: PricingPage,
     },
   ],
 })
