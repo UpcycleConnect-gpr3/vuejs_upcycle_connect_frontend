@@ -23,4 +23,8 @@ p {
     &.left {
         --p-text-align: left;
     }
+
+    &.right {
+        --p-text-align: right;
+    }
 }

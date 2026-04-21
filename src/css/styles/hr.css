@@ -1,0 +1,8 @@
+hr {
+    --hr-height: 2px;
+    --hr-color: var(--foreground-color);
+
+    &.secondary {
+        --hr-color: var(--secondary-color);
+    }
+}
