@@ -1,0 +1,93 @@
+.pricing-grid {
+    --pricing-grid-gap: var(--gap-large);
+}
+
+.pricing-card {
+    --pricing-card-gap: var(--gap-large);
+    --pricing-card-padding: var(--gap-large);
+    --pricing-card-border-radius: 0;
+    --pricing-card-border-width: 1px;
+    --pricing-card-border-style: solid;
+    --pricing-card-border-color: oklch(from var(--white) l c h / 0.15);
+    --pricing-card-bg-color: transparent;
+    --pricing-card-text-color: var(--foreground-color);
+
+    &.featured {
+        --pricing-card-border-color: var(--secondary-color);
+        --pricing-card-border-width: 2px;
+    }
+}
+
+.plan-header {
+    --plan-header-gap: var(--gap-small);
+    --plan-header-padding-bottom: var(--gap-large);
+    --plan-header-border-width: 1px;
+    --plan-header-border-color: oklch(from var(--white) l c h / 0.15);
+}
+
+.plan-name {
+    --plan-name-font-size: var(--font-size-large);
+    --plan-name-font-weight: 500;
+    --plan-name-color: var(--foreground-color);
+}
+
+.plan-price {
+    --plan-price-font-size: var(--font-size-xxxxlarge);
+    --plan-price-font-weight: bold;
+    --plan-price-color: var(--foreground-color);
+}
+
+.plan-price-unit {
+    --plan-price-unit-font-size: var(--font-size-medium);
+    --plan-price-unit-color: oklch(from var(--white) l c h / 0.7);
+}
+
+.plan-features {
+    --plan-features-gap: var(--gap-medium);
+}
+
+.plan-features-label {
+    --plan-features-label-font-size: var(--font-size-medium);
+    --plan-features-label-color: oklch(from var(--white) l c h / 0.7);
+    --plan-features-label-margin-bottom: var(--gap-small);
+}
+
+.plan-feature {
+    --plan-feature-gap: var(--gap-medium);
+    --plan-feature-font-size: var(--font-size-medium);
+    --plan-feature-color: var(--foreground-color);
+}
+
+.plan-feature-icon {
+    --plan-feature-icon-size: 20px;
+    --plan-feature-icon-color: var(--secondary-color);
+}
+
+.stats-grid {
+    --stats-grid-gap: var(--gap-large);
+}
+
+.stat-box {
+    --stat-box-gap: var(--gap-medium);
+    --stat-box-padding: var(--gap-large);
+    --stat-box-border-radius: var(--rounded-layout);
+    --stat-box-border-width: 1px;
+    --stat-box-border-color: oklch(from var(--white) l c h / 0.15);
+    --stat-box-bg-color: transparent;
+}
+
+.stat-label {
+    --stat-label-font-size: var(--font-size-medium);
+    --stat-label-color: var(--foreground-color);
+}
+
+.stat-value {
+    --stat-value-font-size: var(--font-size-xxxlarge);
+    --stat-value-font-weight: bold;
+    --stat-value-color: var(--foreground-color);
+}
+
+.stat-value-unit {
+    --stat-value-unit-font-size: var(--font-size-medium);
+    --stat-value-unit-color: oklch(from var(--white) l c h / 0.7);
+}

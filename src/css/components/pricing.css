@@ -1,0 +1,118 @@
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--pricing-grid-gap);
+    align-items: start;
+    width: 100%;
+}
+
+.pricing-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pricing-card-gap);
+    padding: var(--pricing-card-padding);
+    border-radius: var(--pricing-card-border-radius);
+    border-width: var(--pricing-card-border-width);
+    border-style: var(--pricing-card-border-style);
+    border-color: var(--pricing-card-border-color);
+    background-color: var(--pricing-card-bg-color);
+    color: var(--pricing-card-text-color);
+}
+
+.pricing-card.featured {
+    transform: translateY(calc(-1 * var(--gap-large)));
+}
+
+.plan-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--plan-header-gap);
+    padding-bottom: var(--plan-header-padding-bottom);
+    border-bottom-width: var(--plan-header-border-width);
+    border-bottom-style: solid;
+    border-bottom-color: var(--plan-header-border-color);
+}
+
+.plan-name {
+    font-size: var(--plan-name-font-size);
+    font-weight: var(--plan-name-font-weight);
+    color: var(--plan-name-color);
+}
+
+.plan-price {
+    font-size: var(--plan-price-font-size);
+    font-weight: var(--plan-price-font-weight);
+    color: var(--plan-price-color);
+}
+
+.plan-price-unit {
+    font-size: var(--plan-price-unit-font-size);
+    font-weight: normal;
+    color: var(--plan-price-unit-color);
+}
+
+.plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--plan-features-gap);
+}
+
+.plan-features-label {
+    font-size: var(--plan-features-label-font-size);
+    color: var(--plan-features-label-color);
+    margin-bottom: var(--plan-features-label-margin-bottom);
+}
+
+.plan-feature {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--plan-feature-gap);
+    font-size: var(--plan-feature-font-size);
+    color: var(--plan-feature-color);
+}
+
+.plan-feature-icon {
+    width: var(--plan-feature-icon-size);
+    height: var(--plan-feature-icon-size);
+    color: var(--plan-feature-icon-color);
+    flex-shrink: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--stats-grid-gap);
+    width: 100%;
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--stat-box-gap);
+    padding: var(--stat-box-padding);
+    border-radius: var(--stat-box-border-radius);
+    border-width: var(--stat-box-border-width);
+    border-style: solid;
+    border-color: var(--stat-box-border-color);
+    background-color: var(--stat-box-bg-color);
+}
+
+.stat-label {
+    font-size: var(--stat-label-font-size);
+    color: var(--stat-label-color);
+}
+
+.stat-value {
+    font-size: var(--stat-value-font-size);
+    font-weight: var(--stat-value-font-weight);
+    color: var(--stat-value-color);
+}
+
+.stat-value-unit {
+    font-size: var(--stat-value-unit-font-size);
+    color: var(--stat-value-unit-color);
+}
