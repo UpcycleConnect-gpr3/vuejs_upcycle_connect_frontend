@@ -1,1 +1,6 @@
 export { default as HomePage } from './HomePage.vue'
+export { default as ServicePage } from './ServicePage.vue'
+export { default as ResourcesPage } from './ResourcesPage.vue'
+export { default as AboutPage } from './AboutPage.vue'
+export { default as PricingPage } from './PricingPage.vue'
+export { default as ForumPage } from './ForumPage.vue'

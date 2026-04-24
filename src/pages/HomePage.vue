@@ -1,63 +1,76 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import AppHeader from '@/components/AppHeader.vue'
+import AppFooter from '@/components/AppFooter.vue'
+
+const features = [
+  { title: 'Upcycling marketplace', description: 'Transform waste into value through our curated marketplace.' },
+  { title: 'Community forum', description: 'Connect with like-minded people and share ideas.' },
+  { title: 'Training programs', description: 'Learn sustainable practices through expert-led courses.' },
+]
 </script>
 
 <template>
-  <header>
-    <div class="logo">
-      <div class="logo-dot"></div>
-      <span>UpcycleConnect</span>
-    </div>
-
-    <nav>
-      <RouterLink to="/" class="navlink">Home</RouterLink>
-      <RouterLink to="/service" class="navlink">Service</RouterLink>
-      <RouterLink to="/resources" class="navlink">Resources</RouterLink>
-      <RouterLink to="/pricing" class="navlink">Pricing</RouterLink>
-    </nav>
-
-    <div class="layout-flex layout-gap-medium layout-items-center">
-      <button class="secondary medium">Sign up</button>
-      <button class="outline medium">Log in</button>
-    </div>
-  </header>
+  <AppHeader />
 
   <main>
     <!-- Hero -->
-    <section>
+    <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
+        <span class="eyebrow">A circular economy platform</span>
         <hgroup class="center">
-          <h1 class="bold center secondary">A headline to make a big<br />impact on visitors</h1>
-          <p class="center">
-            Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the
-            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
+          <h1 class="display center">
+            Turn <span class="text-secondary">waste</span><br />
+            into <span class="text-secondary">wonder</span>
+          </h1>
+          <p class="lead center measure" style="margin-inline: auto;">
+            UpcycleConnect is where designers, makers and companies meet to give materials a second life —
+            and build a genuinely circular economy together.
           </p>
         </hgroup>
         <div class="layout-flex layout-gap-medium">
-          <button class="primary medium">Get started</button>
-          <button class="outline medium">Learn more</button>
+          <button class="primary large">Get started</button>
+          <button class="secondary large">Learn more</button>
         </div>
       </div>
     </section>
 
-    <!-- Feature -->
+    <!-- Features -->
+    <section>
+      <div class="container layout-flex layout-columns layout-gap-extra-large">
+        <hgroup class="center">
+          <span class="eyebrow">What we do</span>
+          <h2 class="center">A complete circular toolkit</h2>
+        </hgroup>
+
+        <div class="grid-3">
+          <article v-for="(f, i) in features" :key="i" class="card accent-bar layout-flex layout-columns layout-gap-large">
+            <span class="eyebrow">0{{ i + 1 }}</span>
+            <hgroup>
+              <h4>{{ f.title }}</h4>
+              <p class="measure">{{ f.description }}</p>
+            </hgroup>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature split -->
     <section>
       <div class="container">
-        <div class="card grid-2">
-          <div class="image-placeholder"></div>
-          <div class="layout-flex layout-columns layout-gap-large">
+        <div class="card grid-2" style="padding: 0; overflow: hidden;">
+          <div class="image-placeholder" style="min-height: 420px; align-self: stretch;"></div>
+          <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12);">
+            <span class="eyebrow">Spotlight</span>
             <hgroup>
-              <h2 class="bold secondary">A headline to make a big impact on visitors</h2>
-              <p class="left">
-                Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been
-                the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of
-                type and scrambled it to make a type specimen book.
+              <h2>Built for the community,<br />by the community</h2>
+              <p class="measure">
+                Every feature of UpcycleConnect has been shaped by designers, craftspeople, and sustainability
+                advocates. We're not just a platform — we're a movement.
               </p>
             </hgroup>
             <div class="layout-flex layout-gap-medium">
               <button class="primary medium">Get started</button>
-              <button class="outline medium">Learn more</button>
+              <button class="ghost medium">Learn more →</button>
             </div>
           </div>
         </div>
@@ -66,15 +79,13 @@ import { RouterLink } from 'vue-router'
 
     <!-- Partnership -->
     <section>
-      <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
+      <div class="container layout-flex layout-columns layout-items-center layout-gap-extra-large">
         <hgroup class="center">
-          <h2 class="bold center secondary">Partnership</h2>
-          <p class="center">Our trusted partners !</p>
+          <span class="eyebrow">Partnership</span>
+          <h2 class="center">Our trusted partners</h2>
         </hgroup>
         <div class="grid-3" style="width: 100%">
-          <div class="image-placeholder"></div>
-          <div class="image-placeholder"></div>
-          <div class="image-placeholder"></div>
+          <div v-for="i in 3" :key="i" class="image-placeholder" style="min-height: 160px;"></div>
         </div>
       </div>
     </section>
@@ -82,51 +93,36 @@ import { RouterLink } from 'vue-router'
     <!-- Contact -->
     <section>
       <div class="container">
-        <div class="card grid-2">
-          <div class="layout-flex layout-columns layout-gap-large">
+        <div class="card grid-2" style="padding: 0; overflow: hidden;">
+          <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12);">
+            <span class="eyebrow">Contact</span>
             <hgroup>
-              <h2 class="bold secondary">Contact us</h2>
-              <p class="left">
-                Consectetuer adipiscing lorem risus iortipps frcits ghcorh gug rii
+              <h2>Let's talk</h2>
+              <p class="measure">
+                Questions, partnerships, or just want to say hi ? Drop us a note and we'll get back to you.
               </p>
             </hgroup>
-            <form>
+            <form class="layout-flex layout-columns layout-gap-large">
               <div class="form-group">
-                <label>Name</label>
-                <input type="text" class="primary medium full-width" placeholder="Name" />
+                <label for="name">Name</label>
+                <input id="name" type="text" class="primary medium full-width" placeholder="Your name" />
               </div>
               <div class="form-group">
-                <label>Email</label>
-                <input type="email" class="primary medium full-width" placeholder="Enter your email" />
+                <label for="email">Email</label>
+                <input id="email" type="email" class="primary medium full-width" placeholder="you@example.com" />
               </div>
               <div class="form-group">
-                <label>Message</label>
-                <textarea class="primary medium full-width" placeholder="Type your message here"></textarea>
+                <label for="message">Message</label>
+                <textarea id="message" class="primary full-width" placeholder="Type your message here..."></textarea>
               </div>
-              <button type="submit" class="primary medium">Get started</button>
+              <button type="submit" class="primary medium">Send message</button>
             </form>
           </div>
-          <div class="image-placeholder" style="align-self: stretch; min-height: 360px"></div>
+          <div class="image-placeholder" style="align-self: stretch; min-height: 520px;"></div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="container">
-      <div class="footer-nav">
-        <div class="logo">
-          <span>UpcycleConnect</span>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p class="left">© 2026 Alternex. All rights reserved.</p>
-        <div class="layout-flex layout-gap-medium layout-items-center">
-          <a class="ghost small">Privacy Policy</a>
-          <a class="ghost small">Terms of Service</a>
-          <a class="ghost small">Cookie Settings</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <AppFooter />
 </template>
