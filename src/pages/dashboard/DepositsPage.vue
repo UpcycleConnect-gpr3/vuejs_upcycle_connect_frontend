@@ -2,6 +2,7 @@
 import { ref, reactive, computed } from 'vue'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
+import QrCode from '@/components/QrCode.vue'
 
 type Status = 'pending' | 'approved' | 'deposited' | 'collected' | 'rejected'
 
@@ -67,6 +68,10 @@ function submit() {
 
 // Code modal
 const codeOpen = ref<Deposit | null>(null)
+const qrRef = ref<InstanceType<typeof QrCode> | null>(null)
+function downloadQr() {
+  qrRef.value?.download()
+}
 </script>
 
 <template>
@@ -161,14 +166,14 @@ const codeOpen = ref<Deposit | null>(null)
         </div>
 
         <div class="qr-mock">
-          <div class="qr-grid"></div>
+          <QrCode v-if="codeOpen?.barcode" ref="qrRef" :value="codeOpen.barcode" :size="160" />
           <span class="tiny mono muted">{{ codeOpen?.barcode }}</span>
         </div>
         <p class="small muted center">Le QR/code-barres est lu par l'artisan ou le professionnel pour récupérer l'objet.</p>
       </div>
       <template #footer>
         <button class="ghost medium" @click="codeOpen = null">Fermer</button>
-        <button class="primary medium">Imprimer / Télécharger</button>
+        <button class="primary medium" @click="downloadQr">Imprimer / Télécharger</button>
       </template>
     </AppModal>
   </DashboardLayout>
