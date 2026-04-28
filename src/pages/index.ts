@@ -1,3 +1,15 @@
 export { default as HomePage } from './HomePage.vue'
 export { default as ForumPage } from './ForumPage.vue'
 export { default as PricingPage } from './PricingPage.vue'
+
+// Dashboard (espace particulier)
+export { default as DashboardIndexPage } from './dashboard/IndexPage.vue'
+export { default as DashboardListingsPage } from './dashboard/ListingsPage.vue'
+export { default as DashboardDepositsPage } from './dashboard/DepositsPage.vue'
+export { default as DashboardAdvicePage } from './dashboard/AdvicePage.vue'
+export { default as DashboardAdviceDetailPage } from './dashboard/AdviceDetailPage.vue'
+export { default as DashboardCatalogPage } from './dashboard/CatalogPage.vue'
+export { default as DashboardCatalogDetailPage } from './dashboard/CatalogDetailPage.vue'
+export { default as DashboardScorePage } from './dashboard/ScorePage.vue'
+export { default as DashboardPlanningPage } from './dashboard/PlanningPage.vue'
+export { default as DashboardOrdersPage } from './dashboard/OrdersPage.vue'
