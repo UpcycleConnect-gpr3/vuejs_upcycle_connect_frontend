@@ -44,6 +44,7 @@ const filtered = computed(() =>
 // Modal wizard
 const showModal = ref(route.path.endsWith('/new'))
 const step = ref(1)
+const editingId = ref<number | null>(null)
 
 const form = reactive({
   type: 'don' as 'don' | 'vente',
@@ -55,9 +56,23 @@ const form = reactive({
   photos: [] as { name: string, size: number }[],
 })
 
+function openEdit(l: Listing) {
+  editingId.value = l.id
+  form.type = l.type
+  form.title = l.title
+  form.category = l.category
+  form.price = l.price ?? 0
+  form.description = ''
+  form.condition = 'good'
+  form.photos = Array.from({ length: l.photoCount }, (_, i) => ({ name: `photo-${i + 1}.jpg`, size: 0 }))
+  step.value = 1
+  showModal.value = true
+}
+
 function close() {
   showModal.value = false
   step.value = 1
+  editingId.value = null
   if (route.path.endsWith('/new')) router.push('/dashboard/listings')
 }
 
@@ -72,17 +87,31 @@ function addPhotos(e: Event) {
 function removePhoto(i: number) { form.photos.splice(i, 1) }
 
 function submitListing() {
-  listings.value.unshift({
-    id: Date.now(),
-    title: form.title,
-    type: form.type,
-    category: form.category,
-    price: form.type === 'vente' ? form.price : null,
-    status: 'pending',
-    views: 0,
-    createdAt: new Date().toISOString().slice(0, 10),
-    photoCount: form.photos.length,
-  })
+  if (editingId.value !== null) {
+    const idx = listings.value.findIndex((l) => l.id === editingId.value)
+    if (idx >= 0) {
+      listings.value[idx] = {
+        ...listings.value[idx],
+        title: form.title,
+        type: form.type,
+        category: form.category,
+        price: form.type === 'vente' ? form.price : null,
+        photoCount: form.photos.length,
+      }
+    }
+  } else {
+    listings.value.unshift({
+      id: Date.now(),
+      title: form.title,
+      type: form.type,
+      category: form.category,
+      price: form.type === 'vente' ? form.price : null,
+      status: 'pending',
+      views: 0,
+      createdAt: new Date().toISOString().slice(0, 10),
+      photoCount: form.photos.length,
+    })
+  }
   Object.assign(form, { type: 'don', title: '', description: '', category: '', condition: 'good', price: 0, photos: [] })
   step.value = 1
   close()
@@ -128,7 +157,7 @@ function submitListing() {
               <div class="tiny muted">{{ l.views }} vues · {{ l.createdAt }}</div>
             </div>
             <div class="layout-flex layout-gap-small">
-              <button class="ghost small">Modifier</button>
+              <button class="secondary small" @click="openEdit(l)">Modifier</button>
             </div>
           </div>
         </div>

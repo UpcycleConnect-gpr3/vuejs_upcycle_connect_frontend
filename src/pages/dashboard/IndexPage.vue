@@ -96,6 +96,7 @@ const alerts = [
             <RouterLink to="/dashboard/planning" class="ghost small">Détail</RouterLink>
           </li>
         </ul>
+        <RouterLink to="/dashboard/planning" class="ghost small" style="align-self: flex-start;">Voir tous mes rendez-vous →</RouterLink>
       </article>
 
       <!-- Conseils du moment -->
