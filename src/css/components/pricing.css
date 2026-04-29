@@ -51,7 +51,7 @@
 .plan-header {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--plan-header-gap);
     padding-bottom: var(--plan-header-padding-bottom);
     border-bottom-width: var(--plan-header-border-width);
