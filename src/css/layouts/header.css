@@ -2,16 +2,22 @@ header {
     width: 100%;
     max-width: var(--container-max-width);
     margin-inline: auto;
-    margin-top: var(--header-margin-top);
-    padding-inline: var(--container-padding-x);
+    margin-top: var(--space-5);
+    padding: var(--space-4) var(--space-6);
     height: var(--header-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
     background-color: var(--header-bg-color);
+    border: var(--header-border-width) solid var(--header-border-color);
+    position: sticky;
+    top: var(--space-5);
+    z-index: 50;
+}
 
-    @media (min-width: 1280px) {
-        padding-inline: var(--container-padding-x-lg);
-    }
+header > nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
 }

@@ -1,30 +1,25 @@
 section {
-    --section-padding-y: 80px;
+    --section-padding-y: var(--space-20);
 }
 
 .card {
-    --card-bg-color: var(--primary-color);
-    --card-padding: var(--gap-extra-extra-large);
+    --card-bg-color: var(--green-800);
+    --card-padding: var(--space-10);
+    --card-border-width: 1px;
+    --card-border-color: var(--green-700);
+    --card-hover-bg-color: var(--green-700);
+    --card-hover-border-color: var(--green-600);
 }
 
 .image-placeholder {
-    --image-placeholder-min-height: 220px;
-    --image-placeholder-bg: oklch(from var(--white) l c h / 0.06);
+    --image-placeholder-min-height: 240px;
+    --image-placeholder-bg: var(--green-700);
     --image-placeholder-pattern:
-        linear-gradient(45deg, oklch(from var(--white) l c h / 0.07) 25%, transparent 25%),
-        linear-gradient(-45deg, oklch(from var(--white) l c h / 0.07) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, oklch(from var(--white) l c h / 0.07) 75%),
-        linear-gradient(-45deg, transparent 75%, oklch(from var(--white) l c h / 0.07) 75%);
-}
-
-nav {
-    --nav-gap: var(--gap-small);
-}
-
-footer {
-    --footer-padding-y: var(--gap-extra-large);
-    --footer-gap: var(--gap-extra-large);
-    --footer-border-width: 1px;
-    --footer-border-color: oklch(from var(--white) l c h / 0.15);
-    --footer-bottom-padding-top: var(--gap-large);
+        linear-gradient(135deg,
+            transparent 25%,
+            oklch(from var(--white) l c h / 0.04) 25%,
+            oklch(from var(--white) l c h / 0.04) 50%,
+            transparent 50%,
+            transparent 75%,
+            oklch(from var(--white) l c h / 0.04) 75%);
 }

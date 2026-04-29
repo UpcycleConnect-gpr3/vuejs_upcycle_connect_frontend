@@ -1,5 +1,6 @@
 header {
-    --header-height: 72px;
-    --header-bg-color: var(--primary-color);
-    --header-margin-top: 1rem;
+    --header-height: auto;
+    --header-bg-color: var(--green-800);
+    --header-border-width: 1px;
+    --header-border-color: var(--green-700);
 }
