@@ -16,15 +16,15 @@ const articles = [
   <main>
     <section>
       <div class="container">
-        <div class="card grid-2" style="padding: 0; overflow: hidden;">
-          <div class="image-placeholder" style="min-height: 560px; align-self: stretch;"></div>
-          <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12);">
+        <div class="card grid-2" style="padding: 0; overflow: hidden">
+          <div class="image-placeholder" style="min-height: 560px; align-self: stretch"></div>
+          <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12)">
             <span class="eyebrow">Featured · 28 Février 2026</span>
             <hgroup>
               <h1>Bigger news on<br />Upcycle Connect</h1>
               <p class="lead measure">
-                Major platform update, new partnerships, and community milestones. Here's everything that
-                happened this month, and what's coming next.
+                Major platform update, new partnerships, and community milestones. Here's everything
+                that happened this month, and what's coming next.
               </p>
             </hgroup>
             <div class="layout-flex layout-gap-medium">
@@ -49,14 +49,18 @@ const articles = [
           <h2>From the community</h2>
         </hgroup>
         <div class="grid-2 layout-items-stretch">
-          <article v-for="a in articles" :key="a.title" class="card layout-flex layout-columns layout-gap-large">
+          <article
+            v-for="a in articles"
+            :key="a.title"
+            class="card layout-flex layout-columns layout-gap-large"
+          >
             <div class="image-placeholder"></div>
             <span class="eyebrow">{{ a.date }}</span>
             <hgroup>
               <h3>{{ a.title }}</h3>
               <p class="measure">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                the industry's standard dummy text ever since the 1500s.
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
+                Ipsum has been the industry's standard dummy text ever since the 1500s.
               </p>
             </hgroup>
           </article>

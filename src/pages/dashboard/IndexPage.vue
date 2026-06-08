@@ -2,6 +2,8 @@
 import { RouterLink } from 'vue-router'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 
+// TODO: aggregate dashboard stats — apiUpcycle GET /projects (+ /objects, /orders)
+// have no single stats endpoint, so these tiles keep demo values for now.
 const stats = {
   score: 482,
   scoreDelta: '+24',
@@ -11,8 +13,20 @@ const stats = {
 }
 
 const upcoming = [
-  { id: 1, title: 'Atelier transformation palettes', date: '12 mai · 14h00', location: 'Salle A', kind: 'Atelier' },
-  { id: 2, title: 'Webinaire textile éco-responsable', date: '18 mai · 19h00', location: 'En ligne', kind: 'Conseil' },
+  {
+    id: 1,
+    title: 'Atelier transformation palettes',
+    date: '12 mai · 14h00',
+    location: 'Salle A',
+    kind: 'Atelier',
+  },
+  {
+    id: 2,
+    title: 'Webinaire textile éco-responsable',
+    date: '18 mai · 19h00',
+    location: 'En ligne',
+    kind: 'Conseil',
+  },
 ]
 
 const alerts = [
@@ -31,7 +45,9 @@ const alerts = [
       </div>
       <div class="layout-flex layout-gap-medium">
         <RouterLink to="/dashboard/deposits/new" class="ghost medium">+ Dépôt conteneur</RouterLink>
-        <RouterLink to="/dashboard/listings/new" class="primary medium" data-tour="new-listing">+ Nouvelle annonce</RouterLink>
+        <RouterLink to="/dashboard/listings/new" class="primary medium" data-tour="new-listing"
+          >+ Nouvelle annonce</RouterLink
+        >
       </div>
     </header>
 
@@ -71,7 +87,10 @@ const alerts = [
     <!-- Alerts -->
     <section v-if="alerts.length" class="layout-flex layout-columns layout-gap-small">
       <div v-for="(a, i) in alerts" :key="i" class="alert" :class="`alert--${a.type}`">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4M12 16h.01" />
+        </svg>
         <span>{{ a.text }}</span>
       </div>
     </section>
@@ -87,16 +106,18 @@ const alerts = [
           <li v-for="e in upcoming" :key="e.id" class="event-row">
             <div class="event-row-date">
               <span class="tiny uppercase muted">{{ e.kind }}</span>
-              <span style="font-weight: 700;">{{ e.date }}</span>
+              <span style="font-weight: 700">{{ e.date }}</span>
             </div>
-            <div style="flex: 1;">
-              <div style="font-weight: 600;">{{ e.title }}</div>
+            <div style="flex: 1">
+              <div style="font-weight: 600">{{ e.title }}</div>
               <div class="tiny muted">{{ e.location }}</div>
             </div>
             <RouterLink to="/dashboard/planning" class="ghost small">Détail</RouterLink>
           </li>
         </ul>
-        <RouterLink to="/dashboard/planning" class="ghost small" style="align-self: flex-start;">Voir tous mes rendez-vous →</RouterLink>
+        <RouterLink to="/dashboard/planning" class="ghost small" style="align-self: flex-start"
+          >Voir tous mes rendez-vous →</RouterLink
+        >
       </article>
 
       <!-- Conseils du moment -->
@@ -108,16 +129,18 @@ const alerts = [
         <ul class="layout-flex layout-columns layout-gap-medium">
           <li class="advice-mini">
             <span class="badge">Débutant</span>
-            <span style="font-weight: 600;">5 conseils pour bien démarrer</span>
+            <span style="font-weight: 600">5 conseils pour bien démarrer</span>
             <span class="tiny muted">5 min de lecture</span>
           </li>
           <li class="advice-mini">
             <span class="badge">Outils</span>
-            <span style="font-weight: 600;">Outils essentiels pour l'upcycling</span>
+            <span style="font-weight: 600">Outils essentiels pour l'upcycling</span>
             <span class="tiny muted">8 min de lecture</span>
           </li>
         </ul>
-        <RouterLink to="/dashboard/advice" class="ghost small" style="align-self: flex-start;">Voir tous les conseils →</RouterLink>
+        <RouterLink to="/dashboard/advice" class="ghost small" style="align-self: flex-start"
+          >Voir tous les conseils →</RouterLink
+        >
       </article>
     </div>
   </DashboardLayout>

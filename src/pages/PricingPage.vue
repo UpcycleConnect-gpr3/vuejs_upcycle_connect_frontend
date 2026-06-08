@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useUiAuthModalStore } from '@/stores/uiAuthModal'
+
+const ui = useUiAuthModalStore()
 
 const plans = [
   {
     name: 'Basic',
     price: '0',
     description: 'For individuals getting started.',
-    features: ['1 project', 'Community forum', 'Public marketplace', 'Email support', 'Standard analytics', 'Basic training'],
+    features: [
+      '1 project',
+      'Community forum',
+      'Public marketplace',
+      'Email support',
+      'Standard analytics',
+      'Basic training',
+    ],
     featured: false,
     cta: 'Start for free',
   },
@@ -16,8 +26,15 @@ const plans = [
     price: '15',
     description: 'For makers and small teams.',
     features: [
-      'Unlimited projects', 'Private forum spaces', 'Priority marketplace',
-      'Priority support', 'Advanced analytics', 'All trainings', 'Custom branding', 'API access', 'Webhooks',
+      'Unlimited projects',
+      'Private forum spaces',
+      'Priority marketplace',
+      'Priority support',
+      'Advanced analytics',
+      'All trainings',
+      'Custom branding',
+      'API access',
+      'Webhooks',
     ],
     featured: true,
     cta: 'Start Pro trial',
@@ -26,7 +43,14 @@ const plans = [
     name: 'Business',
     price: '30',
     description: 'For organisations that scale.',
-    features: ['Everything in Pro', 'Dedicated manager', 'SSO', 'Audit logs', 'Custom integrations', 'SLA 99.9%'],
+    features: [
+      'Everything in Pro',
+      'Dedicated manager',
+      'SSO',
+      'Audit logs',
+      'Custom integrations',
+      'SLA 99.9%',
+    ],
     featured: false,
     cta: 'Contact sales',
   },
@@ -43,7 +67,7 @@ const plans = [
         <span class="eyebrow">Pricing</span>
         <hgroup class="center">
           <h1 class="center">Simple pricing,<br />powerful platform</h1>
-          <p class="lead center measure" style="margin-inline: auto;">
+          <p class="lead center measure" style="margin-inline: auto">
             Choose a plan that fits your ambition. No hidden fees. Cancel anytime.
           </p>
         </hgroup>
@@ -54,7 +78,12 @@ const plans = [
     <section>
       <div class="container layout-flex layout-columns layout-gap-extra-large">
         <div class="pricing-grid">
-          <div v-for="plan in plans" :key="plan.name" class="pricing-card" :class="{ featured: plan.featured }">
+          <div
+            v-for="plan in plans"
+            :key="plan.name"
+            class="pricing-card"
+            :class="{ featured: plan.featured }"
+          >
             <div class="plan-header">
               <span class="plan-name">{{ plan.name }} plan</span>
               <div class="plan-price-row">
@@ -66,14 +95,25 @@ const plans = [
 
             <ul class="plan-features">
               <li v-for="(f, i) in plan.features" :key="i" class="plan-feature">
-                <svg class="plan-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  class="plan-feature-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="m5 12 5 5L20 7" />
                 </svg>
                 {{ f }}
               </li>
             </ul>
 
-            <button :class="plan.featured ? 'primary medium full-width' : 'secondary medium full-width'">
+            <button
+              :class="plan.featured ? 'primary medium full-width' : 'secondary medium full-width'"
+              @click="ui.open('register')"
+            >
               {{ plan.cta }}
             </button>
           </div>
@@ -87,7 +127,7 @@ const plans = [
         <hgroup class="center">
           <span class="eyebrow">Beyond subscriptions</span>
           <h2 class="center">Other Pricing plan</h2>
-          <p class="center measure" style="margin-inline: auto;">
+          <p class="center measure" style="margin-inline: auto">
             Additional revenue streams for creators, sellers, and training providers.
           </p>
         </hgroup>
@@ -124,14 +164,17 @@ const plans = [
     <!-- CTA -->
     <section>
       <div class="container">
-        <div class="card layout-flex layout-columns layout-items-center layout-gap-large" style="padding: var(--space-16); text-align: center;">
+        <div
+          class="card layout-flex layout-columns layout-items-center layout-gap-large"
+          style="padding: var(--space-16); text-align: center"
+        >
           <span class="eyebrow">Ready ?</span>
           <h2 class="center">Get started in minutes</h2>
-          <p class="lead center measure" style="margin-inline: auto;">
+          <p class="lead center measure" style="margin-inline: auto">
             Create your account, list your first project, and join the circular economy.
           </p>
           <div class="layout-flex layout-gap-medium">
-            <button class="primary large">Create account</button>
+            <button class="primary large" @click="ui.open('register')">Create account</button>
             <button class="secondary large">Talk to sales</button>
           </div>
         </div>

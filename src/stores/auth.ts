@@ -1,20 +1,30 @@
 import { defineStore } from 'pinia'
+import 'pinia-plugin-persistedstate'
 import { computed, ref } from 'vue'
 import type { Router } from 'vue-router'
 import { useApiErrors } from '@/composables/useApiErrors'
-import type { ApiError } from '@/types/api'
+import type { ApiError, ApiResponse } from '@/types/api'
+import { apiAuth } from '@/services/api'
+
+interface LoginPayload {
+  email: string
+  password: string
+}
+
+interface LoginResponse {
+  bearer_token?: string
+  totp_required: boolean
+  hash?: string
+}
+
+interface LoginTotpResponse {
+  bearer_token: string
+}
 
 declare const cookieStore: {
-  set: (
-    name: string,
-    value: string,
-    options?: { domain?: string; path?: string },
-  ) => Promise<void>
+  set: (name: string, value: string, options?: { domain?: string; path?: string }) => Promise<void>
   get: (name: string) => Promise<{ value?: string } | undefined>
-  delete: (
-    name: string,
-    options?: { domain?: string; path?: string },
-  ) => Promise<void>
+  delete: (name: string, options?: { domain?: string; path?: string }) => Promise<void>
 }
 
 const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN
@@ -33,19 +43,13 @@ const writeCookieFallback = (name: string, value: string) => {
 }
 
 const deleteCookieFallback = (name: string) => {
-  const parts = [
-    `${name}=`,
-    `path=${COOKIE_PATH}`,
-    'expires=Thu, 01 Jan 1970 00:00:00 GMT',
-  ]
+  const parts = [`${name}=`, `path=${COOKIE_PATH}`, 'expires=Thu, 01 Jan 1970 00:00:00 GMT']
   if (COOKIE_DOMAIN) parts.push(`domain=${COOKIE_DOMAIN}`)
   document.cookie = parts.join('; ')
 }
 
 const readCookieFallback = (name: string): string | null => {
-  const match = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(`${name}=`))
+  const match = document.cookie.split('; ').find((row) => row.startsWith(`${name}=`))
   if (!match) return null
   const value = match.substring(name.length + 1)
   try {
@@ -67,6 +71,7 @@ export const useAuthStore = defineStore(
   'auth',
   () => {
     const bearerToken = ref<string>('')
+    const userEmail = ref<string>('')
     const isLoading = ref<boolean>(false)
     const error = ref<string | null>(null)
 
@@ -112,14 +117,74 @@ export const useAuthStore = defineStore(
     }
 
     const handleApiError = (err: unknown, fallback: string) => {
-      const apiError = (err as { response?: { data?: ApiError } }).response
-        ?.data
+      const apiError = (err as { response?: { data?: ApiError } }).response?.data
       setError(apiError?.message || fallback)
       setFieldErrors(apiError)
     }
 
+    const login = async ({ email, password }: LoginPayload) => {
+      clearError()
+      setLoading(true)
+      try {
+        const { data } = await apiAuth.post<ApiResponse<LoginResponse>>('/auth/login/', {
+          email,
+          password,
+        })
+        const result = data.data
+        if (result.totp_required) {
+          return { totpRequired: true as const, hash: result.hash ?? '' }
+        }
+        if (result.bearer_token) {
+          await setToken(result.bearer_token)
+          userEmail.value = email
+        }
+        return { totpRequired: false as const, hash: '' }
+      } catch (err) {
+        handleApiError(err, 'Échec de la connexion')
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const loginTotp = async ({ hash, code }: { hash: string; code: string }) => {
+      clearError()
+      setLoading(true)
+      try {
+        const { data } = await apiAuth.post<ApiResponse<LoginTotpResponse>>('/auth/login-totp/', {
+          hash,
+          code,
+        })
+        await setToken(data.data.bearer_token)
+        return data.data
+      } catch (err) {
+        handleApiError(err, 'Code de vérification invalide')
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const register = async ({ email, password }: LoginPayload) => {
+      clearError()
+      setLoading(true)
+      try {
+        const { data } = await apiAuth.post<ApiResponse<{ user_id: string }>>('/auth/register/', {
+          email,
+          password,
+        })
+        return data.data
+      } catch (err) {
+        handleApiError(err, "Échec de l'inscription")
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    }
+
     const logout = async (router: Router) => {
       await clearToken()
+      userEmail.value = ''
       await router.push({ name: 'login' })
     }
 
@@ -131,6 +196,7 @@ export const useAuthStore = defineStore(
 
     return {
       bearerToken,
+      userEmail,
       isLoading,
       error,
       fieldErrors,
@@ -140,6 +206,9 @@ export const useAuthStore = defineStore(
       clearError,
       setError,
       setLoading,
+      login,
+      loginTotp,
+      register,
       logout,
       restoreTokenFromCookies,
     }
@@ -147,7 +216,7 @@ export const useAuthStore = defineStore(
   {
     persist: {
       storage: localStorage,
-      pick: ['bearerToken'],
+      pick: ['bearerToken', 'userEmail'],
     },
   },
 )

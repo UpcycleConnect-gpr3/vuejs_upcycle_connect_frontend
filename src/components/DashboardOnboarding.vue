@@ -8,18 +8,42 @@ interface Step {
 }
 
 const steps: Step[] = [
-  { selector: null, title: 'Bienvenue sur UpcycleConnect 👋', description: 'Visite express en 5 étapes pour prendre vos repères. Vous pouvez passer à tout moment.' },
-  { selector: '[data-tour="listings"]', title: 'Vos annonces', description: 'Déposez une annonce de don ou de vente. Elles passent en validation rapide par notre équipe.' },
-  { selector: '[data-tour="deposits"]', title: 'Dépôt conteneur', description: 'Demandez un dépôt en conteneur. Une fois validé, vous recevez un code et un QR pour le retrait.' },
-  { selector: '[data-tour="catalog"]', title: 'Catalogue', description: 'Parcourez les services, formations et événements achetables ou réservables.' },
-  { selector: '[data-tour="score"]', title: 'Upcycling Score', description: 'Suivez votre impact circulaire et débloquez des badges au fil de vos contributions.' },
+  {
+    selector: null,
+    title: 'Bienvenue sur UpcycleConnect 👋',
+    description:
+      'Visite express en 5 étapes pour prendre vos repères. Vous pouvez passer à tout moment.',
+  },
+  {
+    selector: '[data-tour="listings"]',
+    title: 'Vos annonces',
+    description:
+      'Déposez une annonce de don ou de vente. Elles passent en validation rapide par notre équipe.',
+  },
+  {
+    selector: '[data-tour="deposits"]',
+    title: 'Dépôt conteneur',
+    description:
+      'Demandez un dépôt en conteneur. Une fois validé, vous recevez un code et un QR pour le retrait.',
+  },
+  {
+    selector: '[data-tour="catalog"]',
+    title: 'Catalogue',
+    description: 'Parcourez les services, formations et événements achetables ou réservables.',
+  },
+  {
+    selector: '[data-tour="score"]',
+    title: 'Upcycling Score',
+    description:
+      'Suivez votre impact circulaire et débloquez des badges au fil de vos contributions.',
+  },
 ]
 
 const visible = ref(false)
 const stepIdx = ref(0)
 const target = ref<{ top: number; left: number; width: number; height: number } | null>(null)
 
-const current = computed(() => steps[stepIdx.value])
+const current = computed(() => steps[stepIdx.value] as Step)
 const isLast = computed(() => stepIdx.value === steps.length - 1)
 
 async function updateTarget() {
@@ -107,7 +131,9 @@ const tooltipStyle = computed(() => {
             <button class="ghost small" @click="finish">Passer</button>
             <div class="layout-flex layout-gap-small">
               <button v-if="stepIdx > 0" class="ghost small" @click="prev">← Précédent</button>
-              <button class="primary small" @click="next">{{ isLast ? 'Terminer' : 'Suivant →' }}</button>
+              <button class="primary small" @click="next">
+                {{ isLast ? 'Terminer' : 'Suivant →' }}
+              </button>
             </div>
           </div>
         </div>

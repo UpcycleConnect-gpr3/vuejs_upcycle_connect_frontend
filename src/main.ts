@@ -4,6 +4,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import router from './router'
+import { useAuthStore } from './stores/auth'
 import './css/style.css'
 
 const app = createApp(App)
@@ -14,4 +15,7 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 
-app.mount('#app')
+const authStore = useAuthStore()
+authStore.restoreTokenFromCookies().finally(() => {
+  app.mount('#app')
+})

@@ -1,13 +1,13 @@
 hgroup {
-    --hgroup-flex-direction: column;
-    --hgroup-align-items: flex-start;
-    --hgroup-gap: var(--gap-medium);
+  --hgroup-flex-direction: column;
+  --hgroup-align-items: flex-start;
+  --hgroup-gap: var(--gap-medium);
 
-    &.inline {
-        --hgroup-flex-direction: row;
-    }
+  &.inline {
+    --hgroup-flex-direction: row;
+  }
 
-    &.center {
-        --hgroup-align-items: center;
-    }
+  &.center {
+    --hgroup-align-items: center;
+  }
 }

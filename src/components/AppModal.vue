@@ -19,9 +19,12 @@ function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape' && props.open) close()
 }
 
-watch(() => props.open, (open) => {
-  document.body.style.overflow = open ? 'hidden' : ''
-})
+watch(
+  () => props.open,
+  (open) => {
+    document.body.style.overflow = open ? 'hidden' : ''
+  },
+)
 
 onMounted(() => window.addEventListener('keydown', onKey))
 onUnmounted(() => {
@@ -40,7 +43,9 @@ onUnmounted(() => {
               <h3>{{ title }}</h3>
             </slot>
             <button class="modal-close" @click="close" aria-label="Fermer">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
             </button>
           </header>
 
