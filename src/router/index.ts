@@ -1,5 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { HomePage, ServicePage, ResourcesPage, AboutPage, PricingPage, ForumPage, LoginConfirmPage } from '@/pages'
+import {
+  HomePage,
+  ServicePage,
+  ResourcesPage,
+  AboutPage,
+  PricingPage,
+  ForumPage,
+  LoginConfirmPage,
+} from '@/pages'
 import { useAuthStore } from '@/stores/auth'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
 

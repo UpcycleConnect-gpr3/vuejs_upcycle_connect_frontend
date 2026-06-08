@@ -123,7 +123,7 @@ export const useAuthStore = defineStore(
       setFieldErrors(apiError)
     }
 
-    const login = async ({ email, password }: LoginPayload) => {
+/*    const login = async ({ email, password }: LoginPayload) => {
       clearError()
       setLoading(true)
       try {
@@ -146,7 +146,7 @@ export const useAuthStore = defineStore(
       } finally {
         setLoading(false)
       }
-    }
+    }*/
 
     const loginTotp = async ({ hash, code }: { hash: string; code: string }) => {
       clearError()
