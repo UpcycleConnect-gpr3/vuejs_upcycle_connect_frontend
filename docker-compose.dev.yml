@@ -1,0 +1,9 @@
+services:
+  upcycle-connect_front:
+    build:
+      context: .
+      target: dev
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "4386:5173"

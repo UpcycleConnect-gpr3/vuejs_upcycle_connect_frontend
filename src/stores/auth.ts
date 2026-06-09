@@ -20,6 +20,7 @@ declare const cookieStore: {
 const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN
 const COOKIE_PATH = import.meta.env.VITE_COOKIE_PATH || '/'
 const TOKEN_COOKIE_NAME = 'bearer_token'
+const AUTH_REDIRECT_URL = import.meta.env.VITE_AUTH_REDIRECT_URL || 'http://localhost:4284'
 
 const hasCookieStore = (): boolean =>
   typeof globalThis !== 'undefined' && 'cookieStore' in globalThis
@@ -129,6 +130,15 @@ export const useAuthStore = defineStore(
       if (token) bearerToken.value = token
     }
 
+    const login = async (router: Router) => {
+      const token = await getTokenFromCookies()
+      if (token) {
+        await router.push('/login-confirm')
+      } else {
+        window.location.href = `${AUTH_REDIRECT_URL}/auth/login/`
+      }
+    }
+
     return {
       bearerToken,
       isLoading,
@@ -142,6 +152,7 @@ export const useAuthStore = defineStore(
       setLoading,
       logout,
       restoreTokenFromCookies,
+      login,
     }
   },
   {

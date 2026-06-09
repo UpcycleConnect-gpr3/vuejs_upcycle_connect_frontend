@@ -13,3 +13,13 @@ export interface ApiError {
   status: string
   errors?: ApiValidationError[]
 }
+
+export interface User {
+  id: string
+  firstname: string
+  lastname: string
+  email: string
+  totp_enabled: boolean
+  created_at: string
+  updated_at: string
+}

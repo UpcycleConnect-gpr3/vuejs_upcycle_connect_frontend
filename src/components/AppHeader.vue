@@ -1,5 +1,17 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const handleLogin = async () => {
+  await authStore.login(router)
+}
+
+const handleLogout = async () => {
+  await authStore.logout(router)
+}
 </script>
 
 <template>
@@ -18,8 +30,11 @@ import { RouterLink } from 'vue-router'
     </nav>
 
     <div class="layout-flex layout-gap-medium layout-items-center">
-      <button class="ghost medium">Sign up</button>
-      <button class="primary medium">Log in</button>
+      <template v-if="!authStore.isAuthenticated">
+        <button class="ghost medium">Sign up</button>
+        <button class="primary medium" @click="handleLogin">Log in</button>
+      </template>
+      <button v-else class="ghost medium" @click="handleLogout">Log out</button>
     </div>
   </header>
 </template>
