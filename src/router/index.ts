@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { HomePage, ServicePage, ResourcesPage, AboutPage, PricingPage, ForumPage } from '@/pages'
+import { HomePage, ServicePage, ResourcesPage, AboutPage, PricingPage, ForumPage, LoginConfirmPage } from '@/pages'
 import { useAuthStore } from '@/stores/auth'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
 
@@ -11,12 +11,8 @@ const router = createRouter({
     { path: '/resources', component: ResourcesPage },
     { path: '/about', component: AboutPage },
     { path: '/pricing', component: PricingPage },
-
-    // Public login route — redirects home and triggers the auth modal
-    { path: '/login', name: 'login', redirect: { path: '/' } },
-
-    // Forum
     { path: '/forum', component: ForumPage },
+    { path: '/login-confirm', component: LoginConfirmPage },
     {
       path: '/forum/new',
       component: () => import('@/pages/forum/ForumNewPage.vue'),
