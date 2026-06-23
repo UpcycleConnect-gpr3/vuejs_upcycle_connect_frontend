@@ -882,6 +882,147 @@
   border-color: var(--lime-500);
 }
 
+/* ── Score: hero (gauge + summary) ────────────────────────────────────────── */
+
+.score-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-6);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-color);
+}
+
+.score-gauge {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.score-gauge svg {
+  width: 100%;
+  height: 100%;
+}
+
+.score-gauge-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.score-value {
+  font-size: var(--font-size-xxxxlarge);
+  font-weight: var(--font-weight-black);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.score-summary h2 {
+  --h2-font-size: var(--font-size-xxlarge);
+  --h2-font-weight: var(--font-weight-bold);
+}
+
+/* ── Score: breakdown bars ────────────────────────────────────────────────── */
+
+.breakdown-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bar-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--surface-3);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background-color: var(--lime-500);
+  transition: width 0.6s var(--ease-out);
+}
+
+/* ── Score: history chart ─────────────────────────────────────────────────── */
+
+.history-chart {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--space-4);
+  height: 220px;
+}
+
+.history-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.history-bar-fill {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: var(--space-1);
+  min-height: 24px;
+  background-color: oklch(from var(--lime-500) l c h / 0.2);
+  border-top: 2px solid var(--lime-500);
+  color: var(--lime-500);
+  transition: height 0.6s var(--ease-out);
+}
+
+/* ── Score: badges ────────────────────────────────────────────────────────── */
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.badge-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-3);
+  text-align: center;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-color);
+}
+
+.badge-tile-icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: var(--space-1);
+}
+
+.badge-tile--locked {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.badge-tile--locked .badge-tile-icon {
+  filter: grayscale(1);
+}
+
 /* ── Inline text helpers (work on span/div, not just <p>) ─────────────────── */
 
 .dashboard-shell .muted {
@@ -917,6 +1058,14 @@
     min-height: 160px;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
+  }
+  .score-hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .score-summary {
+    align-items: center;
   }
 }
 
