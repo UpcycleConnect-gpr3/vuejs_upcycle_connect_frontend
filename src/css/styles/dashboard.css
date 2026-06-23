@@ -1023,6 +1023,53 @@
   filter: grayscale(1);
 }
 
+/* ── Data table ───────────────────────────────────────────────────────────── */
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-color);
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-small);
+}
+
+.table-wrapper th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  background-color: var(--surface-3);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.table-wrapper td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle-color);
+  vertical-align: middle;
+}
+
+.table-wrapper tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.table-wrapper tbody tr:hover {
+  background-color: oklch(from var(--white) l c h / 0.03);
+}
+
+.table-wrapper tbody tr:last-child td {
+  border-bottom: none;
+}
+
 /* ── Inline text helpers (work on span/div, not just <p>) ─────────────────── */
 
 .dashboard-shell .muted {
