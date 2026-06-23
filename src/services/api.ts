@@ -26,7 +26,7 @@ const attachToken = (instance: AxiosInstance) => {
 
 export const apiAuth = attachToken(
   axios.create({
-    baseURL: import.meta.env.VITE_AUTH_URL ?? 'http://auth.localhost',
+    baseURL: import.meta.env.VITE_AUTH_URL ?? 'http://localhost:4242',
   }),
 )
 
@@ -44,7 +44,7 @@ export const apiTraining = attachToken(
 
 export const apiUpcycle = attachToken(
   axios.create({
-    baseURL: import.meta.env.VITE_UPCYCLE_URL ?? 'http://upcycle.localhost',
+    baseURL: import.meta.env.VITE_UPCYCLE_URL ?? 'http://localhost:4343',
   }),
 )
 
