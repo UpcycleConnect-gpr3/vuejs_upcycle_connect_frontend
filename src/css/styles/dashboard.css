@@ -1023,6 +1023,59 @@
   filter: grayscale(1);
 }
 
+/* ── Deposits ─────────────────────────────────────────────────────────────── */
+
+.deposit-card {
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-color);
+  transition: border-color var(--transition-fast);
+}
+
+.deposit-card:hover {
+  border-color: var(--border-strong-color);
+}
+
+.deposit-card h4 {
+  --h4-font-size: var(--font-size-large);
+  --h4-font-weight: var(--font-weight-semibold);
+}
+
+/* Container code (shown in modal) */
+
+.container-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-5);
+  text-align: center;
+  background-color: var(--surface-3);
+  border: 1px solid var(--border-color);
+}
+
+.container-code-digits {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xxxlarge);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.18em;
+  color: var(--lime-500);
+}
+
+.qr-mock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--white);
+}
+
+.qr-mock .mono {
+  color: var(--black);
+}
+
 /* ── Data table ───────────────────────────────────────────────────────────── */
 
 .table-wrapper {
