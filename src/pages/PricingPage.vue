@@ -1,11 +1,29 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
+import { useAuthStore } from '@/stores/auth'
+import { useToastsStore } from '@/stores/toasts'
+import { createSubscriptionCheckout } from '@/services/billing'
 
 const ui = useUiAuthModalStore()
+const auth = useAuthStore()
+const toasts = useToastsStore()
+const route = useRoute()
 
-const plans = [
+interface Plan {
+  name: string
+  price: string
+  description: string
+  features: string[]
+  featured: boolean
+  cta: string
+  priceId?: string
+}
+
+const plans: Plan[] = [
   {
     name: 'Basic',
     price: '0',
@@ -38,6 +56,7 @@ const plans = [
     ],
     featured: true,
     cta: 'Start Pro trial',
+    priceId: import.meta.env.VITE_STRIPE_PRICE_PRO,
   },
   {
     name: 'Business',
@@ -52,9 +71,39 @@ const plans = [
       'SLA 99.9%',
     ],
     featured: false,
-    cta: 'Contact sales',
+    cta: 'Subscribe',
+    priceId: import.meta.env.VITE_STRIPE_PRICE_BUSINESS,
   },
 ]
+
+const loadingPlan = ref<string | null>(null)
+
+async function choosePlan(plan: Plan) {
+  // Free / unconfigured plans just funnel to registration.
+  if (!plan.priceId) {
+    ui.open('register')
+    return
+  }
+  // A subscription is tied to a user — make sure we have one.
+  if (!auth.isAuthenticated) {
+    ui.open('login')
+    return
+  }
+  loadingPlan.value = plan.name
+  try {
+    const { url } = await createSubscriptionCheckout(plan.priceId)
+    window.location.href = url
+  } catch {
+    toasts.error('Impossible de démarrer le paiement. Réessayez dans un instant.')
+    loadingPlan.value = null
+  }
+}
+
+onMounted(() => {
+  if (route.query.checkout === 'canceled') {
+    toasts.error('Paiement annulé. Vous pouvez réessayer quand vous voulez.')
+  }
+})
 </script>
 
 <template>
@@ -112,9 +161,10 @@ const plans = [
 
             <button
               :class="plan.featured ? 'primary medium full-width' : 'secondary medium full-width'"
-              @click="ui.open('register')"
+              :disabled="loadingPlan === plan.name"
+              @click="choosePlan(plan)"
             >
-              {{ plan.cta }}
+              {{ loadingPlan === plan.name ? 'Redirection…' : plan.cta }}
             </button>
           </div>
         </div>

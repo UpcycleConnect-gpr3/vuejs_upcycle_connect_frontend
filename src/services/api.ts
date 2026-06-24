@@ -48,4 +48,15 @@ export const apiUpcycle = attachToken(
   }),
 )
 
+// Billing/Stripe lives on its own backend route. Defaults to the upcycle
+// service unless VITE_BILLING_URL points it elsewhere.
+export const apiBilling = attachToken(
+  axios.create({
+    baseURL:
+      import.meta.env.VITE_BILLING_URL ??
+      import.meta.env.VITE_UPCYCLE_URL ??
+      'http://localhost:4343',
+  }),
+)
+
 export default apiUpcycle

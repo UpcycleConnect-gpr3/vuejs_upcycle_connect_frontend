@@ -19,6 +19,7 @@ const router = createRouter({
     { path: '/resources', component: ResourcesPage },
     { path: '/about', component: AboutPage },
     { path: '/pricing', component: PricingPage },
+    { path: '/billing/success', component: () => import('@/pages/BillingSuccessPage.vue') },
     { path: '/forum', component: ForumPage },
     { path: '/login-confirm', component: LoginConfirmPage },
     {
