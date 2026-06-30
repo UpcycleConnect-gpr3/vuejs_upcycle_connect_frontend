@@ -37,7 +37,10 @@ const hasCookieStore = (): boolean =>
 
 const writeCookieFallback = (name: string, value: string) => {
   const parts = [`${name}=${encodeURIComponent(value)}`, `path=${COOKIE_PATH}`]
-  if (COOKIE_DOMAIN) parts.push(`domain=${COOKIE_DOMAIN}`)
+  // localhost : pas d'attribut Domain (rejeté par le navigateur) → cookie host-only,
+  // partagé entre tous les ports de l'hôte. Domain conservé pour un vrai domaine (prod).
+  if (COOKIE_DOMAIN && COOKIE_DOMAIN !== 'localhost' && COOKIE_DOMAIN !== '127.0.0.1')
+    parts.push(`domain=${COOKIE_DOMAIN}`)
   if (window.location.protocol === 'https:') parts.push('Secure')
   parts.push('SameSite=Lax')
   document.cookie = parts.join('; ')
@@ -45,7 +48,10 @@ const writeCookieFallback = (name: string, value: string) => {
 
 const deleteCookieFallback = (name: string) => {
   const parts = [`${name}=`, `path=${COOKIE_PATH}`, 'expires=Thu, 01 Jan 1970 00:00:00 GMT']
-  if (COOKIE_DOMAIN) parts.push(`domain=${COOKIE_DOMAIN}`)
+  // localhost : pas d'attribut Domain (rejeté par le navigateur) → cookie host-only,
+  // partagé entre tous les ports de l'hôte. Domain conservé pour un vrai domaine (prod).
+  if (COOKIE_DOMAIN && COOKIE_DOMAIN !== 'localhost' && COOKIE_DOMAIN !== '127.0.0.1')
+    parts.push(`domain=${COOKIE_DOMAIN}`)
   document.cookie = parts.join('; ')
 }
 
