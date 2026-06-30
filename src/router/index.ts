@@ -95,6 +95,70 @@ const router = createRouter({
       component: () => import('@/pages/dashboard/AdviceDetailPage.vue'),
       meta: { requiresAuth: true },
     },
+
+    // Espace Professionnel / Artisan (all require auth)
+    {
+      path: '/pro',
+      component: () => import('@/pages/pro/IndexPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pro/marketplace',
+      component: () => import('@/pages/pro/MarketplacePage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pro/pickups',
+      component: () => import('@/pages/pro/PickupsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pro/projects',
+      component: () => import('@/pages/pro/ProjectsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pro/subscription',
+      component: () => import('@/pages/pro/SubscriptionPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pro/ads',
+      component: () => import('@/pages/pro/AdsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/pro/stats',
+      component: () => import('@/pages/pro/StatsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+
+    // Espace Salarié (animateurs / formateurs) (all require auth)
+    {
+      path: '/staff',
+      component: () => import('@/pages/staff/IndexPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/staff/trainings',
+      component: () => import('@/pages/staff/TrainingsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/staff/planning',
+      component: () => import('@/pages/staff/PlanningPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/staff/advice',
+      component: () => import('@/pages/staff/AdvicePage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/staff/moderation',
+      component: () => import('@/pages/staff/ModerationPage.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
