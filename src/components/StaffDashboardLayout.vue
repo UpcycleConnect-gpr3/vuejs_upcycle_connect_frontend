@@ -1,0 +1,118 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import DashboardOnboarding from '@/components/DashboardOnboarding.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
+const router = useRouter()
+const { userEmail } = storeToRefs(auth)
+
+const displayName = computed(() => userEmail.value || 'Mon compte')
+const initials = computed(() => {
+  const email = userEmail.value
+  if (!email) return '?'
+  const namePart = email.split('@')[0] ?? email
+  const segments = namePart.split(/[._-]+/).filter(Boolean)
+  if (segments.length >= 2) {
+    return ((segments[0]?.[0] ?? '') + (segments[1]?.[0] ?? '')).toUpperCase()
+  }
+  return namePart.slice(0, 2).toUpperCase()
+})
+
+const logout = () => auth.logout(router)
+
+const animationNav = [
+  {
+    label: "Vue d'ensemble",
+    to: '/staff',
+    icon: 'M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,32.84a8,8,0,0,0-5.52-.6l-64,16A8,8,0,0,0,24,56V200a8,8,0,0,0,9.94,7.76l61.13-15.28,61.35,30.68A8,8,0,0,0,160,224a8.15,8.15,0,0,0,1.94-.24l64-16A8,8,0,0,0,232,200V56A8,8,0,0,0,228.92,49.69Z',
+  },
+  {
+    label: 'Formations & ateliers',
+    to: '/staff/trainings',
+    icon: 'M239.18,97.26,202,86.59l-15.55-39.18a16,16,0,0,0-29.74,0L141.18,86.59l-37.21,10.67a16,16,0,0,0,0,30.41l37.21,10.67,15.55,39.18a16,16,0,0,0,29.74,0L202,138.34l37.21-10.67a16,16,0,0,0,0-30.41ZM196.51,124.35,184,159.55l-12.55-35.2L136.25,112l35.2-12.55L184,64.45l12.55,35.2L231.75,112ZM104,40a8,8,0,0,1-8,8H64a8,8,0,0,1,0-16H96A8,8,0,0,1,104,40ZM72,80a8,8,0,0,1,0-16H32a8,8,0,0,0,0,16ZM48,224a8,8,0,0,1,8-8H88a8,8,0,0,1,0,16H56A8,8,0,0,1,48,224Z',
+  },
+  {
+    label: 'Planning',
+    to: '/staff/planning',
+    icon: 'M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z',
+  },
+]
+
+const contenusNav = [
+  {
+    label: 'Conseils & news',
+    to: '/staff/advice',
+    icon: 'M168,80H88a8,8,0,0,0,0,16h80a8,8,0,0,0,0-16Zm0,32H88a8,8,0,0,0,0,16h80a8,8,0,0,0,0-16Zm56-72V200a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V40A16,16,0,0,1,48,24H208A16,16,0,0,1,224,40ZM208,200V40H48V200Z',
+  },
+  {
+    label: 'Modération forums',
+    to: '/staff/moderation',
+    icon: 'M232,80H167.84l-22.4-30.41a8,8,0,0,0-12.88,0L110.16,80H46A14,14,0,0,0,32,94v23.59a30.55,30.55,0,0,0,4.24,15.55L86.43,219.29A8,8,0,0,0,93.41,224H184.59a8,8,0,0,0,7-4.71l50.18-86.15A30.55,30.55,0,0,0,246,117.59V94A14,14,0,0,0,232,80Z',
+  },
+]
+</script>
+
+<template>
+  <div class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+      <RouterLink to="/" class="logo">
+        <div class="logo-dot"></div>
+        <span>UpcycleConnect</span>
+      </RouterLink>
+
+      <nav class="dashboard-sidebar-nav">
+        <div class="dashboard-sidebar-section">
+          <span class="sidebar-section-title">Animation</span>
+          <ul class="sidebar-nav-list">
+            <li v-for="item in animationNav" :key="item.to" class="sidebar-nav-item">
+              <RouterLink :to="item.to">
+                <svg class="sidebar-icon" viewBox="0 0 256 256" fill="currentColor">
+                  <path :d="item.icon" />
+                </svg>
+                <span>{{ item.label }}</span>
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dashboard-sidebar-section">
+          <span class="sidebar-section-title">Contenus</span>
+          <ul class="sidebar-nav-list">
+            <li v-for="item in contenusNav" :key="item.to" class="sidebar-nav-item">
+              <RouterLink :to="item.to">
+                <svg class="sidebar-icon" viewBox="0 0 256 256" fill="currentColor">
+                  <path :d="item.icon" />
+                </svg>
+                <span>{{ item.label }}</span>
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">{{ initials }}</div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">{{ displayName }}</span>
+          <span class="sidebar-user-role">Salarié</span>
+        </div>
+        <button class="sidebar-user-action" title="Déconnexion" @click="logout">
+          <svg viewBox="0 0 256 256" fill="currentColor">
+            <path
+              d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108-92.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-20,20a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232,123.51Z"
+            />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <slot />
+    </main>
+
+    <DashboardOnboarding />
+  </div>
+</template>
