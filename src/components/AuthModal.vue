@@ -11,12 +11,15 @@ const auth = useAuthStore()
 const router = useRouter()
 const { tab, isOpen } = storeToRefs(ui)
 
+const AUTH_REDIRECT_URL = import.meta.env.VITE_AUTH_REDIRECT_URL || 'http://localhost:4284'
+
 const close = () => ui.close()
 
-// L'authentification est gérée par le module auth dédié : authStore.login
-// redirige vers son portail s'il n'y a pas de token, sinon valide le token
-// auprès du module via POST /auth/login/.
 const goToAuthPortal = async () => {
+  if (tab.value === 'register') {
+    window.location.href = `${AUTH_REDIRECT_URL}/auth/register`
+    return
+  }
   await auth.login(router, upcycleApiClient)
   ui.close()
 }
@@ -30,15 +33,11 @@ const goToAuthPortal = async () => {
 
     <div class="layout-flex layout-columns layout-gap-medium">
       <p class="muted">
-        La connexion et la création de compte se font sur le portail UpcycleConnect. Vous allez
-        être redirigé, puis ramené sur le site une fois authentifié.
+        La connexion et la création de compte se font sur le portail UpcycleConnect. Vous allez être
+        redirigé, puis ramené sur le site une fois authentifié.
       </p>
       <p v-if="auth.error" class="tiny" style="color: var(--destructive-color)">{{ auth.error }}</p>
-      <button
-        class="primary medium full-width"
-        :disabled="auth.isLoading"
-        @click="goToAuthPortal"
-      >
+      <button class="primary medium full-width" :disabled="auth.isLoading" @click="goToAuthPortal">
         {{ auth.isLoading ? 'Redirection…' : 'Continuer vers le portail' }}
       </button>
     </div>

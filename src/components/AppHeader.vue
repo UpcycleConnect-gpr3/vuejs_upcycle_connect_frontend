@@ -6,8 +6,14 @@ import { upcycleApiClient } from '@/api/axios'
 const router = useRouter()
 const authStore = useAuthStore()
 
+const AUTH_REDIRECT_URL = import.meta.env.VITE_AUTH_REDIRECT_URL || 'http://localhost:4284'
+
 const handleLogin = async () => {
   await authStore.login(router, upcycleApiClient)
+}
+
+const handleSignup = () => {
+  window.location.href = `${AUTH_REDIRECT_URL}/auth/register`
 }
 
 const handleLogout = async () => {
@@ -32,7 +38,7 @@ const handleLogout = async () => {
 
     <div class="layout-flex layout-gap-medium layout-items-center">
       <template v-if="!authStore.isAuthenticated">
-        <button class="ghost medium">Sign up</button>
+        <button class="ghost medium" @click="handleSignup">Sign up</button>
         <button class="primary medium" @click="handleLogin">Log in</button>
       </template>
       <button v-else class="ghost medium" @click="handleLogout">Log out</button>

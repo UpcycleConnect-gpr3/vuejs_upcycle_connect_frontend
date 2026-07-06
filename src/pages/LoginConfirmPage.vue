@@ -26,7 +26,7 @@ const fetchUser = async () => {
       return
     }
 
-    const response = await axios.get<ApiResponse<User>>(`${AUTH_URL}/user/me`, {
+    const response = await axios.get<ApiResponse<User>>(`${AUTH_URL}/auth/me/`, {
       headers: {
         Authorization: token,
       },
@@ -44,23 +44,23 @@ const fetchUser = async () => {
 const handleConfirm = async () => {
   const token = await getTokenFromCookies()
   if (token && user.value) {
-    await axios.post(`${BACKEND_URL}/auth/login`, {}, {
-      headers: {
-        Authorization: token,
+    await axios.post(
+      `${BACKEND_URL}/auth/login`,
+      {
+        username: user.value.username ?? '',
+        email: user.value.email,
+        firstname: user.value.firstname ?? '',
+        lastname: user.value.lastname ?? '',
       },
-    })
-    
-    await axios.patch(`${BACKEND_URL}/user/`, {
-      email: user.value.email,
-      firstname: user.value.firstname,
-      lastname: user.value.lastname,
-    }, {
-      headers: {
-        Authorization: token,
+      {
+        headers: {
+          Authorization: token,
+        },
       },
-    })
-    
+    )
+
     await authStore.setToken(token)
+    authStore.userEmail = user.value.email
     await router.replace('/dashboard')
   }
 }
@@ -111,7 +111,9 @@ onMounted(fetchUser)
 
               <div class="layout-flex layout-gap-medium layout-justify-end">
                 <button class="ghost medium" @click="handleCancel">No, use another account</button>
-                <button class="primary medium" @click="handleConfirm">Yes, connect with this account</button>
+                <button class="primary medium" @click="handleConfirm">
+                  Yes, connect with this account
+                </button>
               </div>
             </div>
           </div>
