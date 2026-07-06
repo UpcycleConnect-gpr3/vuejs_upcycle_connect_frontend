@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/authStore'
 import { useToastsStore } from '@/stores/toasts'
 import { createSubscriptionCheckout } from '@/services/billing'
 
@@ -56,7 +56,7 @@ const plans: Plan[] = [
     ],
     featured: true,
     cta: 'Start Pro trial',
-    priceId: import.meta.env.VITE_STRIPE_PRICE_PRO,
+    priceId: import.meta.env.VITE_STRIPE_PRICE_BASIC,
   },
   {
     name: 'Business',

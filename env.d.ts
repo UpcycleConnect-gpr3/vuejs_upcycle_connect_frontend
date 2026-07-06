@@ -7,6 +7,10 @@ interface ImportMetaEnv {
   readonly VITE_UPCYCLE_URL: string
   readonly VITE_COOKIE_DOMAIN: string
   readonly VITE_COOKIE_PATH: string
+  readonly VITE_BILLING_URL: string
+  readonly VITE_STRIPE_PRICE_BASIC: string
+  readonly VITE_STRIPE_PRICE_BUSINESS: string
+  readonly VITE_STRIPE_PAYMENT_LINK_TRAINING: string
 }
 
 interface ImportMeta {

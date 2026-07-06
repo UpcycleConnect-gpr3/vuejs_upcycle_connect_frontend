@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { getTraining, getTrainingSchedules } from '@/services/training'
 import { createOrder } from '@/services/upcycle'
+import { useAuthStore } from '@/stores/authStore'
 import { useToastsStore } from '@/stores/toasts'
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 const toasts = useToastsStore()
+
+// Payment Link Stripe (dashboard > Liens de paiement) pour les formations payantes.
+const TRAINING_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK_TRAINING
 
 // Mock detail
 const item = ref({
@@ -36,13 +41,6 @@ const selectedSlot = ref<number | null>(item.value.slots[0]?.id ?? null)
 const showCheckout = ref(false)
 
 const slot = computed(() => item.value.slots.find((s) => s.id === selectedSlot.value))
-
-const card = reactive({
-  number: '',
-  expiry: '',
-  cvc: '',
-  name: '',
-})
 
 const isProcessing = ref(false)
 const isPaid = ref(false)
@@ -82,6 +80,7 @@ onMounted(async () => {
   }
 })
 
+// Réservation gratuite : enregistre la commande localement, sans passage par Stripe.
 async function pay() {
   isProcessing.value = true
   try {
@@ -92,10 +91,28 @@ async function pay() {
     })
     isPaid.value = true
   } catch {
-    toasts.error('Paiement impossible, réessayez plus tard.')
+    toasts.error('Réservation impossible, réessayez plus tard.')
   } finally {
     isProcessing.value = false
   }
+}
+
+// Formation payante : redirige vers le Payment Link Stripe.
+// client_reference_id permet de retrouver la formation/créneau dans le
+// dashboard Stripe ; l'email du compte est prérempli sur la page de paiement.
+function payWithStripe() {
+  if (!TRAINING_PAYMENT_LINK) {
+    toasts.error("Le paiement en ligne n'est pas configuré. Réessayez plus tard.")
+    return
+  }
+  isProcessing.value = true
+  const url = new URL(TRAINING_PAYMENT_LINK)
+  url.searchParams.set(
+    'client_reference_id',
+    `training-${item.value.id}-slot-${selectedSlot.value ?? 0}`,
+  )
+  if (auth.userEmail) url.searchParams.set('prefilled_email', auth.userEmail)
+  window.location.href = url.toString()
 }
 
 function close() {
@@ -200,46 +217,10 @@ function close() {
           </div>
         </div>
 
-        <form class="layout-flex layout-columns layout-gap-medium" @submit.prevent="pay">
-          <div class="form-group">
-            <label class="uppercase">Numéro de carte</label>
-            <input
-              v-model="card.number"
-              type="text"
-              class="primary medium full-width"
-              placeholder="4242 4242 4242 4242"
-            />
-          </div>
-          <div class="layout-flex layout-gap-medium">
-            <div class="form-group" style="flex: 1">
-              <label class="uppercase">Expiration</label>
-              <input
-                v-model="card.expiry"
-                type="text"
-                class="primary medium full-width"
-                placeholder="MM / AA"
-              />
-            </div>
-            <div class="form-group" style="flex: 1">
-              <label class="uppercase">CVC</label>
-              <input
-                v-model="card.cvc"
-                type="text"
-                class="primary medium full-width"
-                placeholder="123"
-              />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="uppercase">Nom sur la carte</label>
-            <input
-              v-model="card.name"
-              type="text"
-              class="primary medium full-width"
-              placeholder="JEAN DUPONT"
-            />
-          </div>
-        </form>
+        <p v-if="item.price > 0" class="small muted">
+          Le paiement s'effectue sur une page sécurisée Stripe. Vous allez être redirigé pour
+          finaliser votre réservation.
+        </p>
       </div>
 
       <div
@@ -261,8 +242,19 @@ function close() {
 
       <template #footer>
         <button v-if="!isPaid" class="ghost medium" @click="close">Annuler</button>
-        <button v-if="!isPaid" class="primary medium" :disabled="isProcessing" @click="pay">
-          {{ isProcessing ? 'Traitement…' : `Payer ${item.price}€` }}
+        <button
+          v-if="!isPaid"
+          class="primary medium"
+          :disabled="isProcessing"
+          @click="item.price === 0 ? pay() : payWithStripe()"
+        >
+          {{
+            isProcessing
+              ? 'Traitement…'
+              : item.price === 0
+                ? 'Confirmer ma réservation'
+                : `Payer ${item.price}€ via Stripe`
+          }}
         </button>
         <button v-else class="primary medium" @click="close">Voir mon planning →</button>
       </template>
