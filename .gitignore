@@ -39,3 +39,9 @@ __screenshots__/
 *.timestamp-*-*.mjs
 
 .env
+
+# Outillage IA local (skills installés par agent)
+.agents/
+.claude/
+.junie/
+skills-lock.json
