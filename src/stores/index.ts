@@ -13,10 +13,9 @@ export { useLockerStore } from './lockerStore'
 export { usePackageStore } from './packageStore'
 export { useObjectOrderStore } from './objectOrderStore'
 export { useOrderDeliveryMethodStore } from './orderDeliveryMethodStore'
-// Backend forum
 export { useForumUserStore } from './forumUserStore'
 export { useCategoryStore } from './categoryStore'
 export { useForumEventStore } from './forumEventStore'
 export { useTalkStore } from './talkStore'
-// Backend training
 export { useTrainingStore } from './trainingStore'
+export { useConversationStore } from './conversationStore'

@@ -21,8 +21,6 @@ const router = createRouter({
     { path: '/pricing', component: PricingPage },
     { path: '/billing/success', component: () => import('@/pages/BillingSuccessPage.vue') },
     { path: '/forum', component: ForumPage },
-    // Nommée « login » : cible de logout() et du guard requiresAuth.
-    // Sans token, la page renvoie d'elle-même vers le portail d'authentification.
     { path: '/login-confirm', name: 'login', component: LoginConfirmPage },
     {
       path: '/forum/new',
@@ -31,7 +29,6 @@ const router = createRouter({
     },
     { path: '/forum/:id', component: () => import('@/pages/forum/ForumDetailPage.vue') },
 
-    // Dashboard (all require auth)
     {
       path: '/dashboard',
       component: () => import('@/pages/dashboard/IndexPage.vue'),
@@ -88,6 +85,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/dashboard/messages',
+      component: () => import('@/pages/dashboard/MessagesPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/dashboard/advice',
       component: () => import('@/pages/dashboard/AdvicePage.vue'),
       meta: { requiresAuth: true },
@@ -98,7 +100,6 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
 
-    // Espace Professionnel / Artisan (all require auth)
     {
       path: '/pro',
       component: () => import('@/pages/pro/IndexPage.vue'),
@@ -135,7 +136,6 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
 
-    // Espace Salarié (animateurs / formateurs) (all require auth)
     {
       path: '/staff',
       component: () => import('@/pages/staff/IndexPage.vue'),

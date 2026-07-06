@@ -1,5 +1,3 @@
-// Types globaux — modèles de la documentation API Upcycle Connect.
-// Les types transverses (ApiResponse, ApiError, User) vivent dans ./api.
 export * from './api'
 
 export interface Timestamps {
@@ -7,9 +5,6 @@ export interface Timestamps {
   updated_at: string
 }
 
-// ---------------------------------------------------------------------------
-// Delivery Methods
-// ---------------------------------------------------------------------------
 export interface DeliveryMethod extends Timestamps {
   id: number
   name: string
@@ -19,9 +14,6 @@ export interface DeliveryMethodPayload {
   name: string
 }
 
-// ---------------------------------------------------------------------------
-// Events
-// ---------------------------------------------------------------------------
 export interface UpcycleEvent extends Timestamps {
   id: number
   name: string
@@ -36,9 +28,6 @@ export interface UpcycleEvent extends Timestamps {
 
 export type EventPayload = Omit<UpcycleEvent, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Event Steps
-// ---------------------------------------------------------------------------
 export interface EventStep extends Timestamps {
   id: number
   event_id: number
@@ -51,7 +40,6 @@ export interface EventStep extends Timestamps {
 export type EventStepPayload = Omit<EventStep, 'id' | 'created_at' | 'updated_at'>
 export type EventStepUpdatePayload = Omit<EventStepPayload, 'event_id'>
 
-// Forme renvoyée par GET /events/{id}/steps et GET /projects/{id}/steps
 export interface StepSummary {
   id: number
   name: string
@@ -60,9 +48,6 @@ export interface StepSummary {
   scheduled_at: string
 }
 
-// ---------------------------------------------------------------------------
-// Objects
-// ---------------------------------------------------------------------------
 export interface UpcycleObject extends Timestamps {
   id: string
   name: string
@@ -84,7 +69,6 @@ export interface ObjectScore {
   score: number
 }
 
-// Formes allégées renvoyées par les endpoints d'association
 export interface DeliveryMethodRef {
   id: number
   name: string
@@ -105,9 +89,6 @@ export interface UserRef {
   username: string
 }
 
-// ---------------------------------------------------------------------------
-// Projects
-// ---------------------------------------------------------------------------
 export interface Project extends Timestamps {
   id: number
   name: string
@@ -118,9 +99,6 @@ export interface Project extends Timestamps {
 
 export type ProjectPayload = Omit<Project, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Steps
-// ---------------------------------------------------------------------------
 export interface Step extends Timestamps {
   id: string
   name: string
@@ -133,9 +111,6 @@ export interface Step extends Timestamps {
 
 export type StepPayload = Omit<Step, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Orders
-// ---------------------------------------------------------------------------
 export interface Order extends Timestamps {
   id: string
   street: string
@@ -146,9 +121,6 @@ export interface Order extends Timestamps {
 
 export type OrderPayload = Omit<Order, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Lockers
-// ---------------------------------------------------------------------------
 export interface Locker extends Timestamps {
   id: string
   name: string
@@ -159,9 +131,6 @@ export interface Locker extends Timestamps {
 
 export type LockerPayload = Omit<Locker, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Packages
-// ---------------------------------------------------------------------------
 export interface Package extends Timestamps {
   id: string
   weight: number
@@ -172,9 +141,6 @@ export interface Package extends Timestamps {
 
 export type PackagePayload = Omit<Package, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Object Orders
-// ---------------------------------------------------------------------------
 export interface ObjectOrder extends Timestamps {
   id: number
   object_id: string
@@ -184,9 +150,6 @@ export interface ObjectOrder extends Timestamps {
 
 export type ObjectOrderPayload = Omit<ObjectOrder, 'id' | 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Order Delivery Methods
-// ---------------------------------------------------------------------------
 export interface OrderDeliveryMethod extends Timestamps {
   order_id: string
   delivery_method_id: number
@@ -195,17 +158,10 @@ export interface OrderDeliveryMethod extends Timestamps {
 
 export type OrderDeliveryMethodPayload = Omit<OrderDeliveryMethod, 'created_at' | 'updated_at'>
 
-// ---------------------------------------------------------------------------
-// Health
-// ---------------------------------------------------------------------------
 export interface HealthStatus {
   status: string
 }
 
-// ---------------------------------------------------------------------------
-// Backend FORUM — Users
-// (GET / PUT / DELETE uniquement : pas de création depuis le backoffice)
-// ---------------------------------------------------------------------------
 export interface ForumUser extends Timestamps {
   id: string
   username: string
@@ -214,16 +170,12 @@ export interface ForumUser extends Timestamps {
   email: string
 }
 
-// L'email est en lecture seule — absent du DTO de mise à jour.
 export interface ForumUserUpdatePayload {
   username: string
   firstname: string
   lastname: string
 }
 
-// ---------------------------------------------------------------------------
-// Backend FORUM — Categories
-// ---------------------------------------------------------------------------
 export interface ForumCategory extends Timestamps {
   id: number
   name: string
@@ -235,10 +187,6 @@ export interface ForumCategoryPayload {
   description: string
 }
 
-// ---------------------------------------------------------------------------
-// Backend FORUM — Events
-// (modèle minimal côté backend : pas de description, lieu ni statut)
-// ---------------------------------------------------------------------------
 export interface ForumEvent {
   id: number
   title: string
@@ -247,9 +195,6 @@ export interface ForumEvent {
 
 export type ForumEventPayload = Omit<ForumEvent, 'id'>
 
-// ---------------------------------------------------------------------------
-// Backend FORUM — Talks
-// ---------------------------------------------------------------------------
 export interface Talk extends Timestamps {
   id: number
   title: string
@@ -260,7 +205,6 @@ export interface Talk extends Timestamps {
 
 export type TalkCreatePayload = Omit<Talk, 'id' | 'created_at' | 'updated_at'>
 
-// La mise à jour n'accepte que title et status.
 export interface TalkUpdatePayload {
   title: string
   status: string
@@ -274,10 +218,6 @@ export interface TalkMessage {
   created_at: string
 }
 
-// ---------------------------------------------------------------------------
-// Backend TRAINING — Trainings
-// (pas de created_at/updated_at exposés par l'API)
-// ---------------------------------------------------------------------------
 export interface Training {
   id: number
   name: string
@@ -289,7 +229,6 @@ export interface Training {
   location: string
 }
 
-// Seul `name` est obligatoire à la création.
 export interface TrainingPayload {
   name: string
   type?: string
@@ -300,7 +239,6 @@ export interface TrainingPayload {
   location?: string
 }
 
-// Formes renvoyées par les sous-ressources de GET /trainings/{id}/*
 export interface TrainingCurriculum {
   id: number
   name: string
@@ -315,4 +253,26 @@ export interface TrainingSchedule {
   id: number
   starts_at: string
   ends_at: string
+}
+
+export interface ConversationUser {
+  id: string
+  username: string
+  firstname: string
+  lastname: string
+}
+
+export interface Conversation {
+  id: number
+  created_at: string
+  updated_at: string
+  users: ConversationUser[]
+}
+
+export interface ConversationMessage {
+  id: number
+  conversation_id: number
+  user_id: string
+  content: string
+  created_at: string
 }
