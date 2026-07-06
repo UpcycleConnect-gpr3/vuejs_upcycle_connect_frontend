@@ -2,15 +2,13 @@
 import { computed } from 'vue'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 
-// Impact écologique
 const impact = {
-  wasteAvoided: 284, // kg
-  co2Saved: 142, // kg
+  wasteAvoided: 284,
+  co2Saved: 142,
   materialsCollected: 37,
   projectsCompleted: 12,
 }
 
-// Matériaux par catégorie (pour bar chart)
 interface CategoryStat {
   label: string
   count: number
@@ -28,7 +26,6 @@ const byCategory: CategoryStat[] = [
 
 const maxCategory = Math.max(...byCategory.map((c) => c.count))
 
-// Tendance mensuelle
 interface MonthlyTrend {
   month: string
   collected: number
@@ -46,7 +43,6 @@ const monthlyTrend: MonthlyTrend[] = [
 
 const maxTrend = Math.max(...monthlyTrend.map((m) => m.collected))
 
-// Taux de transformation (projets / collectes)
 const conversionRate = computed(() =>
   impact.materialsCollected > 0
     ? Math.round((impact.projectsCompleted / impact.materialsCollected) * 100)
@@ -67,7 +63,6 @@ const conversionRate = computed(() =>
       <span class="badge badge--success">Premium</span>
     </header>
 
-    <!-- Impact écologique -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Impact écologique</h3>
       <div class="stats-row">
@@ -86,7 +81,9 @@ const conversionRate = computed(() =>
             <span class="stat-tile-value">{{ impact.co2Saved }}</span>
             <span class="badge badge--success">kg</span>
           </div>
-          <p class="small muted">Équivalent à {{ Math.round(impact.co2Saved / 2.3) }} trajets Paris → Lyon</p>
+          <p class="small muted">
+            Équivalent à {{ Math.round(impact.co2Saved / 2.3) }} trajets Paris → Lyon
+          </p>
         </div>
 
         <div class="stat-tile">
@@ -106,7 +103,6 @@ const conversionRate = computed(() =>
       </div>
     </section>
 
-    <!-- Matériaux par catégorie -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Matériaux collectés par catégorie</h3>
       <div class="dashboard-card">
@@ -132,15 +128,11 @@ const conversionRate = computed(() =>
       </div>
     </section>
 
-    <!-- Tendance mensuelle -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Évolution mensuelle — Collectes 2026</h3>
       <div class="dashboard-card history-chart">
         <div v-for="m in monthlyTrend" :key="m.month" class="history-bar">
-          <div
-            class="history-bar-fill"
-            :style="{ height: `${(m.collected / maxTrend) * 100}%` }"
-          >
+          <div class="history-bar-fill" :style="{ height: `${(m.collected / maxTrend) * 100}%` }">
             <span class="tiny mono">{{ m.collected }}</span>
           </div>
           <span class="tiny muted">{{ m.month }}</span>
@@ -148,7 +140,6 @@ const conversionRate = computed(() =>
       </div>
     </section>
 
-    <!-- Projets par mois -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Projets lancés par mois</h3>
       <div class="dashboard-card history-chart">
@@ -167,15 +158,14 @@ const conversionRate = computed(() =>
       </div>
     </section>
 
-    <!-- Premium notice -->
     <div class="alert alert--accent">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10" />
         <path d="M12 8v4M12 16h.01" />
       </svg>
       <span>
-        Ces statistiques sont disponibles dans le cadre de votre abonnement <strong>Premium</strong>.
-        Les données sont mises à jour quotidiennement.
+        Ces statistiques sont disponibles dans le cadre de votre abonnement
+        <strong>Premium</strong>. Les données sont mises à jour quotidiennement.
       </span>
     </div>
   </ProDashboardLayout>

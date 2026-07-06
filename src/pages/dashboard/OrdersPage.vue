@@ -43,8 +43,6 @@ onMounted(async () => {
   try {
     const data = await getOrders()
     if (Array.isArray(data) && data.length) {
-      // The Go Order model only exposes id/street/city/zip_code/user_id/
-      // created_at/updated_at — there is no amount or status.
       orders.value = data.map(
         (o): Order => ({
           id: String(o.id),

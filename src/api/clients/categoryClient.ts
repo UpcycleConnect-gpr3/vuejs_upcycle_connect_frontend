@@ -1,7 +1,6 @@
 import { forumApiClient } from '../axios'
 import type { ApiResponse, ForumCategory, ForumCategoryPayload } from '@/types'
 
-// Backend forum : chaque chemin doit se terminer par `/` (matcher Go 1.22 {$}).
 const BASE_PATH = '/categories'
 
 export const getCategories = async (): Promise<ForumCategory[]> => {
@@ -14,12 +13,14 @@ export const createCategory = async (payload: ForumCategoryPayload): Promise<For
   return data.data
 }
 
-// Champs partiels acceptés en mise à jour.
 export const updateCategory = async (
   id: number,
   payload: Partial<ForumCategoryPayload>,
 ): Promise<ForumCategory> => {
-  const { data } = await forumApiClient.put<ApiResponse<ForumCategory>>(`${BASE_PATH}/${id}/`, payload)
+  const { data } = await forumApiClient.put<ApiResponse<ForumCategory>>(
+    `${BASE_PATH}/${id}/`,
+    payload,
+  )
   return data.data
 }
 

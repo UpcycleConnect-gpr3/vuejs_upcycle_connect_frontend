@@ -14,8 +14,6 @@ export interface ApiError {
   errors?: ApiValidationError[]
 }
 
-// Utilisateur renvoyé par le module d'authentification (l'auth elle-même
-// — login, register, TOTP — est gérée par le frontend auth dédié).
 export interface User {
   id: string
   username?: string

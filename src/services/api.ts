@@ -1,6 +1,3 @@
-// Compatibilité : les modules historiques (services/forum, services/training,
-// services/upcycle, services/billing) importent encore apiX depuis ce fichier.
-// La configuration Axios vit désormais dans src/api/axios.ts (guide d'implémentation).
 import { upcycleApiClient } from '@/api/axios'
 
 export {

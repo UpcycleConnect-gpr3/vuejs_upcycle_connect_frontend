@@ -10,7 +10,6 @@ const route = useRoute()
 const toasts = useToastsStore()
 const talkId = computed(() => Number(route.params.id))
 
-// Initial demo data; replaced by GET /talks/:id on mount (graceful fallback).
 const talk = ref({
   id: 1,
   title: 'Comment transformer une vieille palette en table basse ?',
@@ -31,8 +30,6 @@ const reactionTypes = [
   { key: 'idea', icon: '💡', label: 'Idea' },
 ] as const
 
-// The forum backend has no reaction/like concept; reactions are purely local
-// (decorative) state and are not persisted.
 function toggleReaction(type: 'like' | 'fire' | 'idea') {
   const wasActive = talk.value.userReactions[type]
   talk.value.userReactions[type] = !wasActive
@@ -77,7 +74,6 @@ onMounted(async () => {
   try {
     const data = await getTalk(talkId.value)
     if (data) {
-      // The forum Talk model has no category; the body lives in `description`.
       talk.value = {
         ...talk.value,
         id: data.id,
@@ -104,12 +100,9 @@ onMounted(async () => {
         userLiked: Boolean(m.user_liked),
       }))
     }
-  } catch {
-    // keep mock messages
-  }
+  } catch {}
 })
 
-// Likes are purely local (decorative) state; the backend has no like endpoint.
 function toggleMessageLike(id: number) {
   const m = messages.value.find((x) => x.id === id)
   if (!m) return

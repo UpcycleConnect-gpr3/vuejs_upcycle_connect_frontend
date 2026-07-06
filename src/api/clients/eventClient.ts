@@ -19,7 +19,10 @@ export const createEvent = async (payload: EventPayload): Promise<UpcycleEvent> 
 }
 
 export const updateEvent = async (id: number, payload: EventPayload): Promise<UpcycleEvent> => {
-  const { data } = await upcycleApiClient.put<ApiResponse<UpcycleEvent>>(`${BASE_PATH}/${id}`, payload)
+  const { data } = await upcycleApiClient.put<ApiResponse<UpcycleEvent>>(
+    `${BASE_PATH}/${id}`,
+    payload,
+  )
   return data.data
 }
 
@@ -28,7 +31,9 @@ export const deleteEvent = async (id: number): Promise<void> => {
 }
 
 export const getEventSteps = async (id: number): Promise<StepSummary[]> => {
-  const { data } = await upcycleApiClient.get<ApiResponse<StepSummary[]>>(`${BASE_PATH}/${id}/steps`)
+  const { data } = await upcycleApiClient.get<ApiResponse<StepSummary[]>>(
+    `${BASE_PATH}/${id}/steps`,
+  )
   return data.data
 }
 

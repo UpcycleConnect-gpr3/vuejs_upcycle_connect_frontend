@@ -2,8 +2,6 @@
 import { computed } from 'vue'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 
-// TODO: the score endpoint is per-object (apiUpcycle GET /objects/:id/score) and
-// there is no aggregate user-score endpoint, so this page keeps mock data.
 const score = 482
 const max = 1000
 const percent = (score / max) * 100
@@ -97,7 +95,6 @@ const maxHist = Math.max(...history.map((h) => h.value))
       </div>
     </div>
 
-    <!-- Breakdown -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Répartition de vos points</h3>
       <div class="dashboard-card">
@@ -117,7 +114,6 @@ const maxHist = Math.max(...history.map((h) => h.value))
       </div>
     </section>
 
-    <!-- History -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Évolution sur 5 semaines</h3>
       <div class="dashboard-card history-chart">
@@ -130,7 +126,6 @@ const maxHist = Math.max(...history.map((h) => h.value))
       </div>
     </section>
 
-    <!-- Badges -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Badges débloqués</h3>
       <div class="badges-grid">

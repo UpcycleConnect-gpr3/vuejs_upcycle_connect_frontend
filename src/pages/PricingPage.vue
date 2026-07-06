@@ -79,12 +79,10 @@ const plans: Plan[] = [
 const loadingPlan = ref<string | null>(null)
 
 async function choosePlan(plan: Plan) {
-  // Free / unconfigured plans just funnel to registration.
   if (!plan.priceId) {
     ui.open('register')
     return
   }
-  // A subscription is tied to a user — make sure we have one.
   if (!auth.isAuthenticated) {
     ui.open('login')
     return
@@ -110,7 +108,6 @@ onMounted(() => {
   <AppHeader />
 
   <main>
-    <!-- Hero -->
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
         <span class="eyebrow">Pricing</span>
@@ -123,7 +120,6 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- Pricing plans -->
     <section>
       <div class="container layout-flex layout-columns layout-gap-extra-large">
         <div class="pricing-grid">
@@ -171,7 +167,6 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- Other pricing -->
     <section>
       <div class="container layout-flex layout-columns layout-items-center layout-gap-extra-large">
         <hgroup class="center">
@@ -211,7 +206,6 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- CTA -->
     <section>
       <div class="container">
         <div

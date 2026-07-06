@@ -1,5 +1,3 @@
-/* ── Modal ────────────────────────────────────────────────────────────────── */
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -86,8 +84,6 @@
   padding: var(--space-4) var(--space-6);
   border-top: 1px solid var(--border-color);
 }
-
-/* ── Transition ───────────────────────────────────────────────────────────── */
 
 .modal-enter-active,
 .modal-leave-active {

@@ -75,7 +75,6 @@ function confirmCancel() {
 }
 
 function downloadPdf(invoice: Invoice) {
-  // Demo only — no real PDF
   console.info('Téléchargement simulé :', invoice.number)
 }
 </script>
@@ -92,23 +91,42 @@ function downloadPdf(invoice: Invoice) {
       </div>
     </header>
 
-    <!-- Current plan -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Formule actuelle</h3>
       <div class="dashboard-card">
-        <div class="layout-flex layout-justify-between" style="flex-wrap: wrap; gap: var(--space-4)">
+        <div
+          class="layout-flex layout-justify-between"
+          style="flex-wrap: wrap; gap: var(--space-4)"
+        >
           <div>
-            <div class="layout-flex layout-gap-small" style="align-items: center; margin-bottom: var(--space-2)">
+            <div
+              class="layout-flex layout-gap-small"
+              style="align-items: center; margin-bottom: var(--space-2)"
+            >
               <h2 style="margin: 0">{{ currentPlan.name }}</h2>
               <span class="badge badge--success">Actif</span>
             </div>
-            <div class="mono" style="font-size: var(--font-size-xlarge); font-weight: 700; margin-bottom: var(--space-2)">
+            <div
+              class="mono"
+              style="
+                font-size: var(--font-size-xlarge);
+                font-weight: 700;
+                margin-bottom: var(--space-2);
+              "
+            >
               {{ currentPlan.price }}€ / mois
             </div>
-            <div class="small muted">Prochain renouvellement : <span class="mono">{{ currentPlan.nextRenewal }}</span></div>
+            <div class="small muted">
+              Prochain renouvellement : <span class="mono">{{ currentPlan.nextRenewal }}</span>
+            </div>
           </div>
           <ul class="layout-flex layout-columns layout-gap-small">
-            <li v-for="f in currentPlan.features" :key="f" class="small" style="display: flex; gap: var(--space-2)">
+            <li
+              v-for="f in currentPlan.features"
+              :key="f"
+              class="small"
+              style="display: flex; gap: var(--space-2)"
+            >
               <span style="color: var(--lime-500)">✓</span>
               {{ f }}
             </li>
@@ -117,14 +135,17 @@ function downloadPdf(invoice: Invoice) {
 
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-4)">
           <button class="primary medium" @click="showChangeModal = true">Changer de formule</button>
-          <button class="ghost medium" style="color: var(--destructive-color)" @click="showCancelModal = true">
+          <button
+            class="ghost medium"
+            style="color: var(--destructive-color)"
+            @click="showCancelModal = true"
+          >
             Résilier l'abonnement
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Invoices -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Historique de facturation</h3>
       <div class="table-wrapper">
@@ -144,7 +165,9 @@ function downloadPdf(invoice: Invoice) {
               <td class="mono small">{{ inv.number }}</td>
               <td class="mono" style="font-weight: 700">{{ inv.amount }}€</td>
               <td>
-                <span class="badge" :class="invoiceStatusMeta[inv.status].badge">{{ inv.status }}</span>
+                <span class="badge" :class="invoiceStatusMeta[inv.status].badge">{{
+                  inv.status
+                }}</span>
               </td>
               <td>
                 <button class="ghost small" @click="downloadPdf(inv)">Télécharger PDF</button>
@@ -155,7 +178,6 @@ function downloadPdf(invoice: Invoice) {
       </div>
     </section>
 
-    <!-- Change plan modal -->
     <AppModal :open="showChangeModal" size="medium" @close="showChangeModal = false">
       <template #header>
         <h3>Changer de formule</h3>
@@ -172,15 +194,30 @@ function downloadPdf(invoice: Invoice) {
             :style="selectedPlan === plan.key ? { borderColor: 'var(--lime-500)' } : {}"
             @click="selectedPlan = plan.key"
           >
-            <div class="layout-flex layout-gap-small" style="align-items: center; margin-bottom: var(--space-2)">
+            <div
+              class="layout-flex layout-gap-small"
+              style="align-items: center; margin-bottom: var(--space-2)"
+            >
               <h4 style="margin: 0">{{ plan.name }}</h4>
               <span v-if="plan.key === 'premium'" class="badge badge--accent">Recommandé</span>
             </div>
-            <div class="mono" style="font-size: var(--font-size-large); font-weight: 700; margin-bottom: var(--space-2)">
+            <div
+              class="mono"
+              style="
+                font-size: var(--font-size-large);
+                font-weight: 700;
+                margin-bottom: var(--space-2);
+              "
+            >
               {{ plan.price }}€ / mois
             </div>
             <ul class="layout-flex layout-columns layout-gap-small">
-              <li v-for="f in plan.features" :key="f" class="small" style="display: flex; gap: var(--space-1)">
+              <li
+                v-for="f in plan.features"
+                :key="f"
+                class="small"
+                style="display: flex; gap: var(--space-1)"
+              >
                 <span style="color: var(--lime-500)">✓</span>
                 {{ f }}
               </li>
@@ -195,8 +232,12 @@ function downloadPdf(invoice: Invoice) {
       </template>
     </AppModal>
 
-    <!-- Cancel modal -->
-    <AppModal :open="showCancelModal" size="small" title="Résilier l'abonnement" @close="showCancelModal = false">
+    <AppModal
+      :open="showCancelModal"
+      size="small"
+      title="Résilier l'abonnement"
+      @close="showCancelModal = false"
+    >
       <div class="layout-flex layout-columns layout-gap-medium">
         <div class="alert alert--danger">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -204,14 +245,18 @@ function downloadPdf(invoice: Invoice) {
             <path d="M12 8v4M12 16h.01" />
           </svg>
           <span>
-            En résiliant, vous perdrez l'accès aux fonctionnalités Premium à la fin de la période en cours
-            ({{ currentPlan.nextRenewal }}).
+            En résiliant, vous perdrez l'accès aux fonctionnalités Premium à la fin de la période en
+            cours ({{ currentPlan.nextRenewal }}).
           </span>
         </div>
-        <p class="muted small">Vous pouvez vous réabonner à tout moment. Votre historique de projets sera conservé.</p>
+        <p class="muted small">
+          Vous pouvez vous réabonner à tout moment. Votre historique de projets sera conservé.
+        </p>
       </div>
       <template #footer>
-        <button class="ghost medium" @click="showCancelModal = false">Conserver mon abonnement</button>
+        <button class="ghost medium" @click="showCancelModal = false">
+          Conserver mon abonnement
+        </button>
         <button class="ghost medium" style="color: var(--destructive-color)" @click="confirmCancel">
           Confirmer la résiliation
         </button>

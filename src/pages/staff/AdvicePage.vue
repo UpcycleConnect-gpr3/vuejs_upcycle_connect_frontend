@@ -89,8 +89,7 @@ const articles = ref<StaffAdvice[]>([
     title: 'Galerie : 10 transformations spectaculaires',
     category: 'inspiration',
     readTime: 3,
-    content:
-      'Sélection des projets les plus inspirants partagés par la communauté ce mois-ci.',
+    content: 'Sélection des projets les plus inspirants partagés par la communauté ce mois-ci.',
     status: 'brouillon',
     createdAt: '2026-06-28',
     publishedAt: '',
@@ -127,7 +126,6 @@ const filtered = computed(() =>
   }),
 )
 
-// Modal
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
 
@@ -216,7 +214,6 @@ function categoryName(id: string): string {
       <button class="primary medium" @click="openCreate">+ Rédiger un conseil</button>
     </header>
 
-    <!-- Toolbar -->
     <div class="advice-toolbar">
       <input
         v-model="search"
@@ -226,11 +223,7 @@ function categoryName(id: string): string {
         style="flex: 1"
       />
       <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
-        <button
-          class="forum-tab"
-          :class="{ active: filter === 'all' }"
-          @click="filter = 'all'"
-        >
+        <button class="forum-tab" :class="{ active: filter === 'all' }" @click="filter = 'all'">
           Tout · {{ articles.length }}
         </button>
         <button
@@ -266,7 +259,6 @@ function categoryName(id: string): string {
       </div>
     </div>
 
-    <!-- Grid -->
     <div class="advice-grid">
       <article v-for="a in filtered" :key="a.id" class="advice-card">
         <div class="advice-card-image"></div>
@@ -278,7 +270,9 @@ function categoryName(id: string): string {
             </span>
           </div>
           <h4 style="margin-top: var(--space-2)">{{ a.title }}</h4>
-          <p class="small muted">{{ a.content.slice(0, 120) }}{{ a.content.length > 120 ? '…' : '' }}</p>
+          <p class="small muted">
+            {{ a.content.slice(0, 120) }}{{ a.content.length > 120 ? '…' : '' }}
+          </p>
           <div class="layout-flex layout-justify-between layout-items-center">
             <span class="tiny muted">{{ a.readTime }} min · {{ a.createdAt }}</span>
             <span v-if="a.publishedAt" class="tiny muted">Publié le {{ a.publishedAt }}</span>
@@ -302,10 +296,9 @@ function categoryName(id: string): string {
       <button class="primary medium" @click="openCreate">+ Rédiger un conseil</button>
     </div>
 
-    <!-- Create / Edit modal -->
     <AppModal :open="showModal" size="medium" @close="close">
       <template #header>
-        <h3>{{ editingId !== null ? 'Modifier l\'article' : 'Rédiger un conseil' }}</h3>
+        <h3>{{ editingId !== null ? "Modifier l'article" : 'Rédiger un conseil' }}</h3>
       </template>
 
       <form class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submit">

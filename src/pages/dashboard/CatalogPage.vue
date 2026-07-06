@@ -118,8 +118,6 @@ onMounted(async () => {
   try {
     const trainings = await getTrainings()
     if (Array.isArray(trainings) && trainings.length) {
-      // The Go Training model only exposes name/type/duration/location/
-      // mode_of_delivery — there is no price/description/date/spots_left/capacity.
       items.value = trainings.map(
         (t): CatalogItem => ({
           id: t.id,
@@ -166,7 +164,6 @@ const filtered = computed(() => {
       </div>
     </header>
 
-    <!-- Toolbar -->
     <div class="catalog-toolbar">
       <input
         v-model="search"
@@ -211,7 +208,6 @@ const filtered = computed(() => {
       </select>
     </div>
 
-    <!-- Grid -->
     <div class="catalog-grid">
       <RouterLink
         v-for="i in filtered"

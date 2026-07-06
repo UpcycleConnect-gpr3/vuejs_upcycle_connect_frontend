@@ -2,8 +2,6 @@
 import { RouterLink } from 'vue-router'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 
-// TODO: aggregate dashboard stats — apiUpcycle GET /projects (+ /objects, /orders)
-// have no single stats endpoint, so these tiles keep demo values for now.
 const stats = {
   score: 482,
   scoreDelta: '+24',
@@ -51,7 +49,6 @@ const alerts = [
       </div>
     </header>
 
-    <!-- Stats -->
     <div class="stats-row">
       <RouterLink to="/dashboard/score" class="stat-tile" data-tour="score">
         <span class="stat-tile-label">Upcycling Score</span>
@@ -84,7 +81,6 @@ const alerts = [
       </RouterLink>
     </div>
 
-    <!-- Alerts -->
     <section v-if="alerts.length" class="layout-flex layout-columns layout-gap-small">
       <div v-for="(a, i) in alerts" :key="i" class="alert" :class="`alert--${a.type}`">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -96,7 +92,6 @@ const alerts = [
     </section>
 
     <div class="dashboard-grid">
-      <!-- Prochains rendez-vous -->
       <article class="dashboard-card">
         <div class="card-header">
           <span class="eyebrow">Cette semaine</span>
@@ -120,7 +115,6 @@ const alerts = [
         >
       </article>
 
-      <!-- Conseils du moment -->
       <article class="dashboard-card">
         <div class="card-header">
           <span class="eyebrow">Conseils</span>

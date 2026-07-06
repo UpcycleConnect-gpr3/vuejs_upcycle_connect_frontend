@@ -23,7 +23,6 @@ export const useTrainingStore = defineStore(
   'training',
   () => {
     const trainings = ref<Training[]>([])
-    // Sous-ressources de la formation consultée (GET /trainings/{id}/*)
     const currentTrainingCurricula = ref<TrainingCurriculum[]>([])
     const currentTrainingContent = ref<TrainingContentRef[]>([])
     const currentTrainingSchedules = ref<TrainingSchedule[]>([])

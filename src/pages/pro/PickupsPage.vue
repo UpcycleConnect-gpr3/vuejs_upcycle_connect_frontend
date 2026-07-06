@@ -62,7 +62,7 @@ const pickups = ref<Pickup[]>([
 
 const statusMeta: Record<PickupStatus, { label: string; badge: string }> = {
   'a-recuperer': { label: 'À récupérer', badge: 'badge--accent' },
-  'recupere': { label: 'Récupéré', badge: 'badge--success' },
+  recupere: { label: 'Récupéré', badge: 'badge--success' },
 }
 
 const filterStatus = ref<'all' | PickupStatus>('all')
@@ -113,21 +113,23 @@ function getFiltered() {
       </div>
     </header>
 
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-tile">
         <span class="stat-tile-label">À récupérer</span>
-        <span class="stat-tile-value">{{ pickups.filter((p) => p.status === 'a-recuperer').length }}</span>
+        <span class="stat-tile-value">{{
+          pickups.filter((p) => p.status === 'a-recuperer').length
+        }}</span>
         <p class="small muted">Dans les 72h</p>
       </div>
       <div class="stat-tile">
         <span class="stat-tile-label">Récupérés ce mois</span>
-        <span class="stat-tile-value">{{ pickups.filter((p) => p.status === 'recupere').length }}</span>
+        <span class="stat-tile-value">{{
+          pickups.filter((p) => p.status === 'recupere').length
+        }}</span>
         <p class="small muted">Objets collectés</p>
       </div>
     </div>
 
-    <!-- Filters -->
     <div class="layout-flex layout-gap-small">
       <button
         class="forum-tab"
@@ -152,7 +154,6 @@ function getFiltered() {
       </button>
     </div>
 
-    <!-- Table -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -167,15 +168,15 @@ function getFiltered() {
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="p in getFiltered()"
-            :key="p.id"
-          >
+          <tr v-for="p in getFiltered()" :key="p.id">
             <td style="font-weight: 600">{{ p.objectTitle }}</td>
             <td>{{ p.containerName }}</td>
             <td class="small muted">{{ p.containerAddress }}</td>
             <td class="mono small">{{ p.reservedAt }}</td>
-            <td class="mono small" :style="p.status === 'a-recuperer' ? 'color: var(--destructive-color)' : ''">
+            <td
+              class="mono small"
+              :style="p.status === 'a-recuperer' ? 'color: var(--destructive-color)' : ''"
+            >
               {{ p.deadline }}
             </td>
             <td>
@@ -202,7 +203,6 @@ function getFiltered() {
       <p>Aucune récupération dans cette catégorie.</p>
     </div>
 
-    <!-- Scanner modal -->
     <AppModal :open="showScanModal" size="medium" @close="showScanModal = false">
       <template #header>
         <h3>Scanner le code-barres</h3>

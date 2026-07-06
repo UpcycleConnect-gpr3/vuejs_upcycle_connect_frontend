@@ -7,10 +7,6 @@ import { getCheckoutStatus } from '@/services/billing'
 
 const route = useRoute()
 
-// loading → waiting for the webhook to persist the result
-// paid     → confirmed in DB
-// pending  → payment received, confirmation still propagating
-// error    → no session / failed payment
 const state = ref<'loading' | 'paid' | 'pending' | 'error'>('loading')
 
 onMounted(async () => {
@@ -20,8 +16,6 @@ onMounted(async () => {
     return
   }
 
-  // The webhook (checkout.session.completed) is the source of truth, and it
-  // may land a moment after the redirect — poll a few times before giving up.
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const { status } = await getCheckoutStatus(sessionId)
@@ -34,7 +28,6 @@ onMounted(async () => {
         return
       }
     } catch {
-      // Endpoint unavailable — assume the webhook will confirm shortly.
       state.value = 'pending'
       return
     }
@@ -65,7 +58,9 @@ onMounted(async () => {
             <p class="muted measure center">
               Votre paiement a bien été confirmé. Votre abonnement est actif.
             </p>
-            <RouterLink to="/dashboard" class="primary large">Accéder au tableau de bord</RouterLink>
+            <RouterLink to="/dashboard" class="primary large"
+              >Accéder au tableau de bord</RouterLink
+            >
           </template>
 
           <template v-else-if="state === 'pending'">
@@ -75,7 +70,9 @@ onMounted(async () => {
               Merci ! Votre paiement a été pris en compte. L'activation peut prendre un court
               instant le temps de la confirmation. Vous pouvez déjà accéder à votre espace.
             </p>
-            <RouterLink to="/dashboard" class="primary large">Accéder au tableau de bord</RouterLink>
+            <RouterLink to="/dashboard" class="primary large"
+              >Accéder au tableau de bord</RouterLink
+            >
           </template>
 
           <template v-else>

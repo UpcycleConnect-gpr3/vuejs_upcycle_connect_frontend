@@ -16,7 +16,6 @@ export const useTalkStore = defineStore(
   'talk',
   () => {
     const talks = ref<Talk[]>([])
-    // Sous-ressources du talk consulté (GET /talks/{id}/messages/ et /users/)
     const currentTalkMessages = ref<TalkMessage[]>([])
     const currentTalkUsers = ref<UserRef[]>([])
     const { isLoading, error, request } = useApi()

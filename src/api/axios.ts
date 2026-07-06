@@ -27,7 +27,6 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
   return client
 }
 
-// Un client par domaine
 export const authApiClient = createAxiosClient(
   import.meta.env.VITE_AUTH_URL ?? 'http://localhost:4242',
 )

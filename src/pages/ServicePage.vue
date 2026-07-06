@@ -18,7 +18,6 @@ const services = [
   <AppHeader />
 
   <main>
-    <!-- Hero -->
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
         <hgroup class="center">
@@ -35,7 +34,6 @@ const services = [
       </div>
     </section>
 
-    <!-- Services blocks -->
     <section v-for="s in services" :key="s.title">
       <div class="container">
         <div class="card grid-2" style="padding: 0; overflow: hidden">
@@ -67,7 +65,6 @@ const services = [
       </div>
     </section>
 
-    <!-- CTA -->
     <section>
       <div class="container">
         <div

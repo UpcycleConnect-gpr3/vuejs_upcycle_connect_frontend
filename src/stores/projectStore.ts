@@ -64,8 +64,6 @@ export const useProjectStore = defineStore(
       }
     }
 
-    // --- Associations : objets ---
-
     const fetchProjectObjects = async (id: number) => {
       const data = await request(
         () => getProjectObjects(id),
@@ -81,8 +79,6 @@ export const useProjectStore = defineStore(
       )
       if (result) await fetchProjectObjects(id)
     }
-
-    // --- Associations : étapes ---
 
     const fetchProjectSteps = async (id: number) => {
       const data = await request(

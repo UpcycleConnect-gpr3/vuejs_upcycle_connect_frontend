@@ -102,8 +102,6 @@ onMounted(async () => {
   try {
     const contents = await getTrainingContents()
     if (Array.isArray(contents) && contents.length) {
-      // The Go TrainingContent model only exposes name/content/type — there is
-      // no title/body/category, nor read_time/published_at/author.
       articles.value = contents.map(
         (c): Advice => ({
           id: c.id,
@@ -156,7 +154,6 @@ function toggleBookmark(id: number) {
       </div>
     </header>
 
-    <!-- Toolbar -->
     <div class="advice-toolbar">
       <input
         v-model="search"
@@ -185,7 +182,6 @@ function toggleBookmark(id: number) {
       </div>
     </div>
 
-    <!-- Featured -->
     <RouterLink
       v-if="featured && !search && !activeCategory"
       :to="`/dashboard/advice/${featured.id}`"
@@ -205,7 +201,6 @@ function toggleBookmark(id: number) {
       </div>
     </RouterLink>
 
-    <!-- Grid -->
     <div class="advice-grid">
       <article v-for="a in others" :key="a.id" class="advice-card">
         <RouterLink :to="`/dashboard/advice/${a.id}`" class="advice-card-image"></RouterLink>

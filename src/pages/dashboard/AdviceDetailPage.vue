@@ -60,8 +60,6 @@ onMounted(async () => {
   try {
     const c = await getTrainingContent(id.value)
     if (c) {
-      // Go TrainingContent model: id, name, content (string), type.
-      // No author/publishedAt/readTime — keep mock defaults for those.
       article.value = {
         ...article.value,
         id: c.id,

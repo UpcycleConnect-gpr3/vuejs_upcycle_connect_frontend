@@ -1,8 +1,6 @@
 import { ref } from 'vue'
 import type { ApiError } from '@/types/api'
 
-// Extrait le message d'erreur du format d'erreur standard de l'API,
-// avec repli sur le message Axios/JS puis sur un message métier.
 export const getApiErrorMessage = (err: unknown, fallback: string): string => {
   const apiError = (err as { response?: { data?: ApiError } }).response?.data
   if (apiError?.message) return apiError.message
@@ -10,9 +8,6 @@ export const getApiErrorMessage = (err: unknown, fallback: string): string => {
   return fallback
 }
 
-// État loading/erreur partagé par les actions d'un store.
-// `request` exécute un appel API : il renvoie le résultat, ou null en cas
-// d'échec après avoir renseigné `error` (les stores ne relancent pas l'erreur).
 export const useApi = () => {
   const isLoading = ref<boolean>(false)
   const error = ref<string | null>(null)

@@ -28,7 +28,6 @@ const features = [
   <AppHeader />
 
   <main>
-    <!-- Hero -->
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
         <span class="eyebrow">A circular economy platform</span>
@@ -49,7 +48,6 @@ const features = [
       </div>
     </section>
 
-    <!-- Features -->
     <section>
       <div class="container layout-flex layout-columns layout-gap-extra-large">
         <hgroup class="center">
@@ -73,7 +71,6 @@ const features = [
       </div>
     </section>
 
-    <!-- Feature split -->
     <section>
       <div class="container">
         <div class="card grid-2" style="padding: 0; overflow: hidden">
@@ -96,7 +93,6 @@ const features = [
       </div>
     </section>
 
-    <!-- Partnership -->
     <section>
       <div class="container layout-flex layout-columns layout-items-center layout-gap-extra-large">
         <hgroup class="center">
@@ -109,7 +105,6 @@ const features = [
       </div>
     </section>
 
-    <!-- Contact -->
     <section>
       <div class="container">
         <div class="card grid-2" style="padding: 0; overflow: hidden">

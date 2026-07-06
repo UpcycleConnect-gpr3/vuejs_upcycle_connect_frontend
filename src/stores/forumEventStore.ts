@@ -10,8 +10,6 @@ import {
 import { useApi } from '@/composables/useApi'
 import type { ForumEvent, ForumEventPayload } from '@/types'
 
-// Événements du backend forum ({ id, title, date }) — distincts des
-// événements du backend upcycle gérés par useEventStore.
 export const useForumEventStore = defineStore(
   'forumEvent',
   () => {

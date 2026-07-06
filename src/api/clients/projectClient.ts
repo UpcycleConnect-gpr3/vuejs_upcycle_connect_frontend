@@ -35,10 +35,10 @@ export const deleteProject = async (id: number): Promise<void> => {
   await upcycleApiClient.delete(`${BASE_PATH}/${id}`)
 }
 
-// --- Associations : objets ---
-
 export const getProjectObjects = async (id: number): Promise<ObjectRef[]> => {
-  const { data } = await upcycleApiClient.get<ApiResponse<ObjectRef[]>>(`${BASE_PATH}/${id}/objects`)
+  const { data } = await upcycleApiClient.get<ApiResponse<ObjectRef[]>>(
+    `${BASE_PATH}/${id}/objects`,
+  )
   return data.data
 }
 
@@ -46,14 +46,17 @@ export const addProjectObject = async (id: number, objectId: string): Promise<vo
   await upcycleApiClient.post(`${BASE_PATH}/${id}/objects/${objectId}`)
 }
 
-// --- Associations : étapes ---
-
 export const getProjectSteps = async (id: number): Promise<StepSummary[]> => {
-  const { data } = await upcycleApiClient.get<ApiResponse<StepSummary[]>>(`${BASE_PATH}/${id}/steps`)
+  const { data } = await upcycleApiClient.get<ApiResponse<StepSummary[]>>(
+    `${BASE_PATH}/${id}/steps`,
+  )
   return data.data
 }
 
 export const createProjectStep = async (id: number, payload: StepPayload): Promise<Step> => {
-  const { data } = await upcycleApiClient.post<ApiResponse<Step>>(`${BASE_PATH}/${id}/steps`, payload)
+  const { data } = await upcycleApiClient.post<ApiResponse<Step>>(
+    `${BASE_PATH}/${id}/steps`,
+    payload,
+  )
   return data.data
 }

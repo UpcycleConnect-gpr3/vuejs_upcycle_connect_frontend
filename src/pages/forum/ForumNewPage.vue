@@ -42,8 +42,6 @@ async function handleSubmit() {
   if (!form.title || !form.content) return
   isSubmitting.value = true
   try {
-    // NOTE: the forum backend has no talk/category write route, so the selected
-    // category is not persisted; only title/description/type/status are sent.
     await createTalk({
       title: form.title,
       description: form.content,

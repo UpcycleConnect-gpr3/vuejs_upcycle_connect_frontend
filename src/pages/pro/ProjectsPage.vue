@@ -113,7 +113,11 @@ function toggleFeatured(project: Project) {
     projects.value[idx] = {
       ...current,
       featured: newFeatured,
-      status: newFeatured ? 'mis en avant' : (current.status === 'mis en avant' ? 'en cours' : current.status),
+      status: newFeatured
+        ? 'mis en avant'
+        : current.status === 'mis en avant'
+          ? 'en cours'
+          : current.status,
     }
   }
 }
@@ -157,15 +161,18 @@ function progressPercent(project: Project): number {
       <button class="primary medium" @click="showNewModal = true">+ Nouveau projet</button>
     </header>
 
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-tile">
         <span class="stat-tile-label">En cours</span>
-        <span class="stat-tile-value">{{ projects.filter((p) => p.status === 'en cours' || p.status === 'mis en avant').length }}</span>
+        <span class="stat-tile-value">{{
+          projects.filter((p) => p.status === 'en cours' || p.status === 'mis en avant').length
+        }}</span>
       </div>
       <div class="stat-tile">
         <span class="stat-tile-label">Terminés</span>
-        <span class="stat-tile-value">{{ projects.filter((p) => p.status === 'terminé').length }}</span>
+        <span class="stat-tile-value">{{
+          projects.filter((p) => p.status === 'terminé').length
+        }}</span>
       </div>
       <div class="stat-tile">
         <span class="stat-tile-label">Mis en avant</span>
@@ -173,11 +180,12 @@ function progressPercent(project: Project): number {
       </div>
       <div class="stat-tile">
         <span class="stat-tile-label">Brouillons</span>
-        <span class="stat-tile-value">{{ projects.filter((p) => p.status === 'brouillon').length }}</span>
+        <span class="stat-tile-value">{{
+          projects.filter((p) => p.status === 'brouillon').length
+        }}</span>
       </div>
     </div>
 
-    <!-- Projects grid -->
     <div class="dashboard-grid">
       <article
         v-for="project in projects"
@@ -188,7 +196,9 @@ function progressPercent(project: Project): number {
       >
         <div class="card-header">
           <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
-            <span class="badge" :class="statusMeta[project.status].badge">{{ project.status }}</span>
+            <span class="badge" :class="statusMeta[project.status].badge">{{
+              project.status
+            }}</span>
             <span v-if="project.featured" class="badge badge--success">⭐ Mis en avant</span>
             <span class="badge">{{ project.material }}</span>
           </div>
@@ -196,7 +206,6 @@ function progressPercent(project: Project): number {
         </div>
         <p class="small muted">{{ project.description }}</p>
 
-        <!-- Progress bar -->
         <div style="margin-top: var(--space-2)">
           <div class="layout-flex layout-justify-between" style="margin-bottom: var(--space-1)">
             <span class="tiny muted">Avancement</span>
@@ -211,10 +220,7 @@ function progressPercent(project: Project): number {
         </div>
 
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3)" @click.stop>
-          <button
-            class="ghost small"
-            @click="toggleFeatured(project)"
-          >
+          <button class="ghost small" @click="toggleFeatured(project)">
             {{ project.featured ? '✕ Retirer de la vitrine' : '⭐ Mettre en avant' }}
           </button>
         </div>
@@ -223,10 +229,11 @@ function progressPercent(project: Project): number {
 
     <div v-if="projects.length === 0" class="empty-state">
       <p>Vous n'avez encore aucun projet. Commencez dès maintenant !</p>
-      <button class="primary medium" @click="showNewModal = true">+ Créer mon premier projet</button>
+      <button class="primary medium" @click="showNewModal = true">
+        + Créer mon premier projet
+      </button>
     </div>
 
-    <!-- New project modal -->
     <AppModal :open="showNewModal" size="medium" @close="showNewModal = false">
       <template #header>
         <h3>Nouveau projet d'upcycling</h3>
@@ -269,13 +276,16 @@ function progressPercent(project: Project): number {
 
       <template #footer>
         <button class="ghost medium" @click="showNewModal = false">Annuler</button>
-        <button class="primary medium" :disabled="!newForm.title || !newForm.material" @click="createProject">
+        <button
+          class="primary medium"
+          :disabled="!newForm.title || !newForm.material"
+          @click="createProject"
+        >
           Créer le projet
         </button>
       </template>
     </AppModal>
 
-    <!-- Detail modal -->
     <AppModal :open="showDetailModal" size="medium" @close="showDetailModal = false">
       <template #header>
         <h3>{{ selectedProject?.title }}</h3>
@@ -283,26 +293,39 @@ function progressPercent(project: Project): number {
 
       <div v-if="selectedProject" class="layout-flex layout-columns layout-gap-medium">
         <div class="layout-flex layout-gap-small">
-          <span class="badge" :class="statusMeta[selectedProject.status].badge">{{ selectedProject.status }}</span>
+          <span class="badge" :class="statusMeta[selectedProject.status].badge">{{
+            selectedProject.status
+          }}</span>
           <span class="badge">{{ selectedProject.material }}</span>
         </div>
         <p class="muted">{{ selectedProject.description }}</p>
         <div>
           <h4 style="margin-bottom: var(--space-2)">Étapes</h4>
           <ul class="layout-flex layout-columns layout-gap-small">
-            <li
-              v-for="(step, i) in selectedProject.steps"
-              :key="i"
-              class="event-row"
-            >
+            <li v-for="(step, i) in selectedProject.steps" :key="i" class="event-row">
               <span
-                style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0"
+                style="
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 12px;
+                  flex-shrink: 0;
+                "
                 :style="{
                   background: step.done ? 'var(--lime-500)' : 'var(--surface-3)',
                   color: step.done ? '#000' : 'var(--text-tertiary)',
                 }"
-              >{{ step.done ? '✓' : i + 1 }}</span>
-              <span :style="{ textDecoration: step.done ? 'line-through' : 'none', opacity: step.done ? 0.6 : 1 }">
+                >{{ step.done ? '✓' : i + 1 }}</span
+              >
+              <span
+                :style="{
+                  textDecoration: step.done ? 'line-through' : 'none',
+                  opacity: step.done ? 0.6 : 1,
+                }"
+              >
                 {{ step.label }}
               </span>
             </li>

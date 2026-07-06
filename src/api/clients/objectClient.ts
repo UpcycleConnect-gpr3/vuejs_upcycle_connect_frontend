@@ -31,7 +31,10 @@ export const updateObject = async (
   id: string,
   payload: ObjectUpdatePayload,
 ): Promise<UpcycleObject> => {
-  const { data } = await upcycleApiClient.put<ApiResponse<UpcycleObject>>(`${BASE_PATH}/${id}`, payload)
+  const { data } = await upcycleApiClient.put<ApiResponse<UpcycleObject>>(
+    `${BASE_PATH}/${id}`,
+    payload,
+  )
   return data.data
 }
 
@@ -43,8 +46,6 @@ export const getObjectScore = async (id: string): Promise<ObjectScore> => {
   const { data } = await upcycleApiClient.get<ApiResponse<ObjectScore>>(`${BASE_PATH}/${id}/score`)
   return data.data
 }
-
-// --- Associations : modes de livraison ---
 
 export const getObjectDeliveryMethods = async (id: string): Promise<DeliveryMethodRef[]> => {
   const { data } = await upcycleApiClient.get<ApiResponse<DeliveryMethodRef[]>>(
@@ -67,10 +68,10 @@ export const removeObjectDeliveryMethod = async (
   await upcycleApiClient.delete(`${BASE_PATH}/${id}/delivery-methods/${deliveryMethodId}`)
 }
 
-// --- Associations : projets ---
-
 export const getObjectProjects = async (id: string): Promise<ProjectRef[]> => {
-  const { data } = await upcycleApiClient.get<ApiResponse<ProjectRef[]>>(`${BASE_PATH}/${id}/projects`)
+  const { data } = await upcycleApiClient.get<ApiResponse<ProjectRef[]>>(
+    `${BASE_PATH}/${id}/projects`,
+  )
   return data.data
 }
 
@@ -81,8 +82,6 @@ export const addObjectProject = async (id: string, projectId: number): Promise<v
 export const removeObjectProject = async (id: string, projectId: number): Promise<void> => {
   await upcycleApiClient.delete(`${BASE_PATH}/${id}/projects/${projectId}`)
 }
-
-// --- Associations : utilisateurs ---
 
 export const getObjectUsers = async (id: string): Promise<UserRef[]> => {
   const { data } = await upcycleApiClient.get<ApiResponse<UserRef[]>>(`${BASE_PATH}/${id}/users`)

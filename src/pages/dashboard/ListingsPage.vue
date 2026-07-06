@@ -118,7 +118,6 @@ const filtered = computed(() =>
   filter.value === 'all' ? listings.value : listings.value.filter((l) => l.status === filter.value),
 )
 
-// Modal wizard
 const showModal = ref(route.path.endsWith('/new'))
 const step = ref(1)
 const editingId = ref<number | null>(null)
@@ -236,7 +235,6 @@ async function submitListing() {
       <button class="primary medium" @click="showModal = true">+ Nouvelle annonce</button>
     </header>
 
-    <!-- Filters -->
     <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
       <button class="forum-tab" :class="{ active: filter === 'all' }" @click="filter = 'all'">
         Tout · {{ listings.length }}
@@ -252,7 +250,6 @@ async function submitListing() {
       </button>
     </div>
 
-    <!-- Grid -->
     <div class="listings-grid">
       <article v-for="l in filtered" :key="l.id" class="listing-card">
         <div class="listing-photo">
@@ -287,7 +284,6 @@ async function submitListing() {
       </article>
     </div>
 
-    <!-- Empty state -->
     <div v-if="filtered.length === 0" class="empty-state">
       <p>Aucune annonce dans cette catégorie.</p>
       <button class="primary medium" @click="showModal = true">
@@ -295,7 +291,6 @@ async function submitListing() {
       </button>
     </div>
 
-    <!-- Wizard modal -->
     <AppModal :open="showModal" size="medium" @close="close">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
@@ -304,7 +299,6 @@ async function submitListing() {
         </div>
       </template>
 
-      <!-- Step 1 — Infos -->
       <form
         v-if="step === 1"
         class="layout-flex layout-columns layout-gap-medium"
@@ -388,7 +382,6 @@ async function submitListing() {
         </div>
       </form>
 
-      <!-- Step 2 — Photos -->
       <div v-else-if="step === 2" class="layout-flex layout-columns layout-gap-medium">
         <p class="muted">
           Ajoutez au moins une photo. Les annonces avec photos sont 5× plus consultées.
@@ -409,7 +402,6 @@ async function submitListing() {
         </div>
       </div>
 
-      <!-- Step 3 — Récap -->
       <div v-else-if="step === 3" class="layout-flex layout-columns layout-gap-medium">
         <div class="recap-row">
           <span class="tiny uppercase muted">Type</span

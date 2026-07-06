@@ -13,10 +13,8 @@ const router = useRouter()
 const auth = useAuthStore()
 const toasts = useToastsStore()
 
-// Payment Link Stripe (dashboard > Liens de paiement) pour les formations payantes.
 const TRAINING_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK_TRAINING
 
-// Mock detail
 const item = ref({
   id: Number(route.params.id),
   kind: 'training' as const,
@@ -49,8 +47,6 @@ onMounted(async () => {
   try {
     const t = await getTraining(route.params.id as string)
     if (t) {
-      // Go Training model: id, name, type, duration, location, mode_of_delivery,
-      // target_audience. No description/price/trainer/longText — keep mock defaults for those.
       item.value = {
         ...item.value,
         id: t.id,
@@ -66,7 +62,6 @@ onMounted(async () => {
   try {
     const schedules = await getTrainingSchedules(route.params.id as string)
     if (Array.isArray(schedules) && schedules.length) {
-      // ContentSchedule has no datetime/capacity: only day_number + title.
       item.value.slots = schedules.map((s) => ({
         id: s.id,
         date: s.title ? `${s.title} (jour ${s.day_number})` : `Jour ${s.day_number}`,
@@ -75,12 +70,9 @@ onMounted(async () => {
       }))
       selectedSlot.value = item.value.slots[0]?.id ?? null
     }
-  } catch {
-    // keep mock slots
-  }
+  } catch {}
 })
 
-// Réservation gratuite : enregistre la commande localement, sans passage par Stripe.
 async function pay() {
   isProcessing.value = true
   try {
@@ -97,9 +89,6 @@ async function pay() {
   }
 }
 
-// Formation payante : redirige vers le Payment Link Stripe.
-// client_reference_id permet de retrouver la formation/créneau dans le
-// dashboard Stripe ; l'email du compte est prérempli sur la page de paiement.
 function payWithStripe() {
   if (!TRAINING_PAYMENT_LINK) {
     toasts.error("Le paiement en ligne n'est pas configuré. Réessayez plus tard.")
@@ -198,7 +187,6 @@ function close() {
       </aside>
     </article>
 
-    <!-- Checkout modal -->
     <AppModal :open="showCheckout" :title="isPaid ? '' : 'Paiement sécurisé'" @close="close">
       <div v-if="!isPaid" class="layout-flex layout-columns layout-gap-large">
         <div class="checkout-summary">

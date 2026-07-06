@@ -1,7 +1,6 @@
 import { forumApiClient } from '../axios'
 import type { ApiResponse, ForumUser, ForumUserUpdatePayload } from '@/types'
 
-// Backend forum : chaque chemin doit se terminer par `/` (matcher Go 1.22 {$}).
 const BASE_PATH = '/users'
 
 export const getForumUsers = async (): Promise<ForumUser[]> => {
@@ -25,5 +24,3 @@ export const updateForumUser = async (
 export const deleteForumUser = async (id: string): Promise<void> => {
   await forumApiClient.delete(`${BASE_PATH}/${id}/`)
 }
-
-// Pas de POST : le backend forum n'expose pas de création d'utilisateur.

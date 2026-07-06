@@ -82,8 +82,6 @@ export const useObjectStore = defineStore(
       if (data) currentObjectScore.value = data
     }
 
-    // --- Associations : modes de livraison ---
-
     const fetchObjectDeliveryMethods = async (id: string) => {
       const data = await request(
         () => getObjectDeliveryMethods(id),
@@ -112,8 +110,6 @@ export const useObjectStore = defineStore(
       }
     }
 
-    // --- Associations : projets ---
-
     const fetchObjectProjects = async (id: string) => {
       const data = await request(
         () => getObjectProjects(id),
@@ -139,8 +135,6 @@ export const useObjectStore = defineStore(
         currentObjectProjects.value = currentObjectProjects.value.filter((p) => p.id !== projectId)
       }
     }
-
-    // --- Associations : utilisateurs ---
 
     const fetchObjectUsers = async (id: string) => {
       const data = await request(

@@ -1,9 +1,6 @@
 import { forumApiClient } from '../axios'
 import type { ApiResponse, ForumEvent, ForumEventPayload } from '@/types'
 
-// Backend forum : chaque chemin doit se terminer par `/` (matcher Go 1.22 {$}).
-// Modèle distinct des événements du backend upcycle (voir eventClient.ts) :
-// ici le backend n'expose que { id, title, date }.
 const BASE_PATH = '/events'
 
 export const getForumEvents = async (): Promise<ForumEvent[]> => {
@@ -16,7 +13,6 @@ export const createForumEvent = async (payload: ForumEventPayload): Promise<Foru
   return data.data
 }
 
-// Champs partiels acceptés en mise à jour.
 export const updateForumEvent = async (
   id: number,
   payload: Partial<ForumEventPayload>,

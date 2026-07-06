@@ -53,7 +53,7 @@ const reports = ref<Report[]>([
   {
     id: 4,
     author: 'user#219',
-    excerpt: 'Quelqu\'un peut m\'aider à identifier ce meuble ? Photo en PJ.',
+    excerpt: "Quelqu'un peut m'aider à identifier ce meuble ? Photo en PJ.",
     reason: 'Doublon signalé',
     reportedAt: '2026-06-26',
     status: 'en_attente',
@@ -63,17 +63,17 @@ const reports = ref<Report[]>([
   {
     id: 5,
     author: 'user#088',
-    excerpt: 'Attention arnaque ! Ce vendeur m\'a escroqué de 150€...',
+    excerpt: "Attention arnaque ! Ce vendeur m'a escroqué de 150€...",
     reason: 'Fausses informations',
     reportedAt: '2026-06-25',
     status: 'en_attente',
     action: null,
-    thread: 'Retours d\'expérience : achats',
+    thread: "Retours d'expérience : achats",
   },
   {
     id: 6,
     author: 'user#341',
-    excerpt: 'Regardez mon magnifique projet : j\'ai transformé une palette en...',
+    excerpt: "Regardez mon magnifique projet : j'ai transformé une palette en...",
     reason: 'Spam',
     reportedAt: '2026-06-20',
     status: 'traite',
@@ -83,7 +83,7 @@ const reports = ref<Report[]>([
   {
     id: 7,
     author: 'user#007',
-    excerpt: 'Ce n\'est qu\'un tas de vieilles ordures, pourquoi vous appelez ça...',
+    excerpt: "Ce n'est qu'un tas de vieilles ordures, pourquoi vous appelez ça...",
     reason: 'Propos offensants',
     reportedAt: '2026-06-18',
     status: 'traite',
@@ -126,7 +126,6 @@ function tabCount(status: ReportStatus): number {
   return reports.value.filter((r) => r.status === status).length
 }
 
-// Confirm action modal
 const confirmReport = ref<Report | null>(null)
 const pendingAction = ref<ReportAction | null>(null)
 
@@ -172,9 +171,7 @@ const confirmMessage = computed(() => {
       <div>
         <span class="eyebrow">Forums</span>
         <h1>Modération des forums</h1>
-        <p class="muted measure">
-          Examinez et traitez les messages signalés par la communauté.
-        </p>
+        <p class="muted measure">Examinez et traitez les messages signalés par la communauté.</p>
       </div>
       <div class="layout-flex layout-gap-small">
         <span class="stat-tile" style="padding: var(--space-2) var(--space-4)">
@@ -188,7 +185,6 @@ const confirmMessage = computed(() => {
       </div>
     </header>
 
-    <!-- Tabs -->
     <div class="layout-flex layout-gap-small">
       <button
         v-for="(meta, key) in tabMeta"
@@ -202,7 +198,6 @@ const confirmMessage = computed(() => {
       </button>
     </div>
 
-    <!-- Reports table -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -228,7 +223,10 @@ const confirmMessage = computed(() => {
             </td>
             <td class="small muted" style="max-width: 180px">{{ r.thread }}</td>
             <td style="max-width: 260px">
-              <p class="small muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+              <p
+                class="small muted"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
+              >
                 {{ r.excerpt }}
               </p>
             </td>
@@ -237,14 +235,12 @@ const confirmMessage = computed(() => {
             </td>
             <td class="mono small">{{ r.reportedAt }}</td>
 
-            <!-- Traité : afficher l'action appliquée -->
             <td v-if="activeTab === 'traite'">
               <span v-if="r.action" class="badge" :class="actionBadge[r.action]">
                 {{ actionLabel[r.action] }}
               </span>
             </td>
 
-            <!-- Autres : boutons d'action -->
             <td v-else>
               <div class="layout-flex layout-gap-small">
                 <button class="ghost small" @click="askAction(r, 'masque')">Masquer</button>
@@ -263,7 +259,6 @@ const confirmMessage = computed(() => {
       </table>
     </div>
 
-    <!-- Confirm modal -->
     <AppModal :open="!!confirmReport" size="small" @close="cancelAction">
       <template #header>
         <h3>Confirmer l'action</h3>
@@ -278,14 +273,18 @@ const confirmMessage = computed(() => {
             — {{ confirmReport.author }} · {{ confirmReport.reportedAt }}
           </div>
         </div>
-        <p class="small muted">Cette action sera enregistrée et le signalement passera en statut "Traité".</p>
+        <p class="small muted">
+          Cette action sera enregistrée et le signalement passera en statut "Traité".
+        </p>
       </div>
 
       <template #footer>
         <button class="ghost medium" @click="cancelAction">Annuler</button>
         <button
           class="primary medium"
-          :style="{ background: pendingAction === 'supprime' ? 'var(--destructive-color)' : undefined }"
+          :style="{
+            background: pendingAction === 'supprime' ? 'var(--destructive-color)' : undefined,
+          }"
           @click="applyAction"
         >
           Confirmer

@@ -22,8 +22,7 @@ export const useUserStore = defineStore(
       if (data) currentUser.value = data
     }
 
-    const getUserFromStore = (id: string): User | undefined =>
-      users.value.find((u) => u.id === id)
+    const getUserFromStore = (id: string): User | undefined => users.value.find((u) => u.id === id)
 
     return {
       users,

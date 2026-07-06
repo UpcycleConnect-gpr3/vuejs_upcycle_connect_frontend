@@ -26,9 +26,30 @@ interface ProjectItem {
 }
 
 const newMaterials: MaterialItem[] = [
-  { id: 1, title: 'Lot de planches de palette', category: 'Bois', type: 'don', price: null, postedAt: 'Il y a 2h' },
-  { id: 2, title: 'Cadre vélo acier', category: 'Métal', type: 'vente', price: 15, postedAt: 'Il y a 4h' },
-  { id: 3, title: 'Bobines de fil textile', category: 'Textile', type: 'don', price: null, postedAt: 'Il y a 6h' },
+  {
+    id: 1,
+    title: 'Lot de planches de palette',
+    category: 'Bois',
+    type: 'don',
+    price: null,
+    postedAt: 'Il y a 2h',
+  },
+  {
+    id: 2,
+    title: 'Cadre vélo acier',
+    category: 'Métal',
+    type: 'vente',
+    price: 15,
+    postedAt: 'Il y a 4h',
+  },
+  {
+    id: 3,
+    title: 'Bobines de fil textile',
+    category: 'Textile',
+    type: 'don',
+    price: null,
+    postedAt: 'Il y a 6h',
+  },
 ]
 
 const recentProjects: ProjectItem[] = [
@@ -44,8 +65,8 @@ const alerts = [
 
 const statusBadge: Record<ProjectItem['status'], string> = {
   'en cours': 'badge--accent',
-  'terminé': 'badge--success',
-  'brouillon': 'badge--muted',
+  terminé: 'badge--success',
+  brouillon: 'badge--muted',
 }
 </script>
 
@@ -55,7 +76,9 @@ const statusBadge: Record<ProjectItem['status'], string> = {
       <div>
         <span class="eyebrow">Tableau de bord Pro</span>
         <h1>Bonjour 👋</h1>
-        <p class="muted measure">Votre espace professionnel UpcycleConnect — matériaux, projets et collectes.</p>
+        <p class="muted measure">
+          Votre espace professionnel UpcycleConnect — matériaux, projets et collectes.
+        </p>
       </div>
       <div class="layout-flex layout-gap-medium">
         <RouterLink to="/pro/projects" class="ghost medium">+ Nouveau projet</RouterLink>
@@ -63,7 +86,6 @@ const statusBadge: Record<ProjectItem['status'], string> = {
       </div>
     </header>
 
-    <!-- Stats -->
     <div class="stats-row">
       <RouterLink to="/pro/marketplace" class="stat-tile">
         <span class="stat-tile-label">Objets disponibles à collecter</span>
@@ -83,7 +105,9 @@ const statusBadge: Record<ProjectItem['status'], string> = {
       <RouterLink to="/pro/subscription" class="stat-tile">
         <span class="stat-tile-label">Abonnement</span>
         <div class="stat-tile-value-row">
-          <span class="stat-tile-value" style="font-size: var(--font-size-xlarge)">{{ stats.subscription }}</span>
+          <span class="stat-tile-value" style="font-size: var(--font-size-xlarge)">{{
+            stats.subscription
+          }}</span>
           <span class="badge badge--success">Actif</span>
         </div>
         <p class="small muted">Renouvellement le 15 juillet</p>
@@ -99,7 +123,6 @@ const statusBadge: Record<ProjectItem['status'], string> = {
       </RouterLink>
     </div>
 
-    <!-- Alerts -->
     <section v-if="alerts.length" class="layout-flex layout-columns layout-gap-small">
       <div v-for="(a, i) in alerts" :key="i" class="alert alert--accent">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -111,7 +134,6 @@ const statusBadge: Record<ProjectItem['status'], string> = {
     </section>
 
     <div class="dashboard-grid">
-      <!-- Nouveaux matériaux -->
       <article class="dashboard-card">
         <div class="card-header">
           <span class="eyebrow">Mis en ligne récemment</span>
@@ -137,7 +159,6 @@ const statusBadge: Record<ProjectItem['status'], string> = {
         </RouterLink>
       </article>
 
-      <!-- Projets récents -->
       <article class="dashboard-card">
         <div class="card-header">
           <span class="eyebrow">Upcycling</span>

@@ -1,13 +1,9 @@
-/* ── Dashboard shell ─────────────────────────────────────────────────────── */
-
 .dashboard-shell {
   display: flex;
   align-items: stretch;
   width: 100%;
   min-height: 100vh;
 }
-
-/* ── Sidebar ──────────────────────────────────────────────────────────────── */
 
 .dashboard-sidebar {
   width: 264px;
@@ -86,8 +82,6 @@
   flex-shrink: 0;
 }
 
-/* ── Sidebar user card ────────────────────────────────────────────────────── */
-
 .sidebar-user {
   display: flex;
   align-items: center;
@@ -156,8 +150,6 @@
   border-color: var(--destructive-color);
 }
 
-/* ── Main content ─────────────────────────────────────────────────────────── */
-
 .dashboard-main {
   flex: 1;
   min-width: 0;
@@ -180,8 +172,6 @@
   --h1-font-size: var(--font-size-xxxlarge);
   --h1-font-weight: var(--font-weight-bold);
 }
-
-/* ── Stats row ────────────────────────────────────────────────────────────── */
 
 .stats-row {
   display: grid;
@@ -229,8 +219,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Alerts ───────────────────────────────────────────────────────────────── */
-
 .alert {
   display: flex;
   align-items: center;
@@ -268,8 +256,6 @@
   color: var(--destructive-color);
 }
 
-/* ── Cards grid ───────────────────────────────────────────────────────────── */
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -296,8 +282,6 @@
   --h3-font-weight: var(--font-weight-semibold);
 }
 
-/* ── Event rows ───────────────────────────────────────────────────────────── */
-
 .event-row {
   display: flex;
   align-items: center;
@@ -313,8 +297,6 @@
   min-width: 104px;
 }
 
-/* ── Advice mini ──────────────────────────────────────────────────────────── */
-
 .advice-mini {
   display: flex;
   flex-direction: column;
@@ -327,8 +309,6 @@
 .advice-mini .badge {
   align-self: flex-start;
 }
-
-/* ── Planning: view toggle ────────────────────────────────────────────────── */
 
 .planning-view-toggle {
   display: inline-flex;
@@ -357,8 +337,6 @@
   color: var(--black);
 }
 
-/* ── Planning: legend ─────────────────────────────────────────────────────── */
-
 .planning-legend {
   display: flex;
   flex-wrap: wrap;
@@ -378,8 +356,6 @@
   height: 10px;
   flex-shrink: 0;
 }
-
-/* ── Planning: week / agenda grid ─────────────────────────────────────────── */
 
 .planning-week {
   display: flex;
@@ -579,8 +555,6 @@
   line-height: 1.25;
 }
 
-/* ── Planning: list view ──────────────────────────────────────────────────── */
-
 .planning-month {
   --h3-font-size: var(--font-size-large);
   --h3-font-weight: var(--font-weight-semibold);
@@ -619,8 +593,6 @@
   min-width: 56px;
 }
 
-/* ── Planning: detail modal recap rows ────────────────────────────────────── */
-
 .recap-row {
   display: flex;
   align-items: baseline;
@@ -629,8 +601,6 @@
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--border-subtle-color);
 }
-
-/* ── Catalog: toolbar & tabs ──────────────────────────────────────────────── */
 
 .catalog-toolbar {
   display: flex;
@@ -663,8 +633,6 @@
   border-color: var(--lime-500);
   color: var(--black);
 }
-
-/* ── Catalog: grid & cards ────────────────────────────────────────────────── */
 
 .catalog-grid {
   display: grid;
@@ -721,8 +689,6 @@
   margin-top: auto;
 }
 
-/* ── Advice: toolbar ──────────────────────────────────────────────────────── */
-
 .advice-toolbar {
   display: flex;
   align-items: center;
@@ -746,8 +712,6 @@
 .forum-tab.active .forum-tab-count {
   background-color: oklch(from var(--black) l c h / 0.15);
 }
-
-/* ── Advice: featured ─────────────────────────────────────────────────────── */
 
 .advice-featured {
   display: grid;
@@ -786,8 +750,6 @@
   --h2-font-size: var(--font-size-xxlarge);
   --h2-font-weight: var(--font-weight-bold);
 }
-
-/* ── Advice: grid & cards ─────────────────────────────────────────────────── */
 
 .advice-grid {
   display: grid;
@@ -849,8 +811,6 @@
   flex: 1;
 }
 
-/* ── Advice: bookmark button ──────────────────────────────────────────────── */
-
 .bookmark-btn {
   display: inline-flex;
   align-items: center;
@@ -881,8 +841,6 @@
   color: var(--lime-500);
   border-color: var(--lime-500);
 }
-
-/* ── Score: hero (gauge + summary) ────────────────────────────────────────── */
 
 .score-hero {
   display: grid;
@@ -935,8 +893,6 @@
   --h2-font-weight: var(--font-weight-bold);
 }
 
-/* ── Score: breakdown bars ────────────────────────────────────────────────── */
-
 .breakdown-row {
   display: flex;
   flex-direction: column;
@@ -956,8 +912,6 @@
   background-color: var(--lime-500);
   transition: width 0.6s var(--ease-out);
 }
-
-/* ── Score: history chart ─────────────────────────────────────────────────── */
 
 .history-chart {
   flex-direction: row;
@@ -988,8 +942,6 @@
   color: var(--lime-500);
   transition: height 0.6s var(--ease-out);
 }
-
-/* ── Score: badges ────────────────────────────────────────────────────────── */
 
 .badges-grid {
   display: grid;
@@ -1022,8 +974,6 @@
 .badge-tile--locked .badge-tile-icon {
   filter: grayscale(1);
 }
-
-/* ── Listings (annonces) ──────────────────────────────────────────────────── */
 
 .listings-grid {
   display: grid;
@@ -1078,8 +1028,6 @@
   margin-top: auto;
 }
 
-/* ── Empty state ──────────────────────────────────────────────────────────── */
-
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -1091,8 +1039,6 @@
   border: 1px dashed var(--border-color);
   color: var(--text-secondary);
 }
-
-/* ── Upload dropzone & photo chips ────────────────────────────────────────── */
 
 .dropzone {
   display: flex;
@@ -1137,8 +1083,6 @@
   border: 1px solid var(--border-color);
 }
 
-/* ── Deposits ─────────────────────────────────────────────────────────────── */
-
 .deposit-card {
   padding: var(--space-4) var(--space-5);
   background-color: var(--surface-2);
@@ -1154,8 +1098,6 @@
   --h4-font-size: var(--font-size-large);
   --h4-font-weight: var(--font-weight-semibold);
 }
-
-/* Container code (shown in modal) */
 
 .container-code {
   display: flex;
@@ -1189,8 +1131,6 @@
 .qr-mock .mono {
   color: var(--black);
 }
-
-/* ── Data table ───────────────────────────────────────────────────────────── */
 
 .table-wrapper {
   width: 100%;
@@ -1237,8 +1177,6 @@
   border-bottom: none;
 }
 
-/* ── Inline text helpers (work on span/div, not just <p>) ─────────────────── */
-
 .dashboard-shell .muted {
   color: var(--text-tertiary);
 }
@@ -1252,8 +1190,6 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-
-/* ── Responsive ───────────────────────────────────────────────────────────── */
 
 @media (max-width: 1100px) {
   .stats-row {

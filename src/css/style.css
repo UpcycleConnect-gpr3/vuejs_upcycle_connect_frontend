@@ -43,8 +43,6 @@ div#app {
   align-items: stretch;
 }
 
-/* ── Layout primitives ─────────────────────────────────────────────────── */
-
 .layout-app {
   width: 100%;
   min-height: 100vh;
@@ -126,8 +124,6 @@ div#app {
     padding-inline: var(--container-padding-x-lg);
   }
 }
-
-/* ── Utilities ─────────────────────────────────────────────────────────── */
 
 ul,
 ol {

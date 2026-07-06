@@ -37,7 +37,8 @@ const listings: MarketplaceListing[] = [
     category: 'Métal',
     price: 25,
     location: 'Paris 18e',
-    description: 'Cadre acier des années 80, légèrement rouillé, idéal upcycling/déco industrielle.',
+    description:
+      'Cadre acier des années 80, légèrement rouillé, idéal upcycling/déco industrielle.',
     postedAt: '2026-06-27',
     seller: 'Thomas R.',
   },
@@ -97,7 +98,11 @@ const filtered = computed(() =>
   listings.filter((l) => {
     if (filterType.value !== 'all' && l.type !== filterType.value) return false
     if (filterCategory.value !== 'all' && l.category !== filterCategory.value) return false
-    if (filterLocation.value && !l.location.toLowerCase().includes(filterLocation.value.toLowerCase())) return false
+    if (
+      filterLocation.value &&
+      !l.location.toLowerCase().includes(filterLocation.value.toLowerCase())
+    )
+      return false
     return true
   }),
 )
@@ -129,7 +134,6 @@ function confirmPurchase() {
       </div>
     </header>
 
-    <!-- Filters -->
     <div class="layout-flex layout-gap-small" style="flex-wrap: wrap; align-items: center">
       <button
         class="forum-tab"
@@ -153,11 +157,7 @@ function confirmPurchase() {
         Ventes
       </button>
 
-      <select
-        v-model="filterCategory"
-        class="ghost medium"
-        style="margin-left: var(--space-2)"
-      >
+      <select v-model="filterCategory" class="ghost medium" style="margin-left: var(--space-2)">
         <option value="all">Toutes catégories</option>
         <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
       </select>
@@ -171,14 +171,16 @@ function confirmPurchase() {
       />
     </div>
 
-    <!-- Grid -->
     <div class="catalog-grid">
       <article v-for="l in filtered" :key="l.id" class="catalog-card">
         <div class="listing-photo">
           <span class="tiny muted">Photo</span>
         </div>
         <div style="padding: var(--space-3)">
-          <div class="layout-flex layout-gap-small" style="flex-wrap: wrap; margin-bottom: var(--space-2)">
+          <div
+            class="layout-flex layout-gap-small"
+            style="flex-wrap: wrap; margin-bottom: var(--space-2)"
+          >
             <span class="badge" :class="l.type === 'don' ? 'badge--success' : 'badge--accent'">
               {{ l.type === 'don' ? 'Don' : 'Vente' }}
             </span>
@@ -206,18 +208,23 @@ function confirmPurchase() {
       </article>
     </div>
 
-    <!-- Empty state -->
     <div v-if="filtered.length === 0" class="empty-state">
       <p>Aucune annonce ne correspond à vos critères.</p>
-      <button class="ghost medium" @click="filterType = 'all'; filterCategory = 'all'; filterLocation = ''">
+      <button
+        class="ghost medium"
+        @click="
+          filterType = 'all'
+          filterCategory = 'all'
+          filterLocation = ''
+        "
+      >
         Réinitialiser les filtres
       </button>
     </div>
 
-    <!-- Confirmation modal -->
     <AppModal :open="showConfirmModal" size="small" @close="showConfirmModal = false">
       <template #header>
-        <h3>{{ selectedListing?.type === 'don' ? 'Réserver le don' : 'Confirmer l\'achat' }}</h3>
+        <h3>{{ selectedListing?.type === 'don' ? 'Réserver le don' : "Confirmer l'achat" }}</h3>
       </template>
 
       <div v-if="selectedListing" class="layout-flex layout-columns layout-gap-medium">
@@ -230,7 +237,9 @@ function confirmPurchase() {
           <span>{{ selectedListing.seller }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">{{ selectedListing.type === 'don' ? 'Prix' : 'Montant' }}</span>
+          <span class="tiny uppercase muted">{{
+            selectedListing.type === 'don' ? 'Prix' : 'Montant'
+          }}</span>
           <span>{{ selectedListing.price ? `${selectedListing.price}€` : 'Gratuit' }}</span>
         </div>
         <div class="alert alert--accent">
@@ -239,8 +248,8 @@ function confirmPurchase() {
             <path d="M12 8v4M12 16h.01" />
           </svg>
           <span>
-            Une commission UpcycleConnect de 5% est appliquée sur les transactions payantes.
-            Les dons sont totalement gratuits.
+            Une commission UpcycleConnect de 5% est appliquée sur les transactions payantes. Les
+            dons sont totalement gratuits.
           </span>
         </div>
       </div>
@@ -248,7 +257,7 @@ function confirmPurchase() {
       <template #footer>
         <button class="ghost medium" @click="showConfirmModal = false">Annuler</button>
         <button class="primary medium" @click="confirmPurchase">
-          {{ selectedListing?.type === 'don' ? 'Confirmer la réservation' : 'Confirmer l\'achat' }}
+          {{ selectedListing?.type === 'don' ? 'Confirmer la réservation' : "Confirmer l'achat" }}
         </button>
       </template>
     </AppModal>

@@ -129,7 +129,6 @@ export const useAuthStore = defineStore(
           return
         }
 
-        // Appel à l'endpoint /auth/login/ du module avec le token brut
         const response = await moduleApiClient.post(
           '/auth/login/',
           {},
@@ -138,7 +137,6 @@ export const useAuthStore = defineStore(
           },
         )
 
-        // Stocke les infos utilisateur si nécessaire
         if (response.data?.email) {
           userEmail.value = response.data.email
         }

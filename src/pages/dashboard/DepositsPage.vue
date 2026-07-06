@@ -107,7 +107,6 @@ const filtered = computed(() =>
     : deposits.value.filter((d) => d.status === 'pending' || d.status === 'approved'),
 )
 
-// Modal new deposit
 const showNewModal = ref(false)
 const form = reactive({
   object: '',
@@ -144,7 +143,6 @@ async function submit() {
   showNewModal.value = false
 }
 
-// Code modal
 const codeOpen = ref<Deposit | null>(null)
 const qrRef = ref<InstanceType<typeof QrCode> | null>(null)
 function downloadQr() {
@@ -199,7 +197,6 @@ function downloadQr() {
       </article>
     </div>
 
-    <!-- New deposit -->
     <AppModal :open="showNewModal" title="Nouvelle demande de dépôt" @close="showNewModal = false">
       <form class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submit">
         <div class="form-group">
@@ -256,7 +253,6 @@ function downloadQr() {
       </template>
     </AppModal>
 
-    <!-- Code modal -->
     <AppModal :open="!!codeOpen" size="small" @close="codeOpen = null">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">

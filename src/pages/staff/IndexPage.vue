@@ -106,7 +106,6 @@ const alerts: Alert[] = [
       </div>
     </header>
 
-    <!-- Stats -->
     <div class="stats-row">
       <RouterLink to="/staff/planning" class="stat-tile">
         <span class="stat-tile-label">Sessions cette semaine</span>
@@ -139,7 +138,6 @@ const alerts: Alert[] = [
       </RouterLink>
     </div>
 
-    <!-- Alerts -->
     <section v-if="alerts.length" class="layout-flex layout-columns layout-gap-small">
       <div v-for="(a, i) in alerts" :key="i" class="alert" :class="`alert--${a.type}`">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -151,7 +149,6 @@ const alerts: Alert[] = [
     </section>
 
     <div class="dashboard-grid">
-      <!-- Prochaines sessions -->
       <article class="dashboard-card">
         <div class="card-header">
           <span class="eyebrow">Cette semaine</span>
@@ -175,7 +172,6 @@ const alerts: Alert[] = [
         </RouterLink>
       </article>
 
-      <!-- À traiter -->
       <article class="dashboard-card">
         <div class="card-header">
           <span class="eyebrow">Actions requises</span>

@@ -24,7 +24,10 @@ export const updateDeliveryMethod = async (
   id: number,
   payload: DeliveryMethodPayload,
 ): Promise<DeliveryMethod> => {
-  const { data } = await upcycleApiClient.put<ApiResponse<DeliveryMethod>>(`${BASE_PATH}/${id}`, payload)
+  const { data } = await upcycleApiClient.put<ApiResponse<DeliveryMethod>>(
+    `${BASE_PATH}/${id}`,
+    payload,
+  )
   return data.data
 }
 

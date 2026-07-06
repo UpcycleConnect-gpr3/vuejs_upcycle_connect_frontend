@@ -67,7 +67,7 @@ const trainings = ref<Training[]>([
   },
   {
     id: 5,
-    title: "Introduction au réemploi",
+    title: 'Introduction au réemploi',
     type: 'formation',
     date: '',
     capacity: 20,
@@ -91,7 +91,6 @@ const filtered = computed(() =>
     : trainings.value.filter((t) => t.status === filter.value),
 )
 
-// Modal
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
 
@@ -195,7 +194,6 @@ function displayDate(date: string): string {
       <button class="primary medium" @click="openCreate">+ Créer une formation</button>
     </header>
 
-    <!-- Filters -->
     <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
       <button class="forum-tab" :class="{ active: filter === 'all' }" @click="filter = 'all'">
         Tout · {{ trainings.length }}
@@ -211,7 +209,6 @@ function displayDate(date: string): string {
       </button>
     </div>
 
-    <!-- Table -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -255,7 +252,6 @@ function displayDate(date: string): string {
       <button class="primary medium" @click="openCreate">+ Créer une formation</button>
     </div>
 
-    <!-- Create / Edit modal -->
     <AppModal :open="showModal" size="medium" @close="close">
       <template #header>
         <h3>{{ editingId !== null ? 'Modifier la formation' : 'Créer une formation' }}</h3>

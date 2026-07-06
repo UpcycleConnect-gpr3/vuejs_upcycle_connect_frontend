@@ -20,8 +20,6 @@ onMounted(async () => {
   try {
     const contents = await getTrainingContents()
     if (Array.isArray(contents) && contents.length) {
-      // The Go TrainingContent model exposes name/content/type — no title/
-      // category/published_at.
       resources.value = contents.map((c) => ({
         type: ((c.type as string) ?? 'GUIDE').toUpperCase(),
         title: (c.name as string) ?? 'Ressource',

@@ -14,8 +14,8 @@ interface PEvent {
   id: number
   title: string
   kind: EventKind
-  start: string // "YYYY-MM-DD HH:mm" (may be empty for undated items)
-  duration: number // minutes
+  start: string
+  duration: number
   location: string
 }
 
@@ -83,8 +83,6 @@ onMounted(async () => {
   }
   try {
     const schedules = await getSchedules()
-    // The Go ContentSchedule model has no absolute datetime or location; only a
-    // relative day_number and a string duration. Surface day_number as the label.
     for (const s of schedules ?? []) {
       collected.push({
         id: Number(s.id) + 100000,
@@ -95,16 +93,12 @@ onMounted(async () => {
         location: `Jour ${s.day_number ?? 1}`,
       })
     }
-  } catch {
-    // keep mock + event steps
-  }
+  } catch {}
   if (collected.length) {
     events.value = collected
     jumpToFirstEvent()
   }
 })
-
-/* ── Date helpers ─────────────────────────────────────────────────────────── */
 
 function parseStart(s: string): Date | null {
   if (!s) return null
@@ -117,7 +111,7 @@ function parseStart(s: string): Date | null {
 
 function startOfWeek(date: Date): Date {
   const d = new Date(date)
-  const dow = (d.getDay() + 6) % 7 // Monday = 0
+  const dow = (d.getDay() + 6) % 7
   d.setDate(d.getDate() - dow)
   d.setHours(0, 0, 0, 0)
   return d
@@ -171,8 +165,6 @@ const weekRangeLabel = computed(() => {
   return `${rangeFmt.format(start)} – ${rangeFmtFull.format(end)}`
 })
 
-/* ── Week grid layout ─────────────────────────────────────────────────────── */
-
 const DAY_START_HOUR = 7
 const DAY_END_HOUR = 21
 const HOUR_HEIGHT = 52
@@ -197,7 +189,6 @@ function layoutDay(dayEvents: PEvent[]): PlacedEvent[] {
     })
     .sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin)
 
-  // Group transitively-overlapping events into clusters, assign columns inside each.
   let cluster: typeof items = []
   let clusterEnd = -1
   const finalize = () => {
@@ -249,13 +240,9 @@ const weekColumns = computed(() => {
   })
 })
 
-/* ── List view grouping ───────────────────────────────────────────────────── */
-
 const monthFmt = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
 
-const sorted = computed(() =>
-  [...datedEvents.value].sort((a, b) => a.start.localeCompare(b.start)),
-)
+const sorted = computed(() => [...datedEvents.value].sort((a, b) => a.start.localeCompare(b.start)))
 
 const groupedByMonth = computed(() => {
   const map: Record<string, PEvent[]> = {}
@@ -267,8 +254,6 @@ const groupedByMonth = computed(() => {
   }
   return map
 })
-
-/* ── Misc ─────────────────────────────────────────────────────────────────── */
 
 const kindColor: Record<EventKind, string> = {
   training: 'var(--purple-500)',
@@ -308,8 +293,7 @@ const stats = computed(() => {
       return d >= weekStart && d < weekEnd
     }).length,
     thisMonth: datedEvents.value.filter((e) => e.start.startsWith(monthKey)).length,
-    year: datedEvents.value.filter((e) => e.start.startsWith(String(today.getFullYear())))
-      .length,
+    year: datedEvents.value.filter((e) => e.start.startsWith(String(today.getFullYear()))).length,
   }
 })
 
@@ -359,25 +343,16 @@ function exportICS() {
       <div class="layout-flex layout-gap-medium">
         <button class="ghost medium" @click="exportICS">Exporter (.ics)</button>
         <div class="planning-view-toggle">
-          <button
-            type="button"
-            :class="{ 'is-active': view === 'week' }"
-            @click="view = 'week'"
-          >
+          <button type="button" :class="{ 'is-active': view === 'week' }" @click="view = 'week'">
             Agenda
           </button>
-          <button
-            type="button"
-            :class="{ 'is-active': view === 'list' }"
-            @click="view = 'list'"
-          >
+          <button type="button" :class="{ 'is-active': view === 'list' }" @click="view = 'list'">
             Liste
           </button>
         </div>
       </div>
     </header>
 
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-tile">
         <span class="stat-tile-label">À venir</span>
@@ -397,7 +372,6 @@ function exportICS() {
       </div>
     </div>
 
-    <!-- Legend -->
     <div class="planning-legend">
       <span v-for="(label, kind) in kindLabel" :key="kind" class="planning-legend-item">
         <span class="planning-legend-dot" :style="{ backgroundColor: kindColor[kind] }"></span>
@@ -405,7 +379,6 @@ function exportICS() {
       </span>
     </div>
 
-    <!-- Week / agenda view -->
     <section v-if="view === 'week'" class="planning-week">
       <div class="planning-week-toolbar">
         <div class="planning-week-nav">
@@ -435,7 +408,6 @@ function exportICS() {
 
       <div class="planning-grid-wrap">
         <div class="planning-grid">
-          <!-- Header row -->
           <div class="planning-grid-head">
             <div class="planning-time-gutter"></div>
             <div
@@ -449,7 +421,6 @@ function exportICS() {
             </div>
           </div>
 
-          <!-- Body -->
           <div class="planning-grid-body" :style="{ height: gridHeight + 'px' }">
             <div class="planning-time-gutter">
               <div
@@ -491,7 +462,6 @@ function exportICS() {
       </div>
     </section>
 
-    <!-- List view -->
     <section v-else class="layout-flex layout-columns layout-gap-extra-large">
       <p v-if="!sorted.length" class="muted">Aucun événement planifié.</p>
       <div v-for="(monthEvents, month) in groupedByMonth" :key="month">
@@ -523,7 +493,6 @@ function exportICS() {
       </div>
     </section>
 
-    <!-- Detail modal -->
     <AppModal
       :open="!!detailEvent"
       :title="detailEvent?.title"
