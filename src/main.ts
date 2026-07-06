@@ -17,5 +17,9 @@ app.use(router)
 
 const authStore = useAuthStore()
 authStore.restoreTokenFromCookies().finally(() => {
+  // Session restaurée : recharge le profil via GET /auth/me sans bloquer le mount.
+  if (authStore.isAuthenticated) {
+    authStore.loadProfile().catch(() => {})
+  }
   app.mount('#app')
 })

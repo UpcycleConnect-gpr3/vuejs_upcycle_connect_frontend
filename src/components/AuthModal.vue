@@ -40,9 +40,15 @@ const close = () => ui.close()
 const submitLogin = async () => {
   localError.value = ''
   try {
-    const res = await auth.login({ email: loginForm.email, password: loginForm.password })
-    if (res.totpRequired) {
-      totpHash.value = res.hash
+    const result = await auth.loginWithCredentials({
+      email: loginForm.email,
+      password: loginForm.password,
+    })
+    // Compte protégé par TOTP : le hash temporaire doit être échangé
+    // avec le code à 6 chiffres sur /auth/login-totp.
+    if (result.totp_required && result.hash) {
+      totpHash.value = result.hash
+      totpCode.value = ''
       step.value = 'totp'
       return
     }

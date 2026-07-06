@@ -3,23 +3,15 @@ import 'pinia-plugin-persistedstate'
 import { computed, ref } from 'vue'
 import type { Router } from 'vue-router'
 import { useApiErrors } from '@/composables/useApiErrors'
-import type { ApiError, ApiResponse } from '@/types/api'
-import { apiAuth } from '@/services/api'
-
-interface LoginPayload {
-  email: string
-  password: string
-}
-
-interface LoginResponse {
-  bearer_token?: string
-  totp_required: boolean
-  hash?: string
-}
-
-interface LoginTotpResponse {
-  bearer_token: string
-}
+import type { ApiError, Credentials, LoginResponse, LoginTotpPayload, User } from '@/types/api'
+import {
+  enableTotp as apiEnableTotp,
+  getMe as apiGetMe,
+  getTotpSetup as apiGetTotpSetup,
+  login as apiLogin,
+  loginTotp as apiLoginTotp,
+  register as apiRegister,
+} from '@/api/clients/authClient'
 
 declare const cookieStore: {
   set: (name: string, value: string, options?: { domain?: string; path?: string }) => Promise<void>
@@ -79,6 +71,7 @@ export const useAuthStore = defineStore(
   () => {
     const bearerToken = ref<string>('')
     const userEmail = ref<string>('')
+    const user = ref<User | null>(null)
     const isLoading = ref<boolean>(false)
     const error = ref<string | null>(null)
 
@@ -129,41 +122,55 @@ export const useAuthStore = defineStore(
       setFieldErrors(apiError)
     }
 
-/*    const login = async ({ email, password }: LoginPayload) => {
+    // Charge le profil de l'utilisateur connecté (GET /auth/me).
+    const fetchMe = async () => {
+      const me = await apiGetMe()
+      user.value = me
+      userEmail.value = me.email
+      return me
+    }
+
+    // Connexion par identifiants (POST /auth/login) — étape 1 du flow :
+    // - totp_required=false → le bearer_token est stocké, profil chargé, terminé ;
+    // - totp_required=true  → renvoie le hash temporaire, l'appelant doit
+    //   demander le code TOTP puis appeler loginTotp({hash, code}).
+    const loginWithCredentials = async ({ email, password }: Credentials): Promise<LoginResponse> => {
       clearError()
       setLoading(true)
       try {
-        const { data } = await apiAuth.post<ApiResponse<LoginResponse>>('/auth/login/', {
-          email,
-          password,
-        })
-        const result = data.data
-        if (result.totp_required) {
-          return { totpRequired: true as const, hash: result.hash ?? '' }
-        }
-        if (result.bearer_token) {
+        const result = await apiLogin({ email, password })
+        if (!result.totp_required && result.bearer_token) {
           await setToken(result.bearer_token)
-          userEmail.value = email
+          try {
+            await fetchMe()
+          } catch {
+            // Token stocké : la connexion reste valide même si /auth/me échoue.
+            userEmail.value = email
+          }
         }
-        return { totpRequired: false as const, hash: '' }
+        return result
       } catch (err) {
         handleApiError(err, 'Échec de la connexion')
         throw err
       } finally {
         setLoading(false)
       }
-    }*/
+    }
 
-    const loginTotp = async ({ hash, code }: { hash: string; code: string }) => {
+    // Étape 2 du flow (POST /auth/login-totp) : échange hash + code TOTP
+    // contre le bearer_token.
+    const loginTotp = async ({ hash, code }: LoginTotpPayload) => {
       clearError()
       setLoading(true)
       try {
-        const { data } = await apiAuth.post<ApiResponse<LoginTotpResponse>>('/auth/login-totp/', {
-          hash,
-          code,
-        })
-        await setToken(data.data.bearer_token)
-        return data.data
+        const result = await apiLoginTotp({ hash, code })
+        await setToken(result.bearer_token)
+        try {
+          await fetchMe()
+        } catch {
+          // Token stocké : la connexion reste valide même si /auth/me échoue.
+        }
+        return result
       } catch (err) {
         handleApiError(err, 'Code de vérification invalide')
         throw err
@@ -172,17 +179,58 @@ export const useAuthStore = defineStore(
       }
     }
 
-    const register = async ({ email, password }: LoginPayload) => {
+    const register = async ({ email, password }: Credentials) => {
       clearError()
       setLoading(true)
       try {
-        const { data } = await apiAuth.post<ApiResponse<{ user_id: string }>>('/auth/register/', {
-          email,
-          password,
-        })
-        return data.data
+        return await apiRegister({ email, password })
       } catch (err) {
         handleApiError(err, "Échec de l'inscription")
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // Rafraîchit le profil connecté avec gestion loading/erreur.
+    const loadProfile = async () => {
+      clearError()
+      setLoading(true)
+      try {
+        return await fetchMe()
+      } catch (err) {
+        handleApiError(err, 'Impossible de charger le profil')
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // Activation TOTP (utilisateur connecté) : GET /auth/totp génère le secret
+    // et renvoie l'URL otpauth:// à afficher en QR code.
+    const fetchTotpSetup = async () => {
+      clearError()
+      setLoading(true)
+      try {
+        return await apiGetTotpSetup()
+      } catch (err) {
+        handleApiError(err, "Impossible de générer le secret d'authentification")
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // POST /auth/totp : valide le code scanné et active le TOTP sur le compte.
+    const enableTotp = async (code: string) => {
+      clearError()
+      setLoading(true)
+      try {
+        const message = await apiEnableTotp(code)
+        if (user.value) user.value = { ...user.value, totp_enabled: true }
+        return message
+      } catch (err) {
+        handleApiError(err, "Code d'activation invalide")
         throw err
       } finally {
         setLoading(false)
@@ -192,6 +240,7 @@ export const useAuthStore = defineStore(
     const logout = async (router: Router) => {
       await clearToken()
       userEmail.value = ''
+      user.value = null
       await router.push({ name: 'login' })
     }
 
@@ -213,6 +262,7 @@ export const useAuthStore = defineStore(
     return {
       bearerToken,
       userEmail,
+      user,
       isLoading,
       error,
       fieldErrors,
@@ -223,17 +273,20 @@ export const useAuthStore = defineStore(
       setError,
       setLoading,
       login,
+      loginWithCredentials,
       loginTotp,
       register,
+      loadProfile,
+      fetchTotpSetup,
+      enableTotp,
       logout,
       restoreTokenFromCookies,
-      login,
     }
   },
   {
     persist: {
       storage: localStorage,
-      pick: ['bearerToken', 'userEmail'],
+      pick: ['bearerToken', 'userEmail', 'user'],
     },
   },
 )
