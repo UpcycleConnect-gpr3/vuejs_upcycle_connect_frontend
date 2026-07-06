@@ -8,7 +8,7 @@ import {
   ForumPage,
   LoginConfirmPage,
 } from '@/pages'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/authStore'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
 
 const router = createRouter({
@@ -21,7 +21,9 @@ const router = createRouter({
     { path: '/pricing', component: PricingPage },
     { path: '/billing/success', component: () => import('@/pages/BillingSuccessPage.vue') },
     { path: '/forum', component: ForumPage },
-    { path: '/login-confirm', component: LoginConfirmPage },
+    // Nommée « login » : cible de logout() et du guard requiresAuth.
+    // Sans token, la page renvoie d'elle-même vers le portail d'authentification.
+    { path: '/login-confirm', name: 'login', component: LoginConfirmPage },
     {
       path: '/forum/new',
       component: () => import('@/pages/forum/ForumNewPage.vue'),

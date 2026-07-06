@@ -1,4 +1,4 @@
-export { useAuthStore } from './auth'
+export { useAuthStore } from './authStore'
 export { useUserStore } from './userStore'
 export { useToastsStore } from './toasts'
 export { useUiAuthModalStore } from './uiAuthModal'

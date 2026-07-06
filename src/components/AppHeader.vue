@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/authStore'
+import { upcycleApiClient } from '@/api/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const handleLogin = async () => {
-  await authStore.login(router)
+  await authStore.login(router, upcycleApiClient)
 }
 
 const handleLogout = async () => {

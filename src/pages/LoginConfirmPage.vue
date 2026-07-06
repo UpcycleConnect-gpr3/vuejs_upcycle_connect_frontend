@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useAuthStore, getTokenFromCookies } from '@/stores/auth'
+import { useAuthStore, getTokenFromCookies } from '@/stores/authStore'
 import type { ApiResponse, User } from '@/types/api'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'

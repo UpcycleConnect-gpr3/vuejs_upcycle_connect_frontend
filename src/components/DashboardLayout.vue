@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import DashboardOnboarding from '@/components/DashboardOnboarding.vue'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/authStore'
 
 const auth = useAuthStore()
 const router = useRouter()

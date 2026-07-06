@@ -1,4 +1,4 @@
-import { apiForum } from '@/services/api'
+import { forumApiClient } from '../axios'
 import type { ApiResponse, ForumEvent, ForumEventPayload } from '@/types'
 
 // Backend forum : chaque chemin doit se terminer par `/` (matcher Go 1.22 {$}).
@@ -7,12 +7,12 @@ import type { ApiResponse, ForumEvent, ForumEventPayload } from '@/types'
 const BASE_PATH = '/events'
 
 export const getForumEvents = async (): Promise<ForumEvent[]> => {
-  const { data } = await apiForum.get<ApiResponse<ForumEvent[]>>(`${BASE_PATH}/`)
+  const { data } = await forumApiClient.get<ApiResponse<ForumEvent[]>>(`${BASE_PATH}/`)
   return data.data
 }
 
 export const createForumEvent = async (payload: ForumEventPayload): Promise<ForumEvent> => {
-  const { data } = await apiForum.post<ApiResponse<ForumEvent>>(`${BASE_PATH}/`, payload)
+  const { data } = await forumApiClient.post<ApiResponse<ForumEvent>>(`${BASE_PATH}/`, payload)
   return data.data
 }
 
@@ -21,10 +21,10 @@ export const updateForumEvent = async (
   id: number,
   payload: Partial<ForumEventPayload>,
 ): Promise<ForumEvent> => {
-  const { data } = await apiForum.put<ApiResponse<ForumEvent>>(`${BASE_PATH}/${id}/`, payload)
+  const { data } = await forumApiClient.put<ApiResponse<ForumEvent>>(`${BASE_PATH}/${id}/`, payload)
   return data.data
 }
 
 export const deleteForumEvent = async (id: number): Promise<void> => {
-  await apiForum.delete(`${BASE_PATH}/${id}/`)
+  await forumApiClient.delete(`${BASE_PATH}/${id}/`)
 }
