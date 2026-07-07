@@ -8,6 +8,7 @@ import { useObjectStore } from '@/stores/objectStore'
 import { useConversationStore } from '@/stores/conversationStore'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useToastsStore } from '@/stores/toasts'
+import { createObjectPayment } from '@/services/billing'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,8 +42,33 @@ const conditionLabel = (c?: string) => (c ? (CONDITION_LABELS[c] ?? c) : '—')
 
 const objectId = computed(() => String(route.params.id))
 const isContacting = ref(false)
+const isBuying = ref(false)
 
 const isDon = computed(() => !currentObject.value?.price)
+
+// Achat possible seulement si prix > 0 et que l'utilisateur n'est pas le vendeur.
+const canBuy = computed(
+  () =>
+    !isDon.value &&
+    !!currentObject.value &&
+    currentObject.value.user_id !== currentUserId.value,
+)
+
+const buyObject = async () => {
+  if (!currentObject.value) return
+  if (!currentUserId.value) {
+    await router.push('/login')
+    return
+  }
+  isBuying.value = true
+  try {
+    const { url } = await createObjectPayment(String(currentObject.value.id))
+    window.location.href = url
+  } catch {
+    toasts.error('Impossible de démarrer le paiement pour le moment.')
+    isBuying.value = false
+  }
+}
 
 const imageUrls = computed(() => {
   const raw = currentObject.value?.image_path
@@ -155,8 +181,16 @@ onMounted(() => {
 
             <div class="layout-flex layout-gap-medium">
               <button
-                v-if="seller"
+                v-if="canBuy"
                 class="primary medium"
+                :disabled="isBuying"
+                @click="buyObject"
+              >
+                {{ isBuying ? 'Redirection…' : `Acheter · ${currentObject.price}€` }}
+              </button>
+              <button
+                v-if="seller"
+                :class="canBuy ? 'secondary medium' : 'primary medium'"
                 :disabled="isContacting"
                 @click="contactSeller"
               >

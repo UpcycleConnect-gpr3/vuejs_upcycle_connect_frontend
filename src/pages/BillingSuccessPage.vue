@@ -3,11 +3,12 @@ import { ref, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
-import { getCheckoutStatus } from '@/services/billing'
+import { getCheckoutStatus, getPaymentStatus } from '@/services/billing'
 
 const route = useRoute()
 
 const state = ref<'loading' | 'paid' | 'pending' | 'error'>('loading')
+const isAnnonce = route.query.kind === 'annonce'
 
 onMounted(async () => {
   const sessionId = route.query.session_id as string | undefined
@@ -16,9 +17,11 @@ onMounted(async () => {
     return
   }
 
+  const fetchStatus = isAnnonce ? getPaymentStatus : getCheckoutStatus
+
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
-      const { status } = await getCheckoutStatus(sessionId)
+      const { status } = await fetchStatus(sessionId)
       if (status === 'paid') {
         state.value = 'paid'
         return
@@ -54,13 +57,17 @@ onMounted(async () => {
 
           <template v-else-if="state === 'paid'">
             <span class="billing-result-icon billing-result-icon--ok">✓</span>
-            <h1 class="center">Abonnement activé 🎉</h1>
+            <h1 class="center">{{ isAnnonce ? 'Achat confirmé 🎉' : 'Abonnement activé 🎉' }}</h1>
             <p class="muted measure center">
-              Votre paiement a bien été confirmé. Votre abonnement est actif.
+              {{
+                isAnnonce
+                  ? 'Votre paiement a bien été confirmé. Le vendeur va être notifié de votre achat.'
+                  : 'Votre paiement a bien été confirmé. Votre abonnement est actif.'
+              }}
             </p>
-            <RouterLink to="/dashboard" class="primary large"
-              >Accéder au tableau de bord</RouterLink
-            >
+            <RouterLink :to="isAnnonce ? '/annonces' : '/dashboard'" class="primary large">{{
+              isAnnonce ? 'Retour aux annonces' : 'Accéder au tableau de bord'
+            }}</RouterLink>
           </template>
 
           <template v-else-if="state === 'pending'">
