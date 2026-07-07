@@ -60,3 +60,11 @@ export const createProjectStep = async (id: number, payload: StepPayload): Promi
   )
   return data.data
 }
+
+export const featureProject = async (id: number): Promise<void> => {
+  await upcycleApiClient.post(`${BASE_PATH}/${id}/feature`)
+}
+
+export const unfeatureProject = async (id: number): Promise<void> => {
+  await upcycleApiClient.delete(`${BASE_PATH}/${id}/feature`)
+}

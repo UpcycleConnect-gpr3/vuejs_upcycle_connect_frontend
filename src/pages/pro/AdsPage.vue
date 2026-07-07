@@ -1,99 +1,93 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
+import { getAds, createAd, updateAd, deleteAd } from '@/api/clients/adClient'
+import { useToastsStore } from '@/stores/toasts'
+import type { Ad } from '@/types'
 
-type CampaignStatus = 'active' | 'terminée' | 'en attente'
+const toasts = useToastsStore()
 
-interface Campaign {
-  id: number
-  name: string
-  sponsoredItem: string
-  budget: number
-  startDate: string
-  endDate: string
-  status: CampaignStatus
-  impressions: number
-}
-
-const campaigns = ref<Campaign[]>([
-  {
-    id: 1,
-    name: 'Promo Lampe Bocaux',
-    sponsoredItem: 'Projet : Lampe upcyclée bocaux',
-    budget: 150,
-    startDate: '2026-06-01',
-    endDate: '2026-06-30',
-    status: 'terminée',
-    impressions: 3240,
-  },
-  {
-    id: 2,
-    name: 'Boost Étagère Acier',
-    sponsoredItem: 'Projet : Étagère tuyaux acier',
-    budget: 200,
-    startDate: '2026-06-15',
-    endDate: '2026-07-15',
-    status: 'active',
-    impressions: 1875,
-  },
-  {
-    id: 3,
-    name: 'Mise en avant annonce cuir',
-    sponsoredItem: 'Annonce : Chutes de cuir naturel',
-    budget: 100,
-    startDate: '2026-07-01',
-    endDate: '2026-07-31',
-    status: 'en attente',
-    impressions: 0,
-  },
-])
-
-const statusMeta: Record<CampaignStatus, { badge: string }> = {
-  active: { badge: 'badge--success' },
-  terminée: { badge: 'badge--muted' },
-  'en attente': { badge: 'badge--accent' },
-}
-
+const ads = ref<Ad[]>([])
+const isLoading = ref(false)
+const isSaving = ref(false)
 const showNewModal = ref(false)
 
-const form = reactive({
-  name: '',
-  sponsoredItem: '',
-  budget: 100,
-  startDate: '',
-  endDate: '',
-})
+const form = reactive({ title: '', description: '', budget: 100 })
 
-function createCampaign() {
-  if (!form.name || !form.sponsoredItem || !form.startDate || !form.endDate) return
-  campaigns.value.unshift({
-    id: Date.now(),
-    name: form.name,
-    sponsoredItem: form.sponsoredItem,
-    budget: form.budget,
-    startDate: form.startDate,
-    endDate: form.endDate,
-    status: 'en attente',
-    impressions: 0,
-  })
-  Object.assign(form, { name: '', sponsoredItem: '', budget: 100, startDate: '', endDate: '' })
-  showNewModal.value = false
+const totalBudget = computed(() => ads.value.reduce((sum, a) => sum + a.budget, 0))
+const activeCount = computed(() => ads.value.filter((a) => a.status === 'active').length)
+
+const statusLabel = (s: string) => (s === 'active' ? 'Active' : 'En pause')
+
+const load = async () => {
+  isLoading.value = true
+  try {
+    ads.value = await getAds()
+  } catch {
+    toasts.error('Impossible de charger les publicités.')
+  } finally {
+    isLoading.value = false
+  }
 }
 
-const totalBudget = () => campaigns.value.reduce((sum, c) => sum + c.budget, 0)
-const totalImpressions = () => campaigns.value.reduce((sum, c) => sum + c.impressions, 0)
+const submitCreate = async () => {
+  if (!form.title.trim()) return
+  isSaving.value = true
+  try {
+    await createAd({
+      title: form.title.trim(),
+      description: form.description.trim(),
+      budget: form.budget,
+      status: 'active',
+    })
+    toasts.success('Publicité créée')
+    showNewModal.value = false
+    Object.assign(form, { title: '', description: '', budget: 100 })
+    await load()
+  } catch {
+    toasts.error('Création impossible.')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const toggleStatus = async (ad: Ad) => {
+  const next = ad.status === 'active' ? 'paused' : 'active'
+  try {
+    await updateAd(ad.id, {
+      title: ad.title,
+      description: ad.description,
+      budget: ad.budget,
+      status: next,
+    })
+    await load()
+  } catch {
+    toasts.error('Mise à jour impossible.')
+  }
+}
+
+const remove = async (ad: Ad) => {
+  try {
+    await deleteAd(ad.id)
+    toasts.success('Publicité supprimée')
+    await load()
+  } catch {
+    toasts.error('Suppression impossible.')
+  }
+}
+
+onMounted(load)
 </script>
 
 <template>
   <ProDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Sponsoring</span>
-        <h1>Publicité & campagnes</h1>
+        <span class="eyebrow">Publicité</span>
+        <h1>Mes campagnes</h1>
         <p class="muted measure">
-          Boostez la visibilité de vos annonces et projets grâce aux campagnes sponsorisées
-          UpcycleConnect.
+          Sponsorisez vos objets et projets pour gagner en visibilité auprès de la communauté.
         </p>
       </div>
       <button class="primary medium" @click="showNewModal = true">+ Nouvelle campagne</button>
@@ -102,161 +96,94 @@ const totalImpressions = () => campaigns.value.reduce((sum, c) => sum + c.impres
     <div class="stats-row">
       <div class="stat-tile">
         <span class="stat-tile-label">Campagnes actives</span>
-        <span class="stat-tile-value">{{
-          campaigns.filter((c) => c.status === 'active').length
-        }}</span>
+        <span class="stat-tile-value">{{ activeCount }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Budget total investi</span>
-        <div class="stat-tile-value-row">
-          <span class="stat-tile-value mono">{{ totalBudget() }}€</span>
+        <span class="stat-tile-label">Budget total</span>
+        <span class="stat-tile-value">{{ totalBudget }}€</span>
+      </div>
+    </div>
+
+    <p v-if="isLoading && !ads.length" class="muted">Chargement…</p>
+
+    <div v-else-if="ads.length" class="dashboard-grid">
+      <article v-for="ad in ads" :key="ad.id" class="dashboard-card">
+        <div class="card-header">
+          <div class="layout-flex layout-gap-small">
+            <span class="badge" :class="ad.status === 'active' ? 'badge--success' : 'badge--muted'">
+              {{ statusLabel(ad.status) }}
+            </span>
+          </div>
+          <h4 style="margin-top: var(--space-1)">{{ ad.title }}</h4>
         </div>
-        <p class="small muted">Toutes campagnes</p>
-      </div>
-      <div class="stat-tile">
-        <span class="stat-tile-label">Impressions totales</span>
-        <span class="stat-tile-value mono">{{ totalImpressions().toLocaleString('fr-FR') }}</span>
-        <p class="small muted">Vues cumulées</p>
-      </div>
-      <div class="stat-tile">
-        <span class="stat-tile-label">En attente</span>
-        <div class="stat-tile-value-row">
-          <span class="stat-tile-value">{{
-            campaigns.filter((c) => c.status === 'en attente').length
-          }}</span>
-          <span v-if="campaigns.some((c) => c.status === 'en attente')" class="badge badge--accent"
-            >Action</span
-          >
+        <p class="small muted">{{ ad.description || 'Sans description' }}</p>
+        <div class="tiny muted" style="margin-top: var(--space-2)">Budget : {{ ad.budget }}€</div>
+        <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3); flex-wrap: wrap">
+          <button class="ghost small" @click="toggleStatus(ad)">
+            {{ ad.status === 'active' ? '⏸ Mettre en pause' : '▶ Activer' }}
+          </button>
+          <button class="ghost small" @click="remove(ad)">Supprimer</button>
         </div>
-      </div>
+      </article>
     </div>
 
-    <div class="alert alert--accent">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 8v4M12 16h.01" />
-      </svg>
-      <span
-        >Les campagnes sponsorisées coûtent entre 100 et 500€ selon la durée et le type de mise en
-        avant. Votre contenu est validé sous 48h avant diffusion.</span
-      >
-    </div>
-
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Campagne</th>
-            <th>Objet / Projet sponsorisé</th>
-            <th>Budget</th>
-            <th>Période</th>
-            <th>Impressions</th>
-            <th>Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="c in campaigns" :key="c.id">
-            <td style="font-weight: 600">{{ c.name }}</td>
-            <td class="small muted">{{ c.sponsoredItem }}</td>
-            <td class="mono" style="font-weight: 700">{{ c.budget }}€</td>
-            <td class="small mono">{{ c.startDate }} → {{ c.endDate }}</td>
-            <td class="mono">
-              {{ c.impressions > 0 ? c.impressions.toLocaleString('fr-FR') : '—' }}
-            </td>
-            <td>
-              <span class="badge" :class="statusMeta[c.status].badge">{{ c.status }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div v-if="campaigns.length === 0" class="empty-state">
-      <p>Vous n'avez encore aucune campagne. Boostez votre visibilité dès maintenant !</p>
+    <div v-else class="empty-state">
+      <p>Aucune campagne pour l'instant.</p>
       <button class="primary medium" @click="showNewModal = true">
         + Créer ma première campagne
       </button>
     </div>
 
-    <AppModal :open="showNewModal" size="medium" @close="showNewModal = false">
-      <template #header>
-        <h3>Nouvelle campagne sponsorisée</h3>
-      </template>
-
-      <form class="layout-flex layout-columns layout-gap-medium" @submit.prevent="createCampaign">
+    <AppModal
+      :open="showNewModal"
+      size="medium"
+      title="Nouvelle campagne"
+      @close="showNewModal = false"
+    >
+      <form
+        id="new-ad-form"
+        class="layout-flex layout-columns layout-gap-medium"
+        @submit.prevent="submitCreate"
+      >
         <div class="form-group">
-          <label class="uppercase">Nom de la campagne</label>
+          <label class="uppercase">Titre de la campagne</label>
           <input
-            v-model="form.name"
+            v-model="form.title"
             type="text"
             class="primary medium full-width"
-            placeholder="Ex : Boost été 2026"
+            placeholder="Ex : Mise en avant chaise design"
             required
           />
         </div>
-
         <div class="form-group">
-          <label class="uppercase">Objet ou projet à sponsoriser</label>
+          <label class="uppercase">Description</label>
+          <textarea
+            v-model="form.description"
+            class="primary full-width"
+            rows="3"
+            placeholder="Objet ou projet sponsorisé, message…"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="uppercase">Budget (€)</label>
           <input
-            v-model="form.sponsoredItem"
-            type="text"
+            v-model.number="form.budget"
+            type="number"
+            min="0"
+            step="10"
             class="primary medium full-width"
-            placeholder="Ex : Projet Lampe bocaux / Annonce cuir"
-            required
           />
-        </div>
-
-        <div class="layout-flex layout-gap-medium">
-          <div class="form-group" style="flex: 1">
-            <label class="uppercase">Budget (€)</label>
-            <input
-              v-model.number="form.budget"
-              type="number"
-              min="100"
-              max="500"
-              step="50"
-              class="primary medium full-width"
-            />
-            <span class="tiny muted">Entre 100€ et 500€</span>
-          </div>
-        </div>
-
-        <div class="layout-flex layout-gap-medium">
-          <div class="form-group" style="flex: 1">
-            <label class="uppercase">Date de début</label>
-            <input
-              v-model="form.startDate"
-              type="date"
-              class="primary medium full-width"
-              required
-            />
-          </div>
-          <div class="form-group" style="flex: 1">
-            <label class="uppercase">Date de fin</label>
-            <input v-model="form.endDate" type="date" class="primary medium full-width" required />
-          </div>
-        </div>
-
-        <div class="alert alert--accent">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4M12 16h.01" />
-          </svg>
-          <span
-            >Votre campagne sera examinée par l'équipe avant diffusion (48h). Le budget est débité à
-            la validation.</span
-          >
         </div>
       </form>
-
       <template #footer>
         <button class="ghost medium" @click="showNewModal = false">Annuler</button>
         <button
+          type="submit"
+          form="new-ad-form"
           class="primary medium"
-          :disabled="!form.name || !form.sponsoredItem || !form.startDate || !form.endDate"
-          @click="createCampaign"
+          :disabled="isSaving || !form.title.trim()"
         >
-          Soumettre la campagne
+          {{ isSaving ? 'Création…' : 'Lancer la campagne' }}
         </button>
       </template>
     </AppModal>

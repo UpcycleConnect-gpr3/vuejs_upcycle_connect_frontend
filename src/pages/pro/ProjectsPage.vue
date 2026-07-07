@@ -47,6 +47,11 @@ const removeProject = async (project: Project) => {
   if (ok !== null) toasts.success('Projet supprimé')
 }
 
+const toggleFeatured = async (project: Project) => {
+  const ok = await projectStore.setFeatured(project.id, !project.featured)
+  if (ok) toasts.success(project.featured ? 'Retiré de la vitrine' : 'Projet mis en avant')
+}
+
 const addStep = async () => {
   if (!selectedProject.value || !stepForm.name.trim()) return
   isSaving.value = true
@@ -90,14 +95,20 @@ onMounted(() => {
     <div v-else-if="projects.length" class="dashboard-grid">
       <article v-for="project in projects" :key="project.id" class="dashboard-card">
         <div class="card-header">
-          <h4>{{ project.name }}</h4>
+          <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
+            <span v-if="project.featured" class="badge badge--success">⭐ Mis en avant</span>
+          </div>
+          <h4 style="margin-top: var(--space-1)">{{ project.name }}</h4>
         </div>
         <p class="small muted">{{ project.description || 'Sans description' }}</p>
         <div class="tiny muted" style="margin-top: var(--space-2)">
           Créé le {{ (project.created_at ?? '').slice(0, 10) }}
         </div>
-        <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3)">
+        <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3); flex-wrap: wrap">
           <button class="ghost small" @click="openDetail(project)">Voir les étapes</button>
+          <button class="ghost small" @click="toggleFeatured(project)">
+            {{ project.featured ? '✕ Retirer de la vitrine' : '⭐ Mettre en avant' }}
+          </button>
           <button class="ghost small" @click="removeProject(project)">Supprimer</button>
         </div>
       </article>

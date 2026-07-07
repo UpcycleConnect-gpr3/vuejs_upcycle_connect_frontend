@@ -102,6 +102,46 @@ export interface Project extends Timestamps {
   description: string
   image_path: string
   user_id: string
+  featured?: boolean
+}
+
+export interface Ad {
+  id: number
+  user_id: string
+  title: string
+  description: string
+  budget: number
+  status: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AdPayload {
+  title: string
+  description: string
+  budget: number
+  status: string
+}
+
+export interface CategoryCount {
+  category: string
+  count: number
+}
+
+export interface UserStats {
+  objects_count: number
+  projects_count: number
+  co2_total: number
+  by_category: CategoryCount[]
+}
+
+export interface Subscription {
+  id: string
+  user_id: string
+  price_id: string
+  status: string
+  created_at: string
+  updated_at: string
 }
 
 export type ProjectPayload = Omit<Project, 'id' | 'created_at' | 'updated_at'>

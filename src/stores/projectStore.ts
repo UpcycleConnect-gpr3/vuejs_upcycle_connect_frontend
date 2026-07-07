@@ -6,6 +6,8 @@ import {
   createProject,
   createProjectStep,
   deleteProject,
+  featureProject,
+  unfeatureProject,
   getProjectById,
   getProjectObjects,
   getProjects,
@@ -97,6 +99,19 @@ export const useProjectStore = defineStore(
       return data
     }
 
+    const setFeatured = async (id: number, featured: boolean) => {
+      const result = await request(
+        () => (featured ? featureProject(id) : unfeatureProject(id)).then(() => true),
+        'Impossible de mettre à jour la mise en avant',
+      )
+      if (result) {
+        const idx = projects.value.findIndex((p) => p.id === id)
+        const existing = projects.value[idx]
+        if (idx !== -1 && existing) projects.value[idx] = { ...existing, featured }
+      }
+      return result
+    }
+
     const getProjectFromStore = (id: number): Project | undefined =>
       projects.value.find((p) => p.id === id)
 
@@ -116,6 +131,7 @@ export const useProjectStore = defineStore(
       associateObject,
       fetchProjectSteps,
       addProjectStep,
+      setFeatured,
       getProjectFromStore,
     }
   },

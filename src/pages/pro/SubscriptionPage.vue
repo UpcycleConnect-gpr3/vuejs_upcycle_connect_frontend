@@ -1,53 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { createSubscriptionCheckout } from '@/services/billing'
+import { getMySubscription } from '@/api/clients/statsClient'
 import { useToastsStore } from '@/stores/toasts'
+import type { Subscription } from '@/types'
 
 const toasts = useToastsStore()
+const PRICE_BASIC = import.meta.env.VITE_STRIPE_PRICE_BASIC
+const PRICE_BUSINESS = import.meta.env.VITE_STRIPE_PRICE_BUSINESS
 const PRICE_IDS: Record<'starter' | 'premium', string> = {
-  starter: import.meta.env.VITE_STRIPE_PRICE_BASIC,
-  premium: import.meta.env.VITE_STRIPE_PRICE_BUSINESS,
+  starter: PRICE_BASIC,
+  premium: PRICE_BUSINESS,
 }
 
-type InvoiceStatus = 'payée' | 'en attente' | 'échouée'
+const subscription = ref<Subscription | null>(null)
 
-interface Invoice {
-  id: string
-  date: string
-  number: string
-  amount: number
-  status: InvoiceStatus
-}
+// Formule deduite du price_id renvoye par l'API.
+const currentPlan = computed(() => {
+  const sub = subscription.value
+  if (!sub) return null
+  if (sub.price_id === PRICE_BUSINESS) return { name: 'Business', price: 30 }
+  if (sub.price_id === PRICE_BASIC) return { name: 'Basic', price: 15 }
+  return { name: 'Abonnement', price: 0 }
+})
 
-const currentPlan = {
-  name: 'Premium',
-  price: 29,
-  billingCycle: 'mensuel',
-  nextRenewal: '2026-07-15',
-  features: [
-    'Accès prioritaire aux annonces',
-    'Alertes de collecte en temps réel',
-    'Statistiques avancées',
-    'Mise en avant de 3 projets / mois',
-    'Support prioritaire',
-  ],
-}
+const isActive = computed(() => subscription.value?.status === 'active')
 
-const invoices = ref<Invoice[]>([
-  { id: '1', date: '2026-06-15', number: 'FAC-2026-0142', amount: 29, status: 'payée' },
-  { id: '2', date: '2026-05-15', number: 'FAC-2026-0118', amount: 29, status: 'payée' },
-  { id: '3', date: '2026-04-15', number: 'FAC-2026-0091', amount: 29, status: 'payée' },
-  { id: '4', date: '2026-03-15', number: 'FAC-2026-0064', amount: 15, status: 'payée' },
-  { id: '5', date: '2026-02-15', number: 'FAC-2026-0037', amount: 15, status: 'payée' },
-])
-
-const invoiceStatusMeta: Record<InvoiceStatus, { badge: string }> = {
-  payée: { badge: 'badge--success' },
-  'en attente': { badge: 'badge--accent' },
-  échouée: { badge: 'badge--danger' },
-}
+onMounted(async () => {
+  try {
+    subscription.value = await getMySubscription()
+  } catch {
+    // pas d'abonnement / non disponible
+  }
+})
 
 const showChangeModal = ref(false)
 const showCancelModal = ref(false)
@@ -91,10 +78,6 @@ async function confirmPlanChange() {
 function confirmCancel() {
   showCancelModal.value = false
 }
-
-function downloadPdf(invoice: Invoice) {
-  console.info('Téléchargement simulé :', invoice.number)
-}
 </script>
 
 <template>
@@ -112,48 +95,30 @@ function downloadPdf(invoice: Invoice) {
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Formule actuelle</h3>
       <div class="dashboard-card">
-        <div
-          class="layout-flex layout-justify-between"
-          style="flex-wrap: wrap; gap: var(--space-4)"
-        >
-          <div>
-            <div
-              class="layout-flex layout-gap-small"
-              style="align-items: center; margin-bottom: var(--space-2)"
-            >
-              <h2 style="margin: 0">{{ currentPlan.name }}</h2>
-              <span class="badge badge--success">Actif</span>
-            </div>
-            <div
-              class="mono"
-              style="
-                font-size: var(--font-size-xlarge);
-                font-weight: 700;
-                margin-bottom: var(--space-2);
-              "
-            >
-              {{ currentPlan.price }}€ / mois
-            </div>
-            <div class="small muted">
-              Prochain renouvellement : <span class="mono">{{ currentPlan.nextRenewal }}</span>
-            </div>
+        <div v-if="currentPlan">
+          <div
+            class="layout-flex layout-gap-small"
+            style="align-items: center; margin-bottom: var(--space-2)"
+          >
+            <h2 style="margin: 0">{{ currentPlan.name }}</h2>
+            <span class="badge" :class="isActive ? 'badge--success' : 'badge--muted'">
+              {{ isActive ? 'Actif' : 'En attente' }}
+            </span>
           </div>
-          <ul class="layout-flex layout-columns layout-gap-small">
-            <li
-              v-for="f in currentPlan.features"
-              :key="f"
-              class="small"
-              style="display: flex; gap: var(--space-2)"
-            >
-              <span style="color: var(--lime-500)">✓</span>
-              {{ f }}
-            </li>
-          </ul>
+          <div class="mono" style="font-size: var(--font-size-xlarge); font-weight: 700">
+            {{ currentPlan.price }}€ / mois
+          </div>
         </div>
+        <p v-else class="muted">
+          Vous n'avez pas d'abonnement actif. Choisissez une formule pour accéder aux outils Pro.
+        </p>
 
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-4)">
-          <button class="primary medium" @click="showChangeModal = true">Changer de formule</button>
+          <button class="primary medium" @click="showChangeModal = true">
+            {{ currentPlan ? 'Changer de formule' : 'Choisir une formule' }}
+          </button>
           <button
+            v-if="currentPlan"
             class="ghost medium"
             style="color: var(--destructive-color)"
             @click="showCancelModal = true"
@@ -161,38 +126,6 @@ function downloadPdf(invoice: Invoice) {
             Résilier l'abonnement
           </button>
         </div>
-      </div>
-    </section>
-
-    <section class="layout-flex layout-columns layout-gap-medium">
-      <h3>Historique de facturation</h3>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Numéro</th>
-              <th>Montant</th>
-              <th>Statut</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="inv in invoices" :key="inv.id">
-              <td class="mono small">{{ inv.date }}</td>
-              <td class="mono small">{{ inv.number }}</td>
-              <td class="mono" style="font-weight: 700">{{ inv.amount }}€</td>
-              <td>
-                <span class="badge" :class="invoiceStatusMeta[inv.status].badge">{{
-                  inv.status
-                }}</span>
-              </td>
-              <td>
-                <button class="ghost small" @click="downloadPdf(inv)">Télécharger PDF</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
@@ -263,8 +196,8 @@ function downloadPdf(invoice: Invoice) {
             <path d="M12 8v4M12 16h.01" />
           </svg>
           <span>
-            En résiliant, vous perdrez l'accès aux fonctionnalités Premium à la fin de la période en
-            cours ({{ currentPlan.nextRenewal }}).
+            En résiliant, vous perdrez l'accès aux fonctionnalités Pro à la fin de la période en
+            cours.
           </span>
         </div>
         <p class="muted small">
