@@ -55,10 +55,17 @@ export interface UpcycleObject extends Timestamps {
   price: number
   image_path: string
   column_for_calc_the_score: string
+  category: string
+  condition: string
   quantity: number
   user_id: string
   score: number
   is_ad_validated: boolean
+}
+
+export interface ScoreConfig {
+  categories: Record<string, number>
+  conditions: Record<string, number>
 }
 
 export type ObjectPayload = Omit<UpcycleObject, 'created_at' | 'updated_at'>

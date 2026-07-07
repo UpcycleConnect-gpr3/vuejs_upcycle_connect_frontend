@@ -20,6 +20,25 @@ const { currentUserId } = useCurrentUser()
 
 const UPCYCLE_URL = import.meta.env.VITE_UPCYCLE_URL ?? 'http://localhost:4343'
 
+const CATEGORY_LABELS: Record<string, string> = {
+  clothing: 'Vêtements',
+  electronics: 'Électronique',
+  furniture: 'Mobilier',
+  books: 'Livres',
+  toys: 'Jouets',
+  appliances: 'Électroménager',
+  sports: 'Sport',
+  other: 'Autre',
+}
+const CONDITION_LABELS: Record<string, string> = {
+  new: 'Neuf',
+  like_new: 'Comme neuf',
+  good: 'Bon état',
+  used: 'Usagé',
+}
+const categoryLabel = (c?: string) => (c ? (CATEGORY_LABELS[c] ?? c) : '—')
+const conditionLabel = (c?: string) => (c ? (CONDITION_LABELS[c] ?? c) : '—')
+
 const objectId = computed(() => String(route.params.id))
 const isContacting = ref(false)
 
@@ -35,14 +54,23 @@ const imageUrls = computed(() => {
     .map((p) => (p.startsWith('http') ? p : `${UPCYCLE_URL}/${p.replace(/^\//, '')}`))
 })
 
-const seller = computed(
-  () => currentObjectUsers.value.find((u) => u.id !== currentUserId.value) ?? null,
-)
+const seller = computed(() => {
+  const linked = currentObjectUsers.value.find((u) => u.id !== currentUserId.value)
+  if (linked) return linked
+  const ownerId = currentObject.value?.user_id
+  if (ownerId && ownerId !== currentUserId.value) {
+    return { id: ownerId, username: 'le vendeur' }
+  }
+  return null
+})
 
 const contactSeller = async () => {
-  if (!seller.value) return
+  if (!seller.value || !currentObject.value) return
   isContacting.value = true
-  const conversation = await conversationStore.startConversation(seller.value.id)
+  const conversation = await conversationStore.startConversation(
+    seller.value.id,
+    `Annonce : ${currentObject.value.name}`,
+  )
   isContacting.value = false
   if (conversation) {
     await router.push('/dashboard/messages')
@@ -102,8 +130,14 @@ onMounted(() => {
                 }}</span>
               </div>
               <div>
-                <span class="tiny uppercase muted">Upcycling score</span>
-                <span>{{ currentObject.score || '—' }}</span>
+                <span class="tiny uppercase muted">Upcycler Score</span>
+                <span class="annonce-detail-score">{{
+                  currentObject.score > 0 ? `🌱 ${currentObject.score} kg CO₂` : '—'
+                }}</span>
+              </div>
+              <div>
+                <span class="tiny uppercase muted">Catégorie / État</span>
+                <span>{{ categoryLabel(currentObject.category) }} · {{ conditionLabel(currentObject.condition) }}</span>
               </div>
               <div>
                 <span class="tiny uppercase muted">Livraison</span>
