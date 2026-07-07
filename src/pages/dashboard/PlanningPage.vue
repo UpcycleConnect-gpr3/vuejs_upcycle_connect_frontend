@@ -1,12 +1,33 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { getEventSteps } from '@/services/upcycle'
 import { getSchedules } from '@/services/training'
+import { useAppointmentStore } from '@/stores/appointmentStore'
 import { useToastsStore } from '@/stores/toasts'
+import type { Appointment } from '@/types'
 
 const toasts = useToastsStore()
+const appointmentStore = useAppointmentStore()
+
+const APPOINTMENT_ID_OFFSET = 200000
+const KIND_VALUES = ['training', 'workshop', 'event', 'deposit'] as const
+
+function appointmentToEvent(a: Appointment): PEvent {
+  const start = (a.starts_at ?? '').replace('T', ' ').slice(0, 16)
+  const startDate = new Date(a.starts_at.replace(' ', 'T'))
+  const endDate = new Date(a.ends_at.replace(' ', 'T'))
+  const duration = Math.max(15, Math.round((endDate.getTime() - startDate.getTime()) / 60000) || 60)
+  return {
+    id: APPOINTMENT_ID_OFFSET + a.id,
+    title: a.title,
+    kind: (KIND_VALUES as readonly string[]).includes(a.kind) ? (a.kind as EventKind) : 'event',
+    start,
+    duration,
+    location: a.location,
+  }
+}
 
 type EventKind = 'training' | 'workshop' | 'event' | 'deposit'
 
@@ -71,15 +92,25 @@ onMounted(async () => {
     for (const s of steps ?? []) {
       collected.push({
         id: Number(s.id),
-        title: s.title ?? 'Événement',
+        title: ((s.name as string) || (s.title as string)) ?? 'Événement',
         kind: 'event',
-        start: ((s.start_at as string) ?? '').replace('T', ' ').slice(0, 16),
+        start: (((s.scheduled_at as string) || (s.start_at as string)) ?? '')
+          .replace('T', ' ')
+          .slice(0, 16),
         duration: (s.duration as number) ?? 60,
         location: (s.location as string) ?? '',
       })
     }
   } catch {
     toasts.error('Événements indisponibles, affichage des données de démonstration.')
+  }
+  try {
+    await appointmentStore.fetchAppointments()
+    for (const a of appointmentStore.appointments) {
+      collected.push(appointmentToEvent(a))
+    }
+  } catch {
+    toasts.error('Rendez-vous indisponibles.')
   }
   try {
     const schedules = await getSchedules()
@@ -299,9 +330,54 @@ const stats = computed(() => {
 
 const detailEvent = ref<PEvent | null>(null)
 
-function unsubscribe() {
+const showAdd = ref(false)
+const isSaving = ref(false)
+const addForm = reactive({
+  title: '',
+  kind: 'event' as EventKind,
+  date: '',
+  duration: 60,
+  location: '',
+})
+
+async function submitAdd() {
+  if (!addForm.title.trim() || !addForm.date) return
+  isSaving.value = true
+  const startsAt = addForm.date.replace('T', ' ') + ':00'
+  const endDate = new Date(new Date(addForm.date).getTime() + addForm.duration * 60000)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const endsAt = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())} ${pad(endDate.getHours())}:${pad(endDate.getMinutes())}:00`
+  const created = await appointmentStore.addAppointment({
+    title: addForm.title.trim(),
+    kind: addForm.kind,
+    location: addForm.location.trim(),
+    starts_at: startsAt,
+    ends_at: endsAt,
+  })
+  isSaving.value = false
+  if (created) {
+    const newEvent = appointmentToEvent(created)
+    events.value.push(newEvent)
+    const startDate = parseStart(newEvent.start)
+    if (startDate) currentWeekStart.value = startOfWeek(startDate)
+    view.value = 'week'
+    toasts.success('Rendez-vous ajouté au planning')
+    showAdd.value = false
+    Object.assign(addForm, { title: '', kind: 'event', date: '', duration: 60, location: '' })
+  } else {
+    toasts.error(appointmentStore.error ?? 'Impossible d’ajouter le rendez-vous.')
+  }
+}
+
+async function unsubscribe() {
   if (!detailEvent.value) return
-  events.value = events.value.filter((e) => e.id !== detailEvent.value!.id)
+  const removedId = detailEvent.value.id
+  if (removedId >= APPOINTMENT_ID_OFFSET) {
+    const ok = await appointmentStore.removeAppointment(removedId - APPOINTMENT_ID_OFFSET)
+    if (!ok) return
+  }
+  events.value = events.value.filter((e) => e.id !== removedId)
+  toasts.success('Désinscription enregistrée')
   detailEvent.value = null
 }
 
@@ -342,6 +418,7 @@ function exportICS() {
       </div>
       <div class="layout-flex layout-gap-medium">
         <button class="ghost medium" @click="exportICS">Exporter (.ics)</button>
+        <button class="primary medium" @click="showAdd = true">+ Ajouter</button>
         <div class="planning-view-toggle">
           <button type="button" :class="{ 'is-active': view === 'week' }" @click="view = 'week'">
             Agenda
@@ -519,6 +596,62 @@ function exportICS() {
           Se désinscrire
         </button>
         <button class="primary medium" @click="detailEvent = null">Fermer</button>
+      </template>
+    </AppModal>
+    <AppModal :open="showAdd" title="Ajouter au planning" @close="showAdd = false">
+      <form
+        id="add-appointment-form"
+        class="layout-flex layout-columns layout-gap-medium"
+        @submit.prevent="submitAdd"
+      >
+        <div class="form-group">
+          <label class="uppercase">Titre</label>
+          <input v-model="addForm.title" type="text" class="primary medium full-width" required />
+        </div>
+        <div class="layout-flex layout-gap-medium">
+          <div class="form-group" style="flex: 1">
+            <label class="uppercase">Type</label>
+            <select v-model="addForm.kind" class="primary medium full-width">
+              <option value="event">Événement</option>
+              <option value="training">Formation</option>
+              <option value="workshop">Atelier</option>
+              <option value="deposit">Dépôt</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label class="uppercase">Durée (min)</label>
+            <input
+              v-model.number="addForm.duration"
+              type="number"
+              min="15"
+              step="15"
+              class="primary medium full-width"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="uppercase">Date et heure</label>
+          <input v-model="addForm.date" type="datetime-local" class="primary medium full-width" required />
+        </div>
+        <div class="form-group">
+          <label class="uppercase">Lieu</label>
+          <input v-model="addForm.location" type="text" class="primary medium full-width" />
+        </div>
+        <p v-if="appointmentStore.error" class="small" style="color: var(--destructive-color)">
+          {{ appointmentStore.error }}
+        </p>
+      </form>
+      <template #footer>
+        <button class="ghost medium" @click="showAdd = false">Annuler</button>
+        <button
+          type="submit"
+          form="add-appointment-form"
+          class="primary medium"
+          :disabled="isSaving || !addForm.title.trim() || !addForm.date"
+        >
+          {{ isSaving ? 'Enregistrement…' : 'Ajouter' }}
+        </button>
       </template>
     </AppModal>
   </DashboardLayout>

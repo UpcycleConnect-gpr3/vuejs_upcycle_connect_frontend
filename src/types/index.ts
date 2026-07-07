@@ -262,6 +262,18 @@ export interface TrainingSchedule {
   ends_at: string
 }
 
+export interface Appointment extends Timestamps {
+  id: number
+  user_id: string
+  title: string
+  kind: string
+  location: string
+  starts_at: string
+  ends_at: string
+}
+
+export type AppointmentPayload = Omit<Appointment, 'id' | 'user_id' | 'created_at' | 'updated_at'>
+
 export interface ConversationUser {
   id: string
   username: string
