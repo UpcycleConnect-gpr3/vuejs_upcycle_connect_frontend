@@ -42,7 +42,11 @@ export const getTalk = async (id: number | string): Promise<Talk> => {
   return data.data
 }
 
-export const createTalk = async (payload: Record<string, unknown>): Promise<Talk> => {
+export const createTalk = async (payload: {
+  title: string
+  content: string
+  category_id: number
+}): Promise<Talk> => {
   const { data } = await apiForum.post<ApiResponse<Talk>>('/talks/', payload)
   return data.data
 }
@@ -54,8 +58,9 @@ export const getTalkMessages = async (id: number | string): Promise<ForumMessage
 
 export const createTalkMessage = async (
   id: number | string,
-  payload: Record<string, unknown>,
+  payload: { content: string },
 ): Promise<ForumMessage> => {
-  const { data } = await apiForum.post<ApiResponse<ForumMessage>>(`/talks/${id}/messages/`, payload)
+  const { data } = await apiForum.post<ApiResponse<ForumMessage>>('/messages/', payload)
+  await apiForum.post(`/talks/${id}/messages/`, { message_id: data.data.id })
   return data.data
 }

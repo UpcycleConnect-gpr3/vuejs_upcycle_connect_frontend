@@ -78,7 +78,7 @@ onMounted(async () => {
         ...talk.value,
         id: data.id,
         title: data.title ?? talk.value.title,
-        content: (data.description as string) ?? talk.value.content,
+        content: (data.content as string) ?? talk.value.content,
       }
     }
   } catch {

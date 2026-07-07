@@ -23,7 +23,7 @@ const displayName = (user: ConversationUser) => {
 
 const partnerNames = (conversation: Conversation) => {
   const others = conversation.users.filter((u) => u.id !== currentUserId.value)
-  if (!others.length) return 'Conversation'
+  if (!others.length) return conversation.title || 'Conversation'
   return others.map(displayName).join(', ')
 }
 

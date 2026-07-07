@@ -27,8 +27,11 @@ const categories = ref<{ id: string; name: string }[]>([
 onMounted(async () => {
   try {
     const data = await getCategories()
-    if (Array.isArray(data) && data.length) {
-      categories.value = data.map((c: ForumCategory) => ({
+    const visible = (Array.isArray(data) ? data : []).filter(
+      (c: ForumCategory) => c.name !== 'private',
+    )
+    if (visible.length) {
+      categories.value = visible.map((c: ForumCategory) => ({
         id: String(c.id),
         name: c.name,
       }))
@@ -44,9 +47,8 @@ async function handleSubmit() {
   try {
     await createTalk({
       title: form.title,
-      description: form.content,
-      type: 'discussion',
-      status: 'open',
+      content: form.content,
+      category_id: Number(form.categoryId) || 0,
     })
     toasts.success('Discussion publiée')
     router.push('/forum')
