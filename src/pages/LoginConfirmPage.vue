@@ -22,7 +22,7 @@ const fetchUser = async () => {
   try {
     const token = await getTokenFromCookies()
     if (!token) {
-      window.location.href = AUTH_REDIRECT_URL
+      window.location.href = `${AUTH_REDIRECT_URL}/auth/login`
       return
     }
 
@@ -67,7 +67,7 @@ const handleConfirm = async () => {
 
 const handleCancel = async () => {
   await authStore.clearToken()
-  window.location.replace(AUTH_REDIRECT_URL)
+  window.location.replace(`${AUTH_REDIRECT_URL}/auth/login`)
 }
 
 onMounted(fetchUser)

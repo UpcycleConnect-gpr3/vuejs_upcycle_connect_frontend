@@ -110,7 +110,7 @@ export const useAuthStore = defineStore(
     const logout = async (router: Router) => {
       await clearToken()
       userEmail.value = ''
-      await router.push({ name: 'login' })
+      await router.push('/')
     }
 
     const restoreTokenFromCookies = async () => {

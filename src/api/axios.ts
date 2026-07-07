@@ -19,6 +19,12 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
   client.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
+      if (error.response?.status === 401 && error.config?.headers?.Authorization) {
+        const authStore = useAuthStore()
+        if (authStore.bearerToken) {
+          void authStore.clearToken()
+        }
+      }
       console.error(`[${baseURL}] Error:`, error.message)
       return Promise.reject(error)
     },
@@ -33,6 +39,7 @@ export const authApiClient = createAxiosClient(
 export const forumApiClient = createAxiosClient(
   import.meta.env.VITE_FORUM_URL ?? 'http://forum.localhost',
 )
+forumApiClient.defaults.headers.common['X-Container-Name'] = 'app'
 export const trainingApiClient = createAxiosClient(
   import.meta.env.VITE_TRAINING_URL ?? 'http://training.localhost',
 )

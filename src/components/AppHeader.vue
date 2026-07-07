@@ -44,7 +44,10 @@ const handleLogout = async () => {
         <button class="ghost medium" @click="handleSignup">Sign up</button>
         <button class="primary medium" @click="handleLogin">Log in</button>
       </template>
-      <button v-else class="ghost medium" @click="handleLogout">Log out</button>
+      <template v-else>
+        <RouterLink to="/dashboard" class="primary medium">Dashboard</RouterLink>
+        <button class="ghost medium" @click="handleLogout">Log out</button>
+      </template>
     </div>
   </header>
 </template>

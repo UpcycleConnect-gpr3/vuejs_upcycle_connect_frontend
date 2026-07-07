@@ -15,8 +15,8 @@ onMounted(async () => {
     if (authStore.bearerToken) await authStore.clearToken()
     return
   }
-  if (!authStore.isAuthenticated) {
-    await authStore.restoreTokenFromCookies()
+  if (authStore.bearerToken !== token) {
+    await authStore.setToken(token)
     await authStore.login(router, upcycleApiClient)
   }
 })
