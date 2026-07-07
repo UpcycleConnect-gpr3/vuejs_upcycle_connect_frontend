@@ -1,7 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import StaffDashboardLayout from '@/components/StaffDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
+import { useAppointmentStore } from '@/stores/appointmentStore'
+import { useToastsStore } from '@/stores/toasts'
+import type { Appointment } from '@/types'
+
+const appointmentStore = useAppointmentStore()
+const toasts = useToastsStore()
+const APPOINTMENT_ID_OFFSET = 200000
+const KINDS = ['training', 'workshop', 'event'] as const
+
+function appointmentToEvent(a: Appointment): PEvent {
+  const start = (a.starts_at ?? '').replace('T', ' ').slice(0, 16)
+  const s = new Date(a.starts_at.replace(' ', 'T'))
+  const e = new Date(a.ends_at.replace(' ', 'T'))
+  const duration = Math.max(15, Math.round((e.getTime() - s.getTime()) / 60000) || 60)
+  return {
+    id: APPOINTMENT_ID_OFFSET + a.id,
+    title: a.title,
+    kind: (KINDS as readonly string[]).includes(a.kind) ? (a.kind as EventKind) : 'event',
+    start,
+    duration,
+    location: a.location,
+    participants: 0,
+  }
+}
 
 type EventKind = 'training' | 'workshop' | 'event'
 
@@ -15,62 +39,7 @@ interface PEvent {
   participants: number
 }
 
-const events = ref<PEvent[]>([
-  {
-    id: 1,
-    title: 'Atelier upcycling débutant',
-    kind: 'workshop',
-    start: '2026-07-02 10:00',
-    duration: 180,
-    location: 'Atelier Paris 11',
-    participants: 8,
-  },
-  {
-    id: 2,
-    title: 'Formation réemploi textile',
-    kind: 'training',
-    start: '2026-07-04 14:00',
-    duration: 240,
-    location: 'En ligne',
-    participants: 12,
-  },
-  {
-    id: 3,
-    title: 'Repair Café mensuel',
-    kind: 'event',
-    start: '2026-07-05 09:30',
-    duration: 300,
-    location: 'Atelier Paris 11',
-    participants: 20,
-  },
-  {
-    id: 4,
-    title: 'Restaurer un meuble en bois',
-    kind: 'training',
-    start: '2026-07-10 09:00',
-    duration: 360,
-    location: 'Atelier Paris 11',
-    participants: 12,
-  },
-  {
-    id: 5,
-    title: 'Upcycling textile débutant',
-    kind: 'workshop',
-    start: '2026-07-15 14:00',
-    duration: 180,
-    location: 'Salle B',
-    participants: 8,
-  },
-  {
-    id: 6,
-    title: 'Repair Café électronique',
-    kind: 'workshop',
-    start: '2026-07-22 10:00',
-    duration: 240,
-    location: 'Atelier Paris 11',
-    participants: 15,
-  },
-])
+const events = ref<PEvent[]>([])
 
 const view = ref<'list' | 'week'>('week')
 
@@ -270,6 +239,56 @@ const stats = computed(() => {
 
 const detailEvent = ref<PEvent | null>(null)
 
+const showAdd = ref(false)
+const isSaving = ref(false)
+const addForm = reactive({ title: '', kind: 'event' as EventKind, date: '', duration: 60, location: '' })
+
+async function submitAdd() {
+  if (!addForm.title.trim() || !addForm.date) return
+  isSaving.value = true
+  const startsAt = addForm.date.replace('T', ' ') + ':00'
+  const end = new Date(new Date(addForm.date).getTime() + addForm.duration * 60000)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const endsAt = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())} ${pad(end.getHours())}:${pad(end.getMinutes())}:00`
+  const created = await appointmentStore.addAppointment({
+    title: addForm.title.trim(),
+    kind: addForm.kind,
+    location: addForm.location.trim(),
+    starts_at: startsAt,
+    ends_at: endsAt,
+  })
+  isSaving.value = false
+  if (created) {
+    const ev = appointmentToEvent(created)
+    events.value.push(ev)
+    const d = parseStart(ev.start)
+    if (d) currentWeekStart.value = startOfWeek(d)
+    view.value = 'week'
+    toasts.success('Session ajoutée au planning')
+    showAdd.value = false
+    Object.assign(addForm, { title: '', kind: 'event', date: '', duration: 60, location: '' })
+  } else {
+    toasts.error(appointmentStore.error ?? 'Ajout impossible.')
+  }
+}
+
+async function unsubscribeStaff() {
+  if (!detailEvent.value) return
+  const id = detailEvent.value.id
+  if (id >= APPOINTMENT_ID_OFFSET) {
+    const ok = await appointmentStore.removeAppointment(id - APPOINTMENT_ID_OFFSET)
+    if (!ok) return
+  }
+  events.value = events.value.filter((e) => e.id !== id)
+  detailEvent.value = null
+  toasts.success('Session retirée')
+}
+
+onMounted(async () => {
+  await appointmentStore.fetchAppointments()
+  events.value = appointmentStore.appointments.map(appointmentToEvent)
+})
+
 function exportICS() {
   const ics = [
     'BEGIN:VCALENDAR',
@@ -304,6 +323,7 @@ function exportICS() {
         <p class="muted measure">Vos formations, ateliers et événements à animer.</p>
       </div>
       <div class="layout-flex layout-gap-medium">
+        <button class="primary medium" @click="showAdd = true">+ Ajouter</button>
         <button class="ghost medium" @click="exportICS">Exporter (.ics)</button>
         <div class="planning-view-toggle">
           <button type="button" :class="{ 'is-active': view === 'week' }" @click="view = 'week'">
@@ -465,13 +485,54 @@ function exportICS() {
           <span class="tiny uppercase muted">Lieu</span>
           <span>{{ detailEvent.location }}</span>
         </div>
-        <div class="recap-row">
-          <span class="tiny uppercase muted">Participants</span>
-          <span>{{ detailEvent.participants }} inscrits</span>
-        </div>
       </div>
       <template #footer>
-        <button class="primary medium" @click="detailEvent = null">Fermer</button>
+        <button class="ghost medium" @click="detailEvent = null">Fermer</button>
+        <button
+          v-if="detailEvent && detailEvent.id >= APPOINTMENT_ID_OFFSET"
+          class="primary medium"
+          style="background: var(--destructive-color)"
+          @click="unsubscribeStaff"
+        >
+          Retirer du planning
+        </button>
+      </template>
+    </AppModal>
+
+    <AppModal :open="showAdd" title="Ajouter une session" @close="showAdd = false">
+      <form id="staff-appt-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitAdd">
+        <div class="form-group">
+          <label class="uppercase">Titre</label>
+          <input v-model="addForm.title" type="text" class="primary medium full-width" required />
+        </div>
+        <div class="layout-flex layout-gap-medium">
+          <div class="form-group" style="flex: 1">
+            <label class="uppercase">Type</label>
+            <select v-model="addForm.kind" class="primary medium full-width">
+              <option value="event">Événement</option>
+              <option value="training">Formation</option>
+              <option value="workshop">Atelier</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label class="uppercase">Durée (min)</label>
+            <input v-model.number="addForm.duration" type="number" min="15" step="15" class="primary medium full-width" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="uppercase">Date et heure</label>
+          <input v-model="addForm.date" type="datetime-local" class="primary medium full-width" required />
+        </div>
+        <div class="form-group">
+          <label class="uppercase">Lieu</label>
+          <input v-model="addForm.location" type="text" class="primary medium full-width" />
+        </div>
+      </form>
+      <template #footer>
+        <button class="ghost medium" @click="showAdd = false">Annuler</button>
+        <button type="submit" form="staff-appt-form" class="primary medium" :disabled="isSaving || !addForm.title.trim() || !addForm.date">
+          {{ isSaving ? 'Enregistrement…' : 'Ajouter' }}
+        </button>
       </template>
     </AppModal>
   </StaffDashboardLayout>

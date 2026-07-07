@@ -69,3 +69,27 @@ export const getTrainingContent = async (id: number | string): Promise<TrainingC
   const { data } = await apiTraining.get<ApiResponse<TrainingContent>>(`/training-content/${id}/`)
   return data.data
 }
+
+export const createTrainingContent = async (payload: {
+  type: string
+  name: string
+  content: string
+}): Promise<TrainingContent> => {
+  const { data } = await apiTraining.post<ApiResponse<TrainingContent>>('/training-content/', payload)
+  return data.data
+}
+
+export const updateTrainingContent = async (
+  id: number | string,
+  payload: { type: string; name: string; content: string },
+): Promise<TrainingContent> => {
+  const { data } = await apiTraining.put<ApiResponse<TrainingContent>>(
+    `/training-content/${id}/`,
+    payload,
+  )
+  return data.data
+}
+
+export const deleteTrainingContent = async (id: number | string): Promise<void> => {
+  await apiTraining.delete(`/training-content/${id}/`)
+}

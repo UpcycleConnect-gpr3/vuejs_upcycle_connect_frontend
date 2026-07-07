@@ -64,3 +64,7 @@ export const createTalkMessage = async (
   await apiForum.post(`/talks/${id}/messages/`, { message_id: data.data.id })
   return data.data
 }
+
+export const deleteTalk = async (id: number | string): Promise<void> => {
+  await apiForum.delete(`/talks/${id}/`)
+}
