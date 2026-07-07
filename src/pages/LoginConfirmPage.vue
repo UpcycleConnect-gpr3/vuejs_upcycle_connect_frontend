@@ -26,7 +26,7 @@ const fetchUser = async () => {
       return
     }
 
-    const response = await axios.get<ApiResponse<User>>(`${AUTH_URL}/auth/me/`, {
+    const response = await axios.get<ApiResponse<User>>(`${AUTH_URL}/user/me/`, {
       headers: {
         Authorization: token,
       },
