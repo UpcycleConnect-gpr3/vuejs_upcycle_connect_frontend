@@ -41,7 +41,7 @@ export type EventStepPayload = Omit<EventStep, 'id' | 'created_at' | 'updated_at
 export type EventStepUpdatePayload = Omit<EventStepPayload, 'event_id'>
 
 export interface StepSummary {
-  id: number
+  id: string | number
   name: string
   description: string
   image_path: string

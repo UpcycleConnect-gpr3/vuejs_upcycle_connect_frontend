@@ -1,124 +1,61 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
-import AppModal from '@/components/AppModal.vue'
+import { useObjectStore } from '@/stores/objectStore'
+import type { UpcycleObject } from '@/types'
 
-type ListingType = 'don' | 'vente'
-type Category = 'Bois' | 'Métal' | 'Textile' | 'Électronique' | 'Verre' | 'Autre'
+const router = useRouter()
+const objectStore = useObjectStore()
+const { objects, isLoading, error } = storeToRefs(objectStore)
 
-interface MarketplaceListing {
-  id: number
-  title: string
-  type: ListingType
-  category: Category
-  price: number | null
-  location: string
-  description: string
-  postedAt: string
-  seller: string
+const UPCYCLE_URL = import.meta.env.VITE_UPCYCLE_URL ?? 'http://localhost:4343'
+
+const CATEGORY_LABELS: Record<string, string> = {
+  clothing: 'Vêtements',
+  electronics: 'Électronique',
+  furniture: 'Mobilier',
+  books: 'Livres',
+  toys: 'Jouets',
+  appliances: 'Électroménager',
+  sports: 'Sport',
+  other: 'Autre',
+}
+const categoryLabel = (c: string) => CATEGORY_LABELS[c] ?? c
+
+const filterType = ref<'all' | 'don' | 'vente'>('all')
+const filterCategory = ref('all')
+const search = ref('')
+
+const isDon = (o: UpcycleObject) => !o.price
+
+const imageUrl = (o: UpcycleObject) => {
+  const first = (o.image_path ?? '').split(',')[0]?.trim()
+  if (!first) return ''
+  return first.startsWith('http') ? first : `${UPCYCLE_URL}/${first.replace(/^\//, '')}`
 }
 
-const listings: MarketplaceListing[] = [
-  {
-    id: 1,
-    title: 'Lot de planches de palette',
-    type: 'don',
-    category: 'Bois',
-    price: null,
-    location: 'Paris 11e',
-    description: 'Environ 15 planches de palette récupérées, décloutées, prêtes à transformer.',
-    postedAt: '2026-06-28',
-    seller: 'Marie L.',
-  },
-  {
-    id: 2,
-    title: 'Cadre vélo acier vintage',
-    type: 'vente',
-    category: 'Métal',
-    price: 25,
-    location: 'Paris 18e',
-    description:
-      'Cadre acier des années 80, légèrement rouillé, idéal upcycling/déco industrielle.',
-    postedAt: '2026-06-27',
-    seller: 'Thomas R.',
-  },
-  {
-    id: 3,
-    title: 'Bobines de fil textile colorées',
-    type: 'don',
-    category: 'Textile',
-    price: null,
-    location: 'Montreuil',
-    description: "Surplus d'atelier couture, différentes couleurs et matières.",
-    postedAt: '2026-06-26',
-    seller: 'Atelier Couture 93',
-  },
-  {
-    id: 4,
-    title: 'Vieux téléphone Bakelite',
-    type: 'vente',
-    category: 'Électronique',
-    price: 12,
-    location: 'Vincennes',
-    description: 'Téléphone années 60 décoratif, non fonctionnel, excellent matériau créatif.',
-    postedAt: '2026-06-25',
-    seller: 'Paul M.',
-  },
-  {
-    id: 5,
-    title: 'Bouteilles et bocaux en verre',
-    type: 'don',
-    category: 'Verre',
-    price: null,
-    location: 'Paris 5e',
-    description: "Bocaux Le Parfait, bouteilles diverses, nettoyés et prêts à l'emploi.",
-    postedAt: '2026-06-24',
-    seller: 'Camille B.',
-  },
-  {
-    id: 6,
-    title: 'Chutes de cuir naturel',
-    type: 'vente',
-    category: 'Autre',
-    price: 18,
-    location: 'Saint-Denis',
-    description: 'Chutes de maroquinerie haut de gamme, couleurs variées, belles dimensions.',
-    postedAt: '2026-06-23',
-    seller: 'Maroquinerie Dupont',
-  },
-]
-
-const filterType = ref<'all' | ListingType>('all')
-const filterCategory = ref<'all' | Category>('all')
-const filterLocation = ref('')
-
-const categories: Category[] = ['Bois', 'Métal', 'Textile', 'Électronique', 'Verre', 'Autre']
-
 const filtered = computed(() =>
-  listings.filter((l) => {
-    if (filterType.value !== 'all' && l.type !== filterType.value) return false
-    if (filterCategory.value !== 'all' && l.category !== filterCategory.value) return false
-    if (
-      filterLocation.value &&
-      !l.location.toLowerCase().includes(filterLocation.value.toLowerCase())
-    )
-      return false
+  objects.value.filter((o) => {
+    const q = search.value.trim().toLowerCase()
+    if (q && !`${o.name} ${o.description}`.toLowerCase().includes(q)) return false
+    if (filterType.value === 'don' && !isDon(o)) return false
+    if (filterType.value === 'vente' && isDon(o)) return false
+    if (filterCategory.value !== 'all' && o.category !== filterCategory.value) return false
     return true
   }),
 )
 
-const selectedListing = ref<MarketplaceListing | null>(null)
-const showConfirmModal = ref(false)
-
-function openPurchase(listing: MarketplaceListing) {
-  selectedListing.value = listing
-  showConfirmModal.value = true
+const resetFilters = () => {
+  filterType.value = 'all'
+  filterCategory.value = 'all'
+  search.value = ''
 }
 
-function confirmPurchase() {
-  showConfirmModal.value = false
-  selectedListing.value = null
-}
+onMounted(() => {
+  objectStore.fetchObjects()
+})
 </script>
 
 <template>
@@ -135,18 +72,10 @@ function confirmPurchase() {
     </header>
 
     <div class="layout-flex layout-gap-small" style="flex-wrap: wrap; align-items: center">
-      <button
-        class="forum-tab"
-        :class="{ active: filterType === 'all' }"
-        @click="filterType = 'all'"
-      >
+      <button class="forum-tab" :class="{ active: filterType === 'all' }" @click="filterType = 'all'">
         Tout
       </button>
-      <button
-        class="forum-tab"
-        :class="{ active: filterType === 'don' }"
-        @click="filterType = 'don'"
-      >
+      <button class="forum-tab" :class="{ active: filterType === 'don' }" @click="filterType = 'don'">
         Dons
       </button>
       <button
@@ -159,107 +88,72 @@ function confirmPurchase() {
 
       <select v-model="filterCategory" class="ghost medium" style="margin-left: var(--space-2)">
         <option value="all">Toutes catégories</option>
-        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+        <option v-for="(label, key) in CATEGORY_LABELS" :key="key" :value="key">{{ label }}</option>
       </select>
 
       <input
-        v-model="filterLocation"
-        type="text"
-        placeholder="Localisation…"
+        v-model="search"
+        type="search"
+        placeholder="Rechercher…"
         class="ghost medium"
-        style="max-width: 180px"
+        style="max-width: 200px"
       />
     </div>
 
-    <div class="catalog-grid">
-      <article v-for="l in filtered" :key="l.id" class="catalog-card">
+    <p v-if="error" class="small" style="color: var(--destructive-color)">{{ error }}</p>
+    <p v-else-if="isLoading && !objects.length" class="muted">Chargement des annonces…</p>
+
+    <div v-else class="catalog-grid">
+      <article
+        v-for="o in filtered"
+        :key="o.id"
+        class="catalog-card"
+        style="cursor: pointer"
+        @click="router.push(`/annonces/${o.id}`)"
+      >
         <div class="listing-photo">
-          <span class="tiny muted">Photo</span>
+          <img v-if="imageUrl(o)" :src="imageUrl(o)" :alt="o.name" class="listing-img" />
+          <span v-else class="tiny muted">Photo</span>
         </div>
         <div style="padding: var(--space-3)">
           <div
             class="layout-flex layout-gap-small"
             style="flex-wrap: wrap; margin-bottom: var(--space-2)"
           >
-            <span class="badge" :class="l.type === 'don' ? 'badge--success' : 'badge--accent'">
-              {{ l.type === 'don' ? 'Don' : 'Vente' }}
+            <span class="badge" :class="isDon(o) ? 'badge--success' : 'badge--accent'">
+              {{ isDon(o) ? 'Don' : 'Vente' }}
             </span>
-            <span class="badge">{{ l.category }}</span>
+            <span class="badge">{{ categoryLabel(o.category) }}</span>
           </div>
-          <h4 style="margin: 0 0 var(--space-1)">{{ l.title }}</h4>
-          <p class="small muted" style="margin: 0 0 var(--space-2)">{{ l.description }}</p>
+          <h4 style="margin: 0 0 var(--space-1)">{{ o.name }}</h4>
+          <p class="small muted" style="margin: 0 0 var(--space-2)">{{ o.description }}</p>
           <div class="layout-flex layout-justify-between" style="align-items: flex-end">
             <div>
-              <div
-                v-if="l.price"
-                class="mono"
-                style="font-size: var(--font-size-large); font-weight: 700"
-              >
-                {{ l.price }}€
+              <div v-if="o.price" class="mono" style="font-size: var(--font-size-large); font-weight: 700">
+                {{ o.price }}€
               </div>
               <div v-else style="font-weight: 700; color: var(--lime-500)">Gratuit</div>
-              <div class="tiny muted">{{ l.location }} · {{ l.seller }}</div>
+              <div v-if="o.score > 0" class="tiny muted">🌱 {{ o.score }} kg CO₂</div>
             </div>
-            <button class="primary small" @click="openPurchase(l)">
-              {{ l.type === 'don' ? 'Réserver' : 'Acheter' }}
+            <button class="primary small" @click.stop="router.push(`/annonces/${o.id}`)">
+              Voir
             </button>
           </div>
         </div>
       </article>
     </div>
 
-    <div v-if="filtered.length === 0" class="empty-state">
+    <div v-if="!isLoading && filtered.length === 0" class="empty-state">
       <p>Aucune annonce ne correspond à vos critères.</p>
-      <button
-        class="ghost medium"
-        @click="
-          filterType = 'all'
-          filterCategory = 'all'
-          filterLocation = ''
-        "
-      >
-        Réinitialiser les filtres
-      </button>
+      <button class="ghost medium" @click="resetFilters">Réinitialiser les filtres</button>
     </div>
-
-    <AppModal :open="showConfirmModal" size="small" @close="showConfirmModal = false">
-      <template #header>
-        <h3>{{ selectedListing?.type === 'don' ? 'Réserver le don' : "Confirmer l'achat" }}</h3>
-      </template>
-
-      <div v-if="selectedListing" class="layout-flex layout-columns layout-gap-medium">
-        <div class="recap-row">
-          <span class="tiny uppercase muted">Objet</span>
-          <span>{{ selectedListing.title }}</span>
-        </div>
-        <div class="recap-row">
-          <span class="tiny uppercase muted">Vendeur</span>
-          <span>{{ selectedListing.seller }}</span>
-        </div>
-        <div class="recap-row">
-          <span class="tiny uppercase muted">{{
-            selectedListing.type === 'don' ? 'Prix' : 'Montant'
-          }}</span>
-          <span>{{ selectedListing.price ? `${selectedListing.price}€` : 'Gratuit' }}</span>
-        </div>
-        <div class="alert alert--accent">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4M12 16h.01" />
-          </svg>
-          <span>
-            Une commission UpcycleConnect de 5% est appliquée sur les transactions payantes. Les
-            dons sont totalement gratuits.
-          </span>
-        </div>
-      </div>
-
-      <template #footer>
-        <button class="ghost medium" @click="showConfirmModal = false">Annuler</button>
-        <button class="primary medium" @click="confirmPurchase">
-          {{ selectedListing?.type === 'don' ? 'Confirmer la réservation' : "Confirmer l'achat" }}
-        </button>
-      </template>
-    </AppModal>
   </ProDashboardLayout>
 </template>
+
+<style scoped>
+.listing-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>

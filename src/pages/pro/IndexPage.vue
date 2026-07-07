@@ -1,73 +1,28 @@
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
+import { useObjectStore } from '@/stores/objectStore'
+import { useProjectStore } from '@/stores/projectStore'
 
-const stats = {
-  availableObjects: 24,
-  activeProjects: 5,
-  subscription: 'Premium',
-  pendingPickups: 3,
-}
+const objectStore = useObjectStore()
+const projectStore = useProjectStore()
+const { objects } = storeToRefs(objectStore)
+const { projects } = storeToRefs(projectStore)
 
-interface MaterialItem {
-  id: number
-  title: string
-  category: string
-  type: 'don' | 'vente'
-  price: number | null
-  postedAt: string
-}
+const newMaterials = computed(() => objects.value.slice(0, 5))
+const recentProjects = computed(() => projects.value.slice(0, 5))
 
-interface ProjectItem {
-  id: number
-  title: string
-  material: string
-  status: 'en cours' | 'terminé' | 'brouillon'
-}
+const stats = computed(() => ({
+  availableObjects: objects.value.length,
+  activeProjects: projects.value.length,
+}))
 
-const newMaterials: MaterialItem[] = [
-  {
-    id: 1,
-    title: 'Lot de planches de palette',
-    category: 'Bois',
-    type: 'don',
-    price: null,
-    postedAt: 'Il y a 2h',
-  },
-  {
-    id: 2,
-    title: 'Cadre vélo acier',
-    category: 'Métal',
-    type: 'vente',
-    price: 15,
-    postedAt: 'Il y a 4h',
-  },
-  {
-    id: 3,
-    title: 'Bobines de fil textile',
-    category: 'Textile',
-    type: 'don',
-    price: null,
-    postedAt: 'Il y a 6h',
-  },
-]
-
-const recentProjects: ProjectItem[] = [
-  { id: 1, title: 'Lampe upcyclée bocaux', material: 'Verre', status: 'en cours' },
-  { id: 2, title: 'Étagère tuyaux acier', material: 'Métal', status: 'en cours' },
-  { id: 3, title: 'Tabouret palette bois', material: 'Bois', status: 'terminé' },
-]
-
-const alerts = [
-  { text: '3 nouveaux objets correspondent à vos critères de collecte prioritaires.' },
-  { text: 'Conteneur Bastille disponible — récupération possible avant le 5 juillet.' },
-]
-
-const statusBadge: Record<ProjectItem['status'], string> = {
-  'en cours': 'badge--accent',
-  terminé: 'badge--success',
-  brouillon: 'badge--muted',
-}
+onMounted(() => {
+  objectStore.fetchObjects()
+  projectStore.fetchProjects()
+})
 </script>
 
 <template>
@@ -88,70 +43,43 @@ const statusBadge: Record<ProjectItem['status'], string> = {
 
     <div class="stats-row">
       <RouterLink to="/pro/marketplace" class="stat-tile">
-        <span class="stat-tile-label">Objets disponibles à collecter</span>
-        <div class="stat-tile-value-row">
-          <span class="stat-tile-value">{{ stats.availableObjects }}</span>
-          <span class="badge badge--success">+8 aujourd'hui</span>
-        </div>
-        <p class="small muted">Correspondant à vos critères</p>
+        <span class="stat-tile-label">Annonces disponibles</span>
+        <span class="stat-tile-value">{{ stats.availableObjects }}</span>
+        <p class="small muted">Objets en don ou en vente</p>
       </RouterLink>
 
       <RouterLink to="/pro/projects" class="stat-tile">
-        <span class="stat-tile-label">Projets en cours</span>
+        <span class="stat-tile-label">Mes projets</span>
         <span class="stat-tile-value">{{ stats.activeProjects }}</span>
-        <p class="small muted">2 en phase finale</p>
+        <p class="small muted">Projets d'upcycling</p>
       </RouterLink>
 
       <RouterLink to="/pro/subscription" class="stat-tile">
         <span class="stat-tile-label">Abonnement</span>
-        <div class="stat-tile-value-row">
-          <span class="stat-tile-value" style="font-size: var(--font-size-xlarge)">{{
-            stats.subscription
-          }}</span>
-          <span class="badge badge--success">Actif</span>
-        </div>
-        <p class="small muted">Renouvellement le 15 juillet</p>
-      </RouterLink>
-
-      <RouterLink to="/pro/pickups" class="stat-tile">
-        <span class="stat-tile-label">Récupérations en attente</span>
-        <div class="stat-tile-value-row">
-          <span class="stat-tile-value">{{ stats.pendingPickups }}</span>
-          <span class="badge badge--accent">Action</span>
-        </div>
-        <p class="small muted">Délai max 72h</p>
+        <span class="stat-tile-value" style="font-size: var(--font-size-xlarge)">Gérer</span>
+        <p class="small muted">Formules et facturation</p>
       </RouterLink>
     </div>
-
-    <section v-if="alerts.length" class="layout-flex layout-columns layout-gap-small">
-      <div v-for="(a, i) in alerts" :key="i" class="alert alert--accent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 8v4M12 16h.01" />
-        </svg>
-        <span>{{ a.text }}</span>
-      </div>
-    </section>
 
     <div class="dashboard-grid">
       <article class="dashboard-card">
         <div class="card-header">
-          <span class="eyebrow">Mis en ligne récemment</span>
-          <h3>Nouveaux matériaux pour vous</h3>
+          <span class="eyebrow">Marketplace</span>
+          <h3>Annonces récentes</h3>
         </div>
-        <ul class="layout-flex layout-columns layout-gap-medium">
+        <p v-if="!newMaterials.length" class="small muted">Aucune annonce pour l'instant.</p>
+        <ul v-else class="layout-flex layout-columns layout-gap-medium">
           <li v-for="m in newMaterials" :key="m.id" class="event-row">
             <div class="event-row-date">
-              <span class="tiny uppercase muted">{{ m.category }}</span>
-              <span class="badge" :class="m.type === 'don' ? 'badge--success' : ''">
-                {{ m.type === 'don' ? 'Don' : `${m.price}€` }}
+              <span class="badge" :class="!m.price ? 'badge--success' : ''">
+                {{ !m.price ? 'Don' : `${m.price}€` }}
               </span>
             </div>
             <div style="flex: 1">
-              <div style="font-weight: 600">{{ m.title }}</div>
-              <div class="tiny muted">{{ m.postedAt }}</div>
+              <div style="font-weight: 600">{{ m.name }}</div>
+              <div v-if="m.score > 0" class="tiny muted">🌱 {{ m.score }} kg CO₂</div>
             </div>
-            <RouterLink to="/pro/marketplace" class="ghost small">Voir</RouterLink>
+            <RouterLink :to="`/annonces/${m.id}`" class="ghost small">Voir</RouterLink>
           </li>
         </ul>
         <RouterLink to="/pro/marketplace" class="ghost small" style="align-self: flex-start">
@@ -164,16 +92,14 @@ const statusBadge: Record<ProjectItem['status'], string> = {
           <span class="eyebrow">Upcycling</span>
           <h3>Vos projets récents</h3>
         </div>
-        <ul class="layout-flex layout-columns layout-gap-medium">
+        <p v-if="!recentProjects.length" class="small muted">Aucun projet pour l'instant.</p>
+        <ul v-else class="layout-flex layout-columns layout-gap-medium">
           <li v-for="p in recentProjects" :key="p.id" class="event-row">
             <div style="flex: 1">
-              <div class="layout-flex layout-gap-small" style="margin-bottom: 4px">
-                <span class="badge" :class="statusBadge[p.status]">{{ p.status }}</span>
-                <span class="tiny muted">{{ p.material }}</span>
-              </div>
-              <div style="font-weight: 600">{{ p.title }}</div>
+              <div style="font-weight: 600">{{ p.name }}</div>
+              <div class="tiny muted">{{ (p.description || '').slice(0, 60) }}</div>
             </div>
-            <RouterLink to="/pro/projects" class="ghost small">Détail</RouterLink>
+            <RouterLink to="/pro/projects" class="ghost small">Gérer</RouterLink>
           </li>
         </ul>
         <RouterLink to="/pro/projects" class="ghost small" style="align-self: flex-start">

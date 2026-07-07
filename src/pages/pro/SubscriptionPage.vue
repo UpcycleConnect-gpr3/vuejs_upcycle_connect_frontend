@@ -2,6 +2,14 @@
 import { ref } from 'vue'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
+import { createSubscriptionCheckout } from '@/services/billing'
+import { useToastsStore } from '@/stores/toasts'
+
+const toasts = useToastsStore()
+const PRICE_IDS: Record<'starter' | 'premium', string> = {
+  starter: import.meta.env.VITE_STRIPE_PRICE_BASIC,
+  premium: import.meta.env.VITE_STRIPE_PRICE_BUSINESS,
+}
 
 type InvoiceStatus = 'payée' | 'en attente' | 'échouée'
 
@@ -66,8 +74,18 @@ const plans = [
   },
 ]
 
-function confirmPlanChange() {
-  showChangeModal.value = false
+async function confirmPlanChange() {
+  const priceId = PRICE_IDS[selectedPlan.value]
+  if (!priceId) {
+    toasts.error('Cette formule n’est pas configurée.')
+    return
+  }
+  try {
+    const { url } = await createSubscriptionCheckout(priceId)
+    window.location.href = url
+  } catch {
+    toasts.error('Impossible de démarrer le paiement. Réessayez.')
+  }
 }
 
 function confirmCancel() {
