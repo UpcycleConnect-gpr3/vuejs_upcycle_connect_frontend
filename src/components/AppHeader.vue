@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import { upcycleApiClient } from '@/api/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { roleHome } = useCurrentUser()
 
 const AUTH_REDIRECT_URL = import.meta.env.VITE_AUTH_REDIRECT_URL || 'http://localhost:4284'
 
@@ -45,7 +47,7 @@ const handleLogout = async () => {
         <button class="primary medium" @click="handleLogin">Log in</button>
       </template>
       <template v-else>
-        <RouterLink to="/dashboard" class="primary medium">Dashboard</RouterLink>
+        <RouterLink :to="roleHome" class="primary medium">Mon espace</RouterLink>
         <button class="ghost medium" @click="handleLogout">Log out</button>
       </template>
     </div>

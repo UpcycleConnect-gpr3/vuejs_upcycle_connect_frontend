@@ -4,8 +4,10 @@ import { RouterLink, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import DashboardOnboarding from '@/components/DashboardOnboarding.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 
 const auth = useAuthStore()
+const { roleLabel } = useCurrentUser()
 const router = useRouter()
 const { userEmail } = storeToRefs(auth)
 
@@ -140,7 +142,7 @@ const profileNav = [
         <div class="sidebar-user-avatar">{{ initials }}</div>
         <div class="sidebar-user-info">
           <span class="sidebar-user-name">{{ displayName }}</span>
-          <span class="sidebar-user-role">Particulier</span>
+          <span class="sidebar-user-role">{{ roleLabel }}</span>
         </div>
         <button class="sidebar-user-action" title="Déconnexion" @click="logout">
           <svg viewBox="0 0 256 256" fill="currentColor">
