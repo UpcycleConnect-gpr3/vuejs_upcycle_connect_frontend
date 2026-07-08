@@ -22,6 +22,7 @@ const form = reactive({
   duration: '',
   location: '',
   maximum_number_of_participants: 12,
+  price: 0,
 })
 
 const resetForm = () => {
@@ -32,6 +33,7 @@ const resetForm = () => {
     duration: '',
     location: '',
     maximum_number_of_participants: 12,
+    price: 0,
   })
 }
 
@@ -50,6 +52,7 @@ const openEdit = (t: Training) => {
     duration: t.duration,
     location: t.location,
     maximum_number_of_participants: t.maximum_number_of_participants,
+    price: t.price ?? 0,
   })
   showModal.value = true
 }
@@ -64,6 +67,7 @@ const submit = async () => {
     duration: form.duration.trim(),
     location: form.location.trim(),
     maximum_number_of_participants: form.maximum_number_of_participants,
+    price: form.price,
   }
   const result =
     editingId.value !== null
@@ -117,6 +121,7 @@ onMounted(() => {
           <span v-if="t.maximum_number_of_participants">
             · 👥 {{ t.maximum_number_of_participants }} max</span
           >
+          <span> · 💶 {{ t.price ? `${t.price}€` : 'Gratuit' }}</span>
         </div>
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3); flex-wrap: wrap">
           <button class="ghost small" @click="openEdit(t)">Modifier</button>
@@ -187,14 +192,27 @@ onMounted(() => {
             />
           </div>
         </div>
-        <div class="form-group">
-          <label class="uppercase">Lieu</label>
-          <input
-            v-model="form.location"
-            type="text"
-            class="primary medium full-width"
-            placeholder="Ex : Atelier Paris 11"
-          />
+        <div class="layout-flex layout-gap-medium">
+          <div class="form-group" style="flex: 1">
+            <label class="uppercase">Lieu</label>
+            <input
+              v-model="form.location"
+              type="text"
+              class="primary medium full-width"
+              placeholder="Ex : Atelier Paris 11"
+            />
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label class="uppercase">Prix (€) — 0 = gratuit</label>
+            <input
+              v-model.number="form.price"
+              type="number"
+              min="0"
+              step="1"
+              class="primary medium full-width"
+              placeholder="Ex : 45"
+            />
+          </div>
         </div>
       </form>
       <template #footer>

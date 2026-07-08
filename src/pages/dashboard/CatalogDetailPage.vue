@@ -3,17 +3,14 @@ import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
-import { getTraining, getTrainingSchedules } from '@/services/training'
+import { getTraining, getTrainingSchedules, createTrainingCheckout } from '@/services/training'
 import { createOrder } from '@/services/upcycle'
-import { useAuthStore } from '@/stores/authStore'
 import { useToastsStore } from '@/stores/toasts'
 
 const route = useRoute()
 const router = useRouter()
-const auth = useAuthStore()
 const toasts = useToastsStore()
 
-const TRAINING_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK_TRAINING
 
 const item = ref({
   id: Number(route.params.id),
@@ -54,6 +51,7 @@ onMounted(async () => {
         category: (t.type as string) ?? item.value.category,
         duration: (t.duration as string) ?? item.value.duration,
         location: (t.location as string) ?? item.value.location,
+        price: typeof t.price === 'number' ? t.price : item.value.price,
       }
     }
   } catch {
@@ -89,19 +87,20 @@ async function pay() {
   }
 }
 
-function payWithStripe() {
-  if (!TRAINING_PAYMENT_LINK) {
-    toasts.error("Le paiement en ligne n'est pas configuré. Réessayez plus tard.")
-    return
-  }
+async function payWithStripe() {
   isProcessing.value = true
-  const url = new URL(TRAINING_PAYMENT_LINK)
-  url.searchParams.set(
-    'client_reference_id',
-    `training-${item.value.id}-slot-${selectedSlot.value ?? 0}`,
-  )
-  if (auth.userEmail) url.searchParams.set('prefilled_email', auth.userEmail)
-  window.location.href = url.toString()
+  try {
+    const origin = window.location.origin
+    const { url } = await createTrainingCheckout(
+      item.value.id,
+      `${origin}/dashboard/planning?training_paid=1`,
+      `${origin}/dashboard/catalog/${item.value.id}`,
+    )
+    window.location.href = url
+  } catch {
+    toasts.error('Le paiement en ligne est indisponible. Réessayez plus tard.')
+    isProcessing.value = false
+  }
 }
 
 function close() {

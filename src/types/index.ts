@@ -274,6 +274,7 @@ export interface Training {
   minimum_number_of_participants: number
   maximum_number_of_participants: number
   location: string
+  price: number
 }
 
 export interface TrainingPayload {
@@ -284,6 +285,7 @@ export interface TrainingPayload {
   minimum_number_of_participants?: number
   maximum_number_of_participants?: number
   location?: string
+  price?: number
 }
 
 export interface TrainingCurriculum {

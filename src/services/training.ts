@@ -9,6 +9,7 @@ export interface Training {
   location?: string
   mode_of_delivery?: string
   target_audience?: string
+  price?: number
   created_at?: string
   updated_at?: string
   [key: string]: unknown
@@ -92,4 +93,27 @@ export const updateTrainingContent = async (
 
 export const deleteTrainingContent = async (id: number | string): Promise<void> => {
   await apiTraining.delete(`/training-content/${id}/`)
+}
+
+// Reserve and pay a training via Stripe Checkout (amount derived server-side
+// from the training price). Returns the hosted Stripe Checkout URL.
+export const createTrainingCheckout = async (
+  id: number | string,
+  successUrl: string,
+  cancelUrl: string,
+): Promise<{ url: string }> => {
+  const { data } = await apiTraining.post<ApiResponse<{ url: string }>>(
+    `/trainings/${id}/checkout/`,
+    { success_url: successUrl, cancel_url: cancelUrl },
+  )
+  return data.data
+}
+
+export const getTrainingPaymentStatus = async (
+  sessionId: string,
+): Promise<{ status: string; customer_email: string }> => {
+  const { data } = await apiTraining.get<ApiResponse<{ status: string; customer_email: string }>>(
+    `/trainings/payments/session/${sessionId}/`,
+  )
+  return data.data
 }
