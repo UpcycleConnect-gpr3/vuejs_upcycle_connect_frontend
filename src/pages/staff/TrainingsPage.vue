@@ -87,6 +87,12 @@ const remove = async (t: Training) => {
   toasts.success('Formation supprimée')
 }
 
+const statusMeta = (status?: string): { label: string; badge: string } => {
+  if (status === 'validated') return { label: 'Validée', badge: 'badge--success' }
+  if (status === 'rejected') return { label: 'Refusée', badge: 'badge--danger' }
+  return { label: 'En attente de validation', badge: 'badge--accent' }
+}
+
 onMounted(() => {
   trainingStore.fetchTrainings()
 })
@@ -112,6 +118,7 @@ onMounted(() => {
           <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
             <span class="badge">{{ t.type || 'formation' }}</span>
             <span v-if="t.mode_of_delivery" class="badge badge--muted">{{ t.mode_of_delivery }}</span>
+            <span class="badge" :class="statusMeta(t.status).badge">{{ statusMeta(t.status).label }}</span>
           </div>
           <h4 style="margin-top: var(--space-1)">{{ t.name }}</h4>
         </div>
