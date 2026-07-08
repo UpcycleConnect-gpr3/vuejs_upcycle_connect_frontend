@@ -33,9 +33,13 @@ export const getCheckoutStatus = async (sessionId: string): Promise<CheckoutStat
 // createObjectPayment starts a one-time Stripe Checkout to buy an annonce.
 // The amount is computed server side from the object price. Returns the hosted
 // Stripe URL to redirect the buyer to.
-export const createObjectPayment = async (objectId: string): Promise<CheckoutSession> => {
+export const createObjectPayment = async (
+  objectId: string,
+  lockerId?: string,
+): Promise<CheckoutSession> => {
   const { data } = await apiBilling.post<ApiResponse<CheckoutSession>>('/payments/checkout', {
     object_id: objectId,
+    locker_id: lockerId ?? '',
     success_url: `${window.location.origin}/billing/success?kind=annonce&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${window.location.origin}/annonces/${objectId}?checkout=canceled`,
   })

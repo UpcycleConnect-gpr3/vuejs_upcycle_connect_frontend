@@ -9,6 +9,8 @@ import { useConversationStore } from '@/stores/conversationStore'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useToastsStore } from '@/stores/toasts'
 import { createObjectPayment } from '@/services/billing'
+import { getAvailableLockers } from '@/api/clients/depositClient'
+import type { Locker } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -54,15 +56,31 @@ const canBuy = computed(
     currentObject.value.user_id !== currentUserId.value,
 )
 
+const lockers = ref<Locker[]>([])
+const selectedLocker = ref<string>('')
+
+const loadLockers = async () => {
+  try {
+    lockers.value = await getAvailableLockers()
+    selectedLocker.value = lockers.value[0]?.id ?? ''
+  } catch {
+    lockers.value = []
+  }
+}
+
 const buyObject = async () => {
   if (!currentObject.value) return
   if (!currentUserId.value) {
     await router.push('/login')
     return
   }
+  if (!selectedLocker.value) {
+    toasts.error('Choisissez un casier de retrait.')
+    return
+  }
   isBuying.value = true
   try {
-    const { url } = await createObjectPayment(String(currentObject.value.id))
+    const { url } = await createObjectPayment(String(currentObject.value.id), selectedLocker.value)
     window.location.href = url
   } catch {
     toasts.error('Impossible de démarrer le paiement pour le moment.')
@@ -109,6 +127,7 @@ onMounted(() => {
   objectStore.fetchObjectById(objectId.value)
   objectStore.fetchObjectDeliveryMethods(objectId.value)
   objectStore.fetchObjectUsers(objectId.value)
+  loadLockers()
 })
 </script>
 
@@ -179,11 +198,21 @@ onMounted(() => {
               </div>
             </div>
 
+            <div v-if="canBuy" class="form-group" style="margin-bottom: var(--space-3)">
+              <label class="uppercase tiny">Casier de retrait (livraison)</label>
+              <select v-model="selectedLocker" class="primary medium full-width">
+                <option v-for="l in lockers" :key="l.id" :value="l.id">
+                  {{ l.name }} — {{ l.city }} ({{ l.available_slots }} libres)
+                </option>
+              </select>
+              <p v-if="!lockers.length" class="tiny muted">Aucun casier disponible.</p>
+            </div>
+
             <div class="layout-flex layout-gap-medium">
               <button
                 v-if="canBuy"
                 class="primary medium"
-                :disabled="isBuying"
+                :disabled="isBuying || !selectedLocker"
                 @click="buyObject"
               >
                 {{ isBuying ? 'Redirection…' : `Acheter · ${currentObject.price}€` }}

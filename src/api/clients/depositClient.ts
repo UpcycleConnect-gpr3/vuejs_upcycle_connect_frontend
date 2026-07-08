@@ -1,5 +1,12 @@
 import { upcycleApiClient } from '../axios'
-import type { ApiResponse, DepositResult, DepositedPackage, Locker, PackageInfo } from '@/types'
+import type {
+  ApiResponse,
+  DeliverySummary,
+  DepositResult,
+  DepositedPackage,
+  Locker,
+  PackageInfo,
+} from '@/types'
 
 // Lockers ayant au moins un slot libre (filtrables par ville).
 export const getAvailableLockers = async (city?: string): Promise<Locker[]> => {
@@ -43,4 +50,21 @@ export const getPackageByCode = async (code: string): Promise<PackageInfo> => {
 export const getDepositedPackages = async (): Promise<DepositedPackage[]> => {
   const { data } = await upcycleApiClient.get<ApiResponse<DepositedPackage[]>>('/packages/deposited')
   return data.data
+}
+
+// Ventes de l'utilisateur a deposer en casier (code de depot).
+export const getSellerDeliveries = async (): Promise<DeliverySummary[]> => {
+  const { data } = await upcycleApiClient.get<ApiResponse<DeliverySummary[]>>('/packages/sales')
+  return data.data
+}
+
+// Achats de l'utilisateur a recuperer en casier (code de retrait).
+export const getBuyerDeliveries = async (): Promise<DeliverySummary[]> => {
+  const { data } = await upcycleApiClient.get<ApiResponse<DeliverySummary[]>>('/packages/purchases')
+  return data.data
+}
+
+// Le vendeur confirme le depot (ouvre le casier avec son code de depot).
+export const confirmDeposit = async (code: string): Promise<void> => {
+  await upcycleApiClient.post('/packages/deposit-confirm', { code })
 }

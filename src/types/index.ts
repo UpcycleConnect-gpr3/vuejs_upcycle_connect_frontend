@@ -196,6 +196,19 @@ export interface PackageInfo {
   weight: number
 }
 
+export interface DeliverySummary {
+  package_id: string
+  code: string
+  retrieve_code: string
+  object_id: string
+  object_name: string
+  price: number
+  locker_name: string
+  locker_city: string
+  status: string
+  expiry_date: string
+}
+
 export interface DepositedPackage {
   package_id: string
   code: string
