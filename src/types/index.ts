@@ -145,6 +145,16 @@ export interface Subscription {
   updated_at: string
 }
 
+export interface Invoice {
+  ref: string
+  type: string
+  label: string
+  amount_cents: number
+  currency: string
+  status: string
+  issued_at: string
+}
+
 export type ProjectPayload = Omit<Project, 'id' | 'created_at' | 'updated_at'>
 
 export interface Step extends Timestamps {

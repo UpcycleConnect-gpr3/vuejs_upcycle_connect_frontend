@@ -4,10 +4,33 @@ import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { createSubscriptionCheckout } from '@/services/billing'
 import { getMySubscription } from '@/api/clients/statsClient'
+import { getMyInvoices, downloadInvoicePdf } from '@/api/clients/invoiceClient'
 import { useToastsStore } from '@/stores/toasts'
-import type { Subscription } from '@/types'
+import type { Invoice, Subscription } from '@/types'
 
 const toasts = useToastsStore()
+
+const invoices = ref<Invoice[]>([])
+const downloadingRef = ref<string | null>(null)
+
+const loadInvoices = async () => {
+  try {
+    invoices.value = await getMyInvoices()
+  } catch {
+    invoices.value = []
+  }
+}
+
+const downloadPdf = async (inv: Invoice) => {
+  downloadingRef.value = inv.ref
+  try {
+    await downloadInvoicePdf(inv.ref)
+  } catch {
+    toasts.error('Téléchargement du PDF impossible.')
+  } finally {
+    downloadingRef.value = null
+  }
+}
 const PRICE_BASIC = import.meta.env.VITE_STRIPE_PRICE_BASIC
 const PRICE_BUSINESS = import.meta.env.VITE_STRIPE_PRICE_BUSINESS
 const PRICE_IDS: Record<'starter' | 'premium', string> = {
@@ -34,6 +57,7 @@ onMounted(async () => {
   } catch {
     // pas d'abonnement / non disponible
   }
+  await loadInvoices()
 })
 
 const showChangeModal = ref(false)
@@ -126,6 +150,43 @@ function confirmCancel() {
             Résilier l'abonnement
           </button>
         </div>
+      </div>
+    </section>
+
+    <section class="layout-flex layout-columns layout-gap-medium">
+      <h3>Historique de facturation</h3>
+      <p v-if="!invoices.length" class="muted small">Aucune facture pour le moment.</p>
+      <div v-else class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Référence</th>
+              <th>Désignation</th>
+              <th>Montant</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="inv in invoices" :key="inv.ref">
+              <td class="mono small">{{ inv.issued_at.slice(0, 10) }}</td>
+              <td class="mono small">{{ inv.ref.replace(/_/g, '-').toUpperCase() }}</td>
+              <td>{{ inv.label }}</td>
+              <td class="mono" style="font-weight: 700">
+                {{ (inv.amount_cents / 100).toFixed(2) }}€
+              </td>
+              <td>
+                <button
+                  class="ghost small"
+                  :disabled="downloadingRef === inv.ref"
+                  @click="downloadPdf(inv)"
+                >
+                  {{ downloadingRef === inv.ref ? '…' : 'PDF' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
