@@ -1,0 +1,35 @@
+{
+  "_name": "Français",
+  "nav": {
+    "home": "Accueil",
+    "service": "Services",
+    "resources": "Ressources",
+    "pricing": "Tarifs",
+    "forum": "Forum",
+    "listings": "Annonces"
+  },
+  "auth": {
+    "signup": "S'inscrire",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "myspace": "Mon espace"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "search": "Rechercher…",
+    "free": "Gratuit",
+    "language": "Langue"
+  },
+  "home": {
+    "eyebrow": "La plateforme de l'upcycling intelligent",
+    "title": "Donnez une seconde vie à vos objets",
+    "subtitle": "Particuliers, artisans et entreprises se retrouvent pour donner, trouver et transformer des objets et matériaux — et mesurer leur impact.",
+    "cta_primary": "Commencer",
+    "cta_secondary": "Découvrir les services"
+  }
+}

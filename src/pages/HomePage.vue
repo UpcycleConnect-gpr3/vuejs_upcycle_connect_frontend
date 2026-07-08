@@ -30,20 +30,18 @@ const features = [
   <main>
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
-        <span class="eyebrow">A circular economy platform</span>
+        <span class="eyebrow">{{ $t('home.eyebrow') }}</span>
         <hgroup class="center">
-          <h1 class="display center">
-            Turn <span class="text-secondary">waste</span><br />
-            into <span class="text-secondary">wonder</span>
-          </h1>
+          <h1 class="display center">{{ $t('home.title') }}</h1>
           <p class="lead center measure" style="margin-inline: auto">
-            UpcycleConnect is where designers, makers and companies meet to give materials a second
-            life — and build a genuinely circular economy together.
+            {{ $t('home.subtitle') }}
           </p>
         </hgroup>
         <div class="layout-flex layout-gap-medium">
-          <button class="primary large" @click="ui.open('register')">Get started</button>
-          <button class="secondary large">Learn more</button>
+          <button class="primary large" @click="ui.open('register')">
+            {{ $t('home.cta_primary') }}
+          </button>
+          <button class="secondary large">{{ $t('home.cta_secondary') }}</button>
         </div>
       </div>
     </section>
