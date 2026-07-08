@@ -25,9 +25,9 @@ const talk = ref({
 })
 
 const reactionTypes = [
-  { key: 'like', icon: '👍', label: 'Like' },
-  { key: 'fire', icon: '🔥', label: 'Fire' },
-  { key: 'idea', icon: '💡', label: 'Idea' },
+  { key: 'like', icon: '', label: 'Like' },
+  { key: 'fire', icon: '', label: 'Fire' },
+  { key: 'idea', icon: '', label: 'Idea' },
 ] as const
 
 function toggleReaction(type: 'like' | 'fire' | 'idea') {
@@ -42,7 +42,7 @@ const messages = ref([
     id: 1,
     author: { name: 'Thomas M.', initials: 'TM' },
     createdAt: 'il y a 4h',
-    content: `Salut Marie, super projet !\n\n1. Oui ponçage essentiel : grain 80 → 120 → 220.\n2. Pour intérieur, huile dure type Rubio Monocoat.\n3. Roulettes pivotantes 75mm avec tire-fond + écrous noyés.`,
+    content: `Salut Marie, super projet !\n\n1. Oui ponçage essentiel : grain 80  120  220.\n2. Pour intérieur, huile dure type Rubio Monocoat.\n3. Roulettes pivotantes 75mm avec tire-fond + écrous noyés.`,
     reactions: 8,
     isOp: false,
     userLiked: true,
@@ -60,7 +60,7 @@ const messages = ref([
     id: 3,
     author: { name: 'Marie L.', initials: 'ML' },
     createdAt: 'il y a 1h',
-    content: 'Merci à vous deux ! Mes palettes sont bien marquées HT 😅',
+    content: 'Merci à vous deux ! Mes palettes sont bien marquées HT ',
     reactions: 2,
     isOp: true,
     userLiked: false,
@@ -145,7 +145,7 @@ async function handleReply() {
           class="layout-flex layout-columns layout-gap-large"
         >
           <RouterLink to="/forum" class="ghost" style="align-self: flex-start"
-            >← Retour au forum</RouterLink
+            > Retour au forum</RouterLink
           >
 
           <article class="card discussion-detail">

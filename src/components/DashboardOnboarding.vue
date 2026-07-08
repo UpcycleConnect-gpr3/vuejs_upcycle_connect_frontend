@@ -10,7 +10,7 @@ interface Step {
 const steps: Step[] = [
   {
     selector: null,
-    title: 'Bienvenue sur UpcycleConnect 👋',
+    title: 'Bienvenue sur UpcycleConnect ',
     description:
       'Visite express en 5 étapes pour prendre vos repères. Vous pouvez passer à tout moment.',
   },
@@ -130,9 +130,9 @@ const tooltipStyle = computed(() => {
           <div class="onboarding-actions">
             <button class="ghost small" @click="finish">Passer</button>
             <div class="layout-flex layout-gap-small">
-              <button v-if="stepIdx > 0" class="ghost small" @click="prev">← Précédent</button>
+              <button v-if="stepIdx > 0" class="ghost small" @click="prev"> Précédent</button>
               <button class="primary small" @click="next">
-                {{ isLast ? 'Terminer' : 'Suivant →' }}
+                {{ isLast ? 'Terminer' : 'Suivant ' }}
               </button>
             </div>
           </div>

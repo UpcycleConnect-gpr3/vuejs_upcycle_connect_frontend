@@ -71,7 +71,7 @@ async function handleSubmit() {
           style="max-width: 760px; margin-inline: auto"
         >
           <RouterLink to="/forum" class="ghost" style="align-self: flex-start"
-            >← Retour au forum</RouterLink
+            > Retour au forum</RouterLink
           >
 
           <hgroup>

@@ -1,0 +1,109 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background-color: oklch(from var(--black-pure) l c h / 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - var(--space-10));
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-strong-color);
+  box-shadow: 0 24px 64px -16px oklch(from var(--black-pure) l c h / 0.6);
+}
+
+.modal-card--small {
+  max-width: 440px;
+}
+.modal-card--medium {
+  max-width: 620px;
+}
+.modal-card--large {
+  max-width: 860px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  --h3-font-size: var(--font-size-large);
+  --h3-font-weight: var(--font-weight-semibold);
+}
+
+.modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.modal-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.modal-close:hover {
+  color: var(--foreground-color);
+  border-color: var(--border-strong-color);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border-color);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity var(--transition-base);
+}
+
+.modal-enter-active .modal-card,
+.modal-leave-active .modal-card {
+  transition:
+    transform var(--transition-base),
+    opacity var(--transition-base);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-card,
+.modal-leave-to .modal-card {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}

@@ -35,7 +35,6 @@ const filtered = computed(() => {
   )
 })
 
-// ---- Récupération par code ----
 const showRetrieve = ref(false)
 const code = ref('')
 const isChecking = ref(false)
@@ -125,9 +124,9 @@ onMounted(load)
           <h4 style="margin-top: var(--space-1)">{{ d.object_name }}</h4>
         </div>
         <div class="tiny muted" style="margin-top: var(--space-2)">
-          📦 {{ d.locker_name }} · {{ d.locker_city }}
+           {{ d.locker_name }} · {{ d.locker_city }}
         </div>
-        <div class="tiny muted">⏳ à récupérer avant le {{ d.expiry_date.slice(0, 10) }}</div>
+        <div class="tiny muted"> à récupérer avant le {{ d.expiry_date.slice(0, 10) }}</div>
         <button class="primary small" style="margin-top: var(--space-3)" @click="openRetrieve()">
           Récupérer
         </button>

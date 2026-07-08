@@ -29,7 +29,7 @@ const articles = [
             </hgroup>
             <div class="layout-flex layout-gap-medium">
               <button class="primary medium">Read article</button>
-              <button class="ghost medium">Share →</button>
+              <button class="ghost medium">Share </button>
             </div>
           </div>
         </div>
