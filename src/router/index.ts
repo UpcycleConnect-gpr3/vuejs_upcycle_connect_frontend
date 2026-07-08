@@ -72,6 +72,11 @@ const router = createRouter({
       meta: { requiresAuth: true , roles: ['provider'] },
     },
     {
+      path: '/dashboard/notifications',
+      component: () => import('@/pages/dashboard/NotificationsPage.vue'),
+      meta: { requiresAuth: true, roles: ['provider'] },
+    },
+    {
       path: '/dashboard/deposits',
       component: () => import('@/pages/dashboard/DepositsPage.vue'),
       meta: { requiresAuth: true , roles: ['provider'] },
