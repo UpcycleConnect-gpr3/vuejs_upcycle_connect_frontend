@@ -16,10 +16,11 @@ export interface ApiError {
 
 export interface User {
   id: string
-  firstname: string
-  lastname: string
+  username?: string
+  firstname: string | null
+  lastname: string | null
   email: string
-  totp_enabled: boolean
+  totp_enabled?: boolean
   created_at: string
   updated_at: string
 }

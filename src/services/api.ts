@@ -1,22 +1,11 @@
-import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
+import { upcycleApiClient } from '@/api/axios'
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-})
+export {
+  authApiClient as apiAuth,
+  forumApiClient as apiForum,
+  trainingApiClient as apiTraining,
+  upcycleApiClient as apiUpcycle,
+  billingApiClient as apiBilling,
+} from '@/api/axios'
 
-api.interceptors.request.use(
-  (config) => {
-    const authStore = useAuthStore()
-    const token = authStore.bearerToken
-
-    if (token) {
-      config.headers.Authorization = `${token}`
-    }
-
-    return config
-  },
-  (error) => Promise.reject(error),
-)
-
-export default api
+export default upcycleApiClient

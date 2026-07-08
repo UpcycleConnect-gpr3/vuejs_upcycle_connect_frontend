@@ -7,10 +7,13 @@ import { RouterLink } from 'vue-router'
     <div class="container">
       <div class="footer-nav">
         <div class="layout-flex layout-columns layout-gap-medium">
-          <div class="logo"><div class="logo-dot"></div><span>UpcycleConnect</span></div>
+          <div class="logo">
+            <div class="logo-dot"></div>
+            <span>UpcycleConnect</span>
+          </div>
           <p class="small muted">Building a circular future, one object at a time.</p>
         </div>
-        <div class="layout-flex layout-gap-extra-large" style="flex-wrap: wrap;">
+        <div class="layout-flex layout-gap-extra-large" style="flex-wrap: wrap">
           <div class="layout-flex layout-columns layout-gap-medium">
             <span class="eyebrow">Product</span>
             <RouterLink to="/service" class="ghost">Service</RouterLink>

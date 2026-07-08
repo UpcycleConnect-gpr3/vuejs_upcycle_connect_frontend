@@ -1,20 +1,14 @@
 import { defineStore } from 'pinia'
+import 'pinia-plugin-persistedstate'
 import { computed, ref } from 'vue'
 import type { Router } from 'vue-router'
 import { useApiErrors } from '@/composables/useApiErrors'
 import type { ApiError } from '@/types/api'
 
 declare const cookieStore: {
-  set: (
-    name: string,
-    value: string,
-    options?: { domain?: string; path?: string },
-  ) => Promise<void>
+  set: (name: string, value: string, options?: { domain?: string; path?: string }) => Promise<void>
   get: (name: string) => Promise<{ value?: string } | undefined>
-  delete: (
-    name: string,
-    options?: { domain?: string; path?: string },
-  ) => Promise<void>
+  delete: (name: string, options?: { domain?: string; path?: string }) => Promise<void>
 }
 
 const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN
@@ -34,19 +28,13 @@ const writeCookieFallback = (name: string, value: string) => {
 }
 
 const deleteCookieFallback = (name: string) => {
-  const parts = [
-    `${name}=`,
-    `path=${COOKIE_PATH}`,
-    'expires=Thu, 01 Jan 1970 00:00:00 GMT',
-  ]
+  const parts = [`${name}=`, `path=${COOKIE_PATH}`, 'expires=Thu, 01 Jan 1970 00:00:00 GMT']
   if (COOKIE_DOMAIN) parts.push(`domain=${COOKIE_DOMAIN}`)
   document.cookie = parts.join('; ')
 }
 
 const readCookieFallback = (name: string): string | null => {
-  const match = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(`${name}=`))
+  const match = document.cookie.split('; ').find((row) => row.startsWith(`${name}=`))
   if (!match) return null
   const value = match.substring(name.length + 1)
   try {
@@ -68,6 +56,7 @@ export const useAuthStore = defineStore(
   'auth',
   () => {
     const bearerToken = ref<string>('')
+    const userEmail = ref<string>('')
     const isLoading = ref<boolean>(false)
     const error = ref<string | null>(null)
 
@@ -113,15 +102,15 @@ export const useAuthStore = defineStore(
     }
 
     const handleApiError = (err: unknown, fallback: string) => {
-      const apiError = (err as { response?: { data?: ApiError } }).response
-        ?.data
+      const apiError = (err as { response?: { data?: ApiError } }).response?.data
       setError(apiError?.message || fallback)
       setFieldErrors(apiError)
     }
 
     const logout = async (router: Router) => {
       await clearToken()
-      await router.push({ name: 'login' })
+      userEmail.value = ''
+      await router.push('/')
     }
 
     const restoreTokenFromCookies = async () => {
@@ -130,17 +119,41 @@ export const useAuthStore = defineStore(
       if (token) bearerToken.value = token
     }
 
-    const login = async (router: Router) => {
-      const token = await getTokenFromCookies()
-      if (token) {
-        await router.push('/login-confirm')
-      } else {
+    const login = async (router: Router, moduleApiClient: any) => {
+      clearError()
+      setLoading(true)
+      try {
+        const token = await getTokenFromCookies()
+        if (!token) {
+          window.location.href = `${AUTH_REDIRECT_URL}/auth/login/`
+          return
+        }
+
+        const response = await moduleApiClient.post(
+          '/auth/login/',
+          {},
+          {
+            headers: { Authorization: token },
+          },
+        )
+
+        if (response.data?.email) {
+          userEmail.value = response.data.email
+        }
+
+        await router.push('/')
+      } catch (err) {
+        handleApiError(err, 'Échec de la connexion')
+        await clearToken()
         window.location.href = `${AUTH_REDIRECT_URL}/auth/login/`
+      } finally {
+        setLoading(false)
       }
     }
 
     return {
       bearerToken,
+      userEmail,
       isLoading,
       error,
       fieldErrors,
@@ -150,15 +163,15 @@ export const useAuthStore = defineStore(
       clearError,
       setError,
       setLoading,
+      login,
       logout,
       restoreTokenFromCookies,
-      login,
     }
   },
   {
     persist: {
       storage: localStorage,
-      pick: ['bearerToken'],
+      pick: ['bearerToken', 'userEmail'],
     },
   },
 )

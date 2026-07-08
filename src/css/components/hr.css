@@ -1,6 +1,6 @@
 hr {
-    border: none;
-    width: 100%;
-    height: var(--hr-height);
-    background-color: var(--hr-color);
+  border: none;
+  width: 100%;
+  height: var(--hr-height);
+  background-color: var(--hr-color);
 }

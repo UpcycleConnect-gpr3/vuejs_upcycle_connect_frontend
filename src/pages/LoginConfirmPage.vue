@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useAuthStore, getTokenFromCookies } from '@/stores/auth'
+import { useAuthStore, getTokenFromCookies } from '@/stores/authStore'
 import type { ApiResponse, User } from '@/types/api'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
@@ -22,11 +22,11 @@ const fetchUser = async () => {
   try {
     const token = await getTokenFromCookies()
     if (!token) {
-      window.location.href = AUTH_REDIRECT_URL
+      window.location.href = `${AUTH_REDIRECT_URL}/auth/login`
       return
     }
 
-    const response = await axios.get<ApiResponse<User>>(`${AUTH_URL}/user/me`, {
+    const response = await axios.get<ApiResponse<User>>(`${AUTH_URL}/user/me/`, {
       headers: {
         Authorization: token,
       },
@@ -44,30 +44,30 @@ const fetchUser = async () => {
 const handleConfirm = async () => {
   const token = await getTokenFromCookies()
   if (token && user.value) {
-    await axios.post(`${BACKEND_URL}/auth/login`, {}, {
-      headers: {
-        Authorization: token,
+    await axios.post(
+      `${BACKEND_URL}/auth/login`,
+      {
+        username: user.value.username ?? '',
+        email: user.value.email,
+        firstname: user.value.firstname ?? '',
+        lastname: user.value.lastname ?? '',
       },
-    })
-    
-    await axios.patch(`${BACKEND_URL}/user/`, {
-      email: user.value.email,
-      firstname: user.value.firstname,
-      lastname: user.value.lastname,
-    }, {
-      headers: {
-        Authorization: token,
+      {
+        headers: {
+          Authorization: token,
+        },
       },
-    })
-    
+    )
+
     await authStore.setToken(token)
+    authStore.userEmail = user.value.email
     await router.replace('/dashboard')
   }
 }
 
 const handleCancel = async () => {
   await authStore.clearToken()
-  window.location.replace(AUTH_REDIRECT_URL)
+  window.location.replace(`${AUTH_REDIRECT_URL}/auth/login`)
 }
 
 onMounted(fetchUser)
@@ -111,7 +111,9 @@ onMounted(fetchUser)
 
               <div class="layout-flex layout-gap-medium layout-justify-end">
                 <button class="ghost medium" @click="handleCancel">No, use another account</button>
-                <button class="primary medium" @click="handleConfirm">Yes, connect with this account</button>
+                <button class="primary medium" @click="handleConfirm">
+                  Yes, connect with this account
+                </button>
               </div>
             </div>
           </div>

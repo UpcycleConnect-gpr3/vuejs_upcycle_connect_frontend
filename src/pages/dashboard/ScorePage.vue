@@ -49,22 +49,35 @@ const maxHist = Math.max(...history.map((h) => h.value))
       <div>
         <span class="eyebrow">Mon impact</span>
         <h1>Upcycling Score</h1>
-        <p class="muted measure">Suivez votre impact circulaire et débloquez des badges au fil de vos contributions.</p>
+        <p class="muted measure">
+          Suivez votre impact circulaire et débloquez des badges au fil de vos contributions.
+        </p>
       </div>
     </header>
 
     <div class="score-hero">
       <div class="score-gauge">
         <svg viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--green-700)" stroke-width="14" />
           <circle
-            cx="100" cy="100" r="80" fill="none"
-            stroke="var(--lime-500)" stroke-width="14"
+            cx="100"
+            cy="100"
+            r="80"
+            fill="none"
+            stroke="var(--green-700)"
+            stroke-width="14"
+          />
+          <circle
+            cx="100"
+            cy="100"
+            r="80"
+            fill="none"
+            stroke="var(--lime-500)"
+            stroke-width="14"
             stroke-linecap="round"
             :stroke-dasharray="2 * Math.PI * 80"
             :stroke-dashoffset="dashOffset"
             transform="rotate(-90 100 100)"
-            style="transition: stroke-dashoffset 0.6s ease;"
+            style="transition: stroke-dashoffset 0.6s ease"
           />
         </svg>
         <div class="score-gauge-text">
@@ -75,19 +88,23 @@ const maxHist = Math.max(...history.map((h) => h.value))
       <div class="score-summary">
         <span class="badge badge--success">+24 ce mois</span>
         <h2>Top 12% de la communauté</h2>
-        <p class="muted measure">Vous avez progressé de 70 points depuis le début du mois. Continuez sur cette lancée pour débloquer le badge "1000 points".</p>
+        <p class="muted measure">
+          Vous avez progressé de 70 points depuis le début du mois. Continuez sur cette lancée pour
+          débloquer le badge "1000 points".
+        </p>
       </div>
     </div>
 
-    <!-- Breakdown -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Répartition de vos points</h3>
       <div class="dashboard-card">
         <ul class="layout-flex layout-columns layout-gap-medium">
           <li v-for="b in breakdown" :key="b.label" class="breakdown-row">
             <div class="layout-flex layout-justify-between layout-items-center">
-              <span style="font-weight: 600;">{{ b.label }}</span>
-              <span class="mono"><strong>{{ b.value }}</strong> pts · {{ b.count }} actions</span>
+              <span style="font-weight: 600">{{ b.label }}</span>
+              <span class="mono"
+                ><strong>{{ b.value }}</strong> pts · {{ b.count }} actions</span
+              >
             </div>
             <div class="bar-track">
               <div class="bar-fill" :style="{ width: `${(b.value / 200) * 100}%` }"></div>
@@ -97,7 +114,6 @@ const maxHist = Math.max(...history.map((h) => h.value))
       </div>
     </section>
 
-    <!-- History -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Évolution sur 5 semaines</h3>
       <div class="dashboard-card history-chart">
@@ -110,18 +126,17 @@ const maxHist = Math.max(...history.map((h) => h.value))
       </div>
     </section>
 
-    <!-- Badges -->
     <section class="layout-flex layout-columns layout-gap-medium">
       <h3>Badges débloqués</h3>
       <div class="badges-grid">
         <div v-for="b in badges" :key="b.id" class="badge-tile">
           <span class="badge-tile-icon">{{ b.icon }}</span>
-          <span style="font-weight: 600;">{{ b.name }}</span>
+          <span style="font-weight: 600">{{ b.name }}</span>
           <span class="tiny muted">{{ b.earnedAt }}</span>
         </div>
         <div v-for="b in locked" :key="b.id" class="badge-tile badge-tile--locked">
           <span class="badge-tile-icon">{{ b.icon }}</span>
-          <span style="font-weight: 600;">{{ b.name }}</span>
+          <span style="font-weight: 600">{{ b.name }}</span>
           <span class="tiny muted">{{ b.requirement }}</span>
         </div>
       </div>

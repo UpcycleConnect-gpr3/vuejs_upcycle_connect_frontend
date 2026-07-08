@@ -1,177 +1,185 @@
 .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--pricing-grid-gap);
-    align-items: stretch;
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--pricing-grid-gap);
+  align-items: stretch;
+  width: 100%;
 }
 
 @media (max-width: 900px) {
-    .pricing-grid { grid-template-columns: 1fr; }
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pricing-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pricing-card-gap);
-    padding: var(--pricing-card-padding);
-    border-width: var(--pricing-card-border-width);
-    border-style: solid;
-    border-color: var(--pricing-card-border-color);
-    background-color: var(--pricing-card-bg-color);
-    color: var(--pricing-card-text-color);
-    position: relative;
-    transition: border-color var(--transition-base), background-color var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pricing-card-gap);
+  padding: var(--pricing-card-padding);
+  border-width: var(--pricing-card-border-width);
+  border-style: solid;
+  border-color: var(--pricing-card-border-color);
+  background-color: var(--pricing-card-bg-color);
+  color: var(--pricing-card-text-color);
+  position: relative;
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .pricing-card:hover {
-    border-color: var(--border-strong-color);
+  border-color: var(--border-strong-color);
 }
 
 .pricing-card.featured {
-    transform: translateY(calc(-1 * var(--space-5)));
-    padding-block: calc(var(--pricing-card-padding) + var(--space-5));
+  transform: translateY(calc(-1 * var(--space-5)));
+  padding-block: calc(var(--pricing-card-padding) + var(--space-5));
 }
 
 .pricing-card.featured::before {
-    content: 'MOST POPULAR';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--lime-500);
-    color: var(--black);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 0.12em;
-    padding: 6px 14px;
-    white-space: nowrap;
+  content: 'MOST POPULAR';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--lime-500);
+  color: var(--black);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  padding: 6px 14px;
+  white-space: nowrap;
 }
 
 .plan-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--plan-header-gap);
-    padding-bottom: var(--plan-header-padding-bottom);
-    border-bottom-width: var(--plan-header-border-width);
-    border-bottom-style: solid;
-    border-bottom-color: var(--plan-header-border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--plan-header-gap);
+  padding-bottom: var(--plan-header-padding-bottom);
+  border-bottom-width: var(--plan-header-border-width);
+  border-bottom-style: solid;
+  border-bottom-color: var(--plan-header-border-color);
 }
 
 .plan-name {
-    font-size: var(--plan-name-font-size);
-    font-weight: var(--plan-name-font-weight);
-    color: var(--plan-name-color);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  font-size: var(--plan-name-font-size);
+  font-weight: var(--plan-name-font-weight);
+  color: var(--plan-name-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .plan-price-row {
-    display: flex;
-    align-items: baseline;
-    gap: 2px;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
 }
 
 .plan-price {
-    font-size: var(--plan-price-font-size);
-    font-weight: var(--plan-price-font-weight);
-    color: var(--plan-price-color);
-    letter-spacing: -0.04em;
-    line-height: 1;
+  font-size: var(--plan-price-font-size);
+  font-weight: var(--plan-price-font-weight);
+  color: var(--plan-price-color);
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 .plan-price-unit {
-    font-size: var(--plan-price-unit-font-size);
-    color: var(--plan-price-unit-color);
-    font-weight: var(--font-weight-medium);
+  font-size: var(--plan-price-unit-font-size);
+  color: var(--plan-price-unit-color);
+  font-weight: var(--font-weight-medium);
 }
 
 .plan-features {
-    display: flex;
-    flex-direction: column;
-    gap: var(--plan-features-gap);
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--plan-features-gap);
+  flex: 1;
 }
 
 .plan-features-label {
-    font-size: var(--plan-features-label-font-size);
-    color: var(--plan-features-label-color);
-    margin-bottom: var(--plan-features-label-margin-bottom);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: var(--font-weight-semibold);
+  font-size: var(--plan-features-label-font-size);
+  color: var(--plan-features-label-color);
+  margin-bottom: var(--plan-features-label-margin-bottom);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: var(--font-weight-semibold);
 }
 
 .plan-feature {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--plan-feature-gap);
-    font-size: var(--plan-feature-font-size);
-    color: var(--plan-feature-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--plan-feature-gap);
+  font-size: var(--plan-feature-font-size);
+  color: var(--plan-feature-color);
 }
 
 .plan-feature-icon {
-    width: var(--plan-feature-icon-size);
-    height: var(--plan-feature-icon-size);
-    color: var(--plan-feature-icon-color);
-    flex-shrink: 0;
+  width: var(--plan-feature-icon-size);
+  height: var(--plan-feature-icon-size);
+  color: var(--plan-feature-icon-color);
+  flex-shrink: 0;
 }
 
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--stats-grid-gap);
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--stats-grid-gap);
+  width: 100%;
 }
 
 @media (max-width: 900px) {
-    .stats-grid { grid-template-columns: 1fr; }
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stat-box {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--stat-box-gap);
-    padding: var(--stat-box-padding);
-    border-width: var(--stat-box-border-width);
-    border-style: solid;
-    border-color: var(--stat-box-border-color);
-    background-color: var(--stat-box-bg-color);
-    transition: border-color var(--transition-base), background-color var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--stat-box-gap);
+  padding: var(--stat-box-padding);
+  border-width: var(--stat-box-border-width);
+  border-style: solid;
+  border-color: var(--stat-box-border-color);
+  background-color: var(--stat-box-bg-color);
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .stat-box:hover {
-    border-color: var(--border-strong-color);
-    background-color: oklch(from var(--white) l c h / 0.04);
+  border-color: var(--border-strong-color);
+  background-color: oklch(from var(--white) l c h / 0.04);
 }
 
 .stat-label {
-    font-size: var(--stat-label-font-size);
-    color: var(--stat-label-color);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: var(--font-weight-semibold);
+  font-size: var(--stat-label-font-size);
+  color: var(--stat-label-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: var(--font-weight-semibold);
 }
 
 .stat-value-row {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
 
 .stat-value {
-    font-size: var(--stat-value-font-size);
-    font-weight: var(--stat-value-font-weight);
-    color: var(--stat-value-color);
-    letter-spacing: -0.03em;
-    line-height: 1;
+  font-size: var(--stat-value-font-size);
+  font-weight: var(--stat-value-font-weight);
+  color: var(--stat-value-color);
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .stat-value-unit {
-    font-size: var(--stat-value-unit-font-size);
-    color: var(--stat-value-unit-color);
-    font-weight: var(--font-weight-medium);
+  font-size: var(--stat-value-unit-font-size);
+  color: var(--stat-value-unit-color);
+  font-weight: var(--font-weight-medium);
 }
