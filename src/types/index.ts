@@ -318,6 +318,7 @@ export interface Training {
   maximum_number_of_participants: number
   location: string
   price: number
+  status?: string
 }
 
 export interface TrainingPayload {
