@@ -19,9 +19,15 @@ const AUTH_REDIRECT_URL = import.meta.env.VITE_AUTH_REDIRECT_URL || 'http://loca
 const hasCookieStore = (): boolean =>
   typeof globalThis !== 'undefined' && 'cookieStore' in globalThis
 
+const isRealDomain = (): boolean =>
+  !!COOKIE_DOMAIN && COOKIE_DOMAIN !== 'localhost' && COOKIE_DOMAIN !== '127.0.0.1'
+
+const cookieStoreOptions = () =>
+  isRealDomain() ? { domain: COOKIE_DOMAIN, path: COOKIE_PATH } : { path: COOKIE_PATH }
+
 const writeCookieFallback = (name: string, value: string) => {
   const parts = [`${name}=${encodeURIComponent(value)}`, `path=${COOKIE_PATH}`]
-  if (COOKIE_DOMAIN) parts.push(`domain=${COOKIE_DOMAIN}`)
+  if (isRealDomain()) parts.push(`domain=${COOKIE_DOMAIN}`)
   if (window.location.protocol === 'https:') parts.push('Secure')
   parts.push('SameSite=Lax')
   document.cookie = parts.join('; ')
@@ -29,7 +35,7 @@ const writeCookieFallback = (name: string, value: string) => {
 
 const deleteCookieFallback = (name: string) => {
   const parts = [`${name}=`, `path=${COOKIE_PATH}`, 'expires=Thu, 01 Jan 1970 00:00:00 GMT']
-  if (COOKIE_DOMAIN) parts.push(`domain=${COOKIE_DOMAIN}`)
+  if (isRealDomain()) parts.push(`domain=${COOKIE_DOMAIN}`)
   document.cookie = parts.join('; ')
 }
 
@@ -67,10 +73,7 @@ export const useAuthStore = defineStore(
     const setToken = async (token: string) => {
       bearerToken.value = token
       if (hasCookieStore()) {
-        await cookieStore.set(TOKEN_COOKIE_NAME, token, {
-          domain: COOKIE_DOMAIN,
-          path: COOKIE_PATH,
-        })
+        await cookieStore.set(TOKEN_COOKIE_NAME, token, cookieStoreOptions())
       } else {
         writeCookieFallback(TOKEN_COOKIE_NAME, token)
       }
@@ -79,10 +82,10 @@ export const useAuthStore = defineStore(
     const clearToken = async () => {
       bearerToken.value = ''
       if (hasCookieStore()) {
-        await cookieStore.delete(TOKEN_COOKIE_NAME, {
-          domain: COOKIE_DOMAIN,
-          path: COOKIE_PATH,
-        })
+        await cookieStore.delete(
+          TOKEN_COOKIE_NAME,
+          isRealDomain() ? { domain: COOKIE_DOMAIN, path: COOKIE_PATH } : { path: COOKIE_PATH },
+        )
       } else {
         deleteCookieFallback(TOKEN_COOKIE_NAME)
       }
