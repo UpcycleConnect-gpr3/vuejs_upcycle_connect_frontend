@@ -564,7 +564,7 @@ function exportICS() {
               <div style="font-weight: 600; margin-top: 2px">{{ e.title }}</div>
               <div class="tiny muted">{{ e.location }} · {{ e.duration }} min</div>
             </div>
-            <span class="ghost small">Détail →</span>
+            <span class="ghost small">Détail </span>
           </article>
         </div>
       </div>

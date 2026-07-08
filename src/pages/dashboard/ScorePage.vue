@@ -20,16 +20,16 @@ const breakdown = [
 ]
 
 const badges = [
-  { id: 1, name: 'Premier don', icon: '🎁', earnedAt: '2025-12-12' },
-  { id: 2, name: '10 transactions', icon: '⚡', earnedAt: '2026-02-01' },
-  { id: 3, name: 'Apprenti', icon: '📚', earnedAt: '2026-03-15' },
-  { id: 4, name: 'Communauté +1', icon: '💬', earnedAt: '2026-04-08' },
-  { id: 5, name: 'Top 12%', icon: '🏆', earnedAt: '2026-04-22' },
+  { id: 1, name: 'Premier don', icon: '', earnedAt: '2025-12-12' },
+  { id: 2, name: '10 transactions', icon: '', earnedAt: '2026-02-01' },
+  { id: 3, name: 'Apprenti', icon: '', earnedAt: '2026-03-15' },
+  { id: 4, name: 'Communauté +1', icon: '', earnedAt: '2026-04-08' },
+  { id: 5, name: 'Top 12%', icon: '', earnedAt: '2026-04-22' },
 ]
 
 const locked = [
-  { id: 6, name: '1000 points', icon: '🌟', requirement: '518 points restants' },
-  { id: 7, name: '50 contributions', icon: '🔥', requirement: '27 contributions restantes' },
+  { id: 6, name: '1000 points', icon: '', requirement: '518 points restants' },
+  { id: 7, name: '50 contributions', icon: '', requirement: '27 contributions restantes' },
 ]
 
 const history = [

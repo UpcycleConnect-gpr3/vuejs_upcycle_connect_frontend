@@ -40,7 +40,6 @@ const PRICE_IDS: Record<'starter' | 'premium', string> = {
 
 const subscription = ref<Subscription | null>(null)
 
-// Formule deduite du price_id renvoye par l'API.
 const currentPlan = computed(() => {
   const sub = subscription.value
   if (!sub) return null
@@ -55,7 +54,7 @@ onMounted(async () => {
   try {
     subscription.value = await getMySubscription()
   } catch {
-    // pas d'abonnement / non disponible
+
   }
   await loadInvoices()
 })
@@ -230,7 +229,7 @@ function confirmCancel() {
                 class="small"
                 style="display: flex; gap: var(--space-1)"
               >
-                <span style="color: var(--lime-500)">✓</span>
+                <span style="color: var(--lime-500)"></span>
                 {{ f }}
               </li>
             </ul>

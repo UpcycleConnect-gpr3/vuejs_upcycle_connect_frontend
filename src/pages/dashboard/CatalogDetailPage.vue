@@ -11,7 +11,6 @@ const route = useRoute()
 const router = useRouter()
 const toasts = useToastsStore()
 
-
 const item = ref({
   id: Number(route.params.id),
   kind: 'training' as const,
@@ -112,7 +111,7 @@ function close() {
 <template>
   <DashboardLayout>
     <RouterLink to="/dashboard/catalog" class="ghost" style="align-self: flex-start"
-      >← Retour au catalogue</RouterLink
+      > Retour au catalogue</RouterLink
     >
 
     <article class="catalog-detail">
@@ -220,7 +219,7 @@ function close() {
             <path d="m5 12 5 5L20 7" />
           </svg>
         </div>
-        <h3 class="center">Réservation confirmée 🎉</h3>
+        <h3 class="center">Réservation confirmée </h3>
         <p class="center muted measure">
           Un email de confirmation vient de vous être envoyé. La session a été ajoutée à votre
           planning.
@@ -243,7 +242,7 @@ function close() {
                 : `Payer ${item.price}€ via Stripe`
           }}
         </button>
-        <button v-else class="primary medium" @click="close">Voir mon planning →</button>
+        <button v-else class="primary medium" @click="close">Voir mon planning </button>
       </template>
     </AppModal>
   </DashboardLayout>

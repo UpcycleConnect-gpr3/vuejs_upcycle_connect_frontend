@@ -123,12 +123,12 @@ onMounted(() => {
           <h4 style="margin-top: var(--space-1)">{{ t.name }}</h4>
         </div>
         <div class="tiny muted" style="margin-top: var(--space-2)">
-          <span v-if="t.duration">⏱ {{ t.duration }}</span>
-          <span v-if="t.location"> · 📍 {{ t.location }}</span>
+          <span v-if="t.duration"> {{ t.duration }}</span>
+          <span v-if="t.location"> ·  {{ t.location }}</span>
           <span v-if="t.maximum_number_of_participants">
-            · 👥 {{ t.maximum_number_of_participants }} max</span
+            ·  {{ t.maximum_number_of_participants }} max</span
           >
-          <span> · 💶 {{ t.price ? `${t.price}€` : 'Gratuit' }}</span>
+          <span> ·  {{ t.price ? `${t.price}€` : 'Gratuit' }}</span>
         </div>
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3); flex-wrap: wrap">
           <button class="ghost small" @click="openEdit(t)">Modifier</button>

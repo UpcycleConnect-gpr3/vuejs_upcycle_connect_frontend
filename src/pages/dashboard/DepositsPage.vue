@@ -8,10 +8,13 @@ import {
   getAvailableLockers,
   depositObject,
   retrievePackage,
+  getSellerDeliveries,
+  getBuyerDeliveries,
+  confirmDeposit,
 } from '@/api/clients/depositClient'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useToastsStore } from '@/stores/toasts'
-import type { Locker, UpcycleObject } from '@/types'
+import type { DeliverySummary, Locker, UpcycleObject } from '@/types'
 
 const toasts = useToastsStore()
 const { currentUserId } = useCurrentUser()
@@ -20,7 +23,52 @@ const myObjects = ref<UpcycleObject[]>([])
 const lockers = ref<Locker[]>([])
 const isLoading = ref(false)
 
-// Dépôts réalisés dans cette session (on garde leur code de récupération).
+const sales = ref<DeliverySummary[]>([])
+const purchases = ref<DeliverySummary[]>([])
+
+const loadDeliveries = async () => {
+  try {
+    const [s, p] = await Promise.all([getSellerDeliveries(), getBuyerDeliveries()])
+    sales.value = s
+    purchases.value = p
+  } catch {
+    sales.value = []
+    purchases.value = []
+  }
+}
+
+const confirmSaleDeposit = async (d: DeliverySummary) => {
+  try {
+    await confirmDeposit(d.code)
+    toasts.success('Objet déposé — le casier est ouvert')
+    await loadDeliveries()
+  } catch {
+    toasts.error('Dépôt impossible.')
+  }
+}
+
+const deliveryCodeOpen = ref<DeliverySummary | null>(null)
+const deliveryCodeKind = ref<'deposit' | 'retrieve'>('deposit')
+const openDeliveryCode = (d: DeliverySummary, kind: 'deposit' | 'retrieve') => {
+  deliveryCodeOpen.value = d
+  deliveryCodeKind.value = kind
+}
+const deliveryCodeValue = computed(() =>
+  deliveryCodeKind.value === 'deposit'
+    ? (deliveryCodeOpen.value?.code ?? '')
+    : (deliveryCodeOpen.value?.retrieve_code ?? ''),
+)
+
+const retrievePurchase = async (d: DeliverySummary) => {
+  try {
+    await retrievePackage(d.retrieve_code)
+    toasts.success('Objet récupéré — le casier est ouvert')
+    await loadDeliveries()
+  } catch {
+    toasts.error('Récupération impossible.')
+  }
+}
+
 interface DepositedItem {
   code: string
   objectName: string
@@ -35,7 +83,7 @@ const load = async () => {
   try {
     const [objects, avail] = await Promise.all([getObjects(), getAvailableLockers()])
     const me = currentUserId.value
-    // On ne peut déposer que ses propres objets encore disponibles.
+
     myObjects.value = objects.filter(
       (o) => o.user_id === me && (!o.status || o.status === 'available'),
     )
@@ -47,7 +95,6 @@ const load = async () => {
   }
 }
 
-// ---- Déposer ----
 const showDeposit = ref(false)
 const isDepositing = ref(false)
 const form = reactive({ objectId: '', lockerId: '', weight: 0 })
@@ -89,12 +136,10 @@ const submitDeposit = async () => {
   }
 }
 
-// ---- Voir un code ----
 const codeOpen = ref<DepositedItem | null>(null)
 const qrRef = ref<InstanceType<typeof QrCode> | null>(null)
 const downloadQr = () => qrRef.value?.download()
 
-// ---- Récupérer ----
 const showRetrieve = ref(false)
 const isRetrieving = ref(false)
 const retrieveCode = ref('')
@@ -125,7 +170,10 @@ const submitRetrieve = async () => {
 
 const selectedLocker = computed(() => lockers.value.find((l) => l.id === form.lockerId))
 
-onMounted(load)
+onMounted(() => {
+  load()
+  loadDeliveries()
+})
 </script>
 
 <template>
@@ -148,6 +196,54 @@ onMounted(load)
     </header>
 
     <p v-if="isLoading && !lockers.length" class="muted">Chargement…</p>
+
+    <section v-if="sales.length" class="layout-flex layout-columns layout-gap-medium">
+      <h3>Mes ventes à déposer</h3>
+      <p class="small muted">
+        Objets vendus : déposez-les dans le casier choisi par l'acheteur avec votre code de dépôt.
+      </p>
+      <div class="layout-flex layout-columns layout-gap-small">
+        <article
+          v-for="d in sales"
+          :key="d.package_id"
+          class="dashboard-card layout-flex layout-justify-between layout-items-center"
+          style="flex-wrap: wrap; gap: var(--space-3)"
+        >
+          <div>
+            <h4 style="margin: 0">{{ d.object_name }}</h4>
+            <span class="tiny muted">{{ d.locker_name }} · {{ d.locker_city }} · {{ d.price }}€</span>
+          </div>
+          <div class="layout-flex layout-gap-small">
+            <button class="ghost small" @click="openDeliveryCode(d, 'deposit')">Code + QR</button>
+            <button class="primary small" @click="confirmSaleDeposit(d)">J'ai déposé</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section v-if="purchases.length" class="layout-flex layout-columns layout-gap-medium">
+      <h3>Mes achats à récupérer</h3>
+      <p class="small muted">
+        Objets achetés, déposés en casier : récupérez-les avec votre code de retrait.
+      </p>
+      <div class="layout-flex layout-columns layout-gap-small">
+        <article
+          v-for="d in purchases"
+          :key="d.package_id"
+          class="dashboard-card layout-flex layout-justify-between layout-items-center"
+          style="flex-wrap: wrap; gap: var(--space-3)"
+        >
+          <div>
+            <h4 style="margin: 0">{{ d.object_name }}</h4>
+            <span class="tiny muted">{{ d.locker_name }} · {{ d.locker_city }}</span>
+          </div>
+          <div class="layout-flex layout-gap-small">
+            <button class="ghost small" @click="openDeliveryCode(d, 'retrieve')">Code + QR</button>
+            <button class="primary small" @click="retrievePurchase(d)">Récupérer</button>
+          </div>
+        </article>
+      </div>
+    </section>
 
     <section v-if="myDeposits.length" class="layout-flex layout-columns layout-gap-medium">
       <h3>Mes dépôts récents</h3>
@@ -175,13 +271,12 @@ onMounted(load)
           <h4 style="margin: 0">{{ l.name }}</h4>
           <span class="tiny muted">{{ l.street }}, {{ l.zip_code }} {{ l.city }}</span>
           <div class="tiny" style="margin-top: var(--space-2)">
-            📦 {{ l.available_slots }} / {{ l.capacity }} places libres
+             {{ l.available_slots }} / {{ l.capacity }} places libres
           </div>
         </article>
       </div>
     </section>
 
-    <!-- Déposer -->
     <AppModal :open="showDeposit" title="Déposer un objet" @close="showDeposit = false">
       <form id="deposit-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitDeposit">
         <div class="form-group">
@@ -221,7 +316,6 @@ onMounted(load)
       </template>
     </AppModal>
 
-    <!-- Code -->
     <AppModal :open="!!codeOpen" size="small" @close="codeOpen = null">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
@@ -246,7 +340,6 @@ onMounted(load)
       </template>
     </AppModal>
 
-    <!-- Récupérer -->
     <AppModal :open="showRetrieve" title="Récupérer un objet" @close="showRetrieve = false">
       <form id="retrieve-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitRetrieve">
         <div class="form-group">
@@ -272,6 +365,34 @@ onMounted(load)
         >
           {{ isRetrieving ? 'Récupération…' : 'Récupérer' }}
         </button>
+      </template>
+    </AppModal>
+
+    <AppModal :open="!!deliveryCodeOpen" size="small" @close="deliveryCodeOpen = null">
+      <template #header>
+        <div class="layout-flex layout-columns" style="gap: 4px">
+          <span class="eyebrow">{{
+            deliveryCodeKind === 'deposit' ? 'Code de dépôt' : 'Code de retrait'
+          }}</span>
+          <h3>{{ deliveryCodeOpen?.object_name }}</h3>
+        </div>
+      </template>
+      <div
+        v-if="deliveryCodeOpen"
+        class="layout-flex layout-columns layout-items-center layout-gap-large"
+      >
+        <div class="container-code">
+          <span class="eyebrow">{{
+            deliveryCodeKind === 'deposit' ? 'Ouvrir le casier pour déposer' : 'Ouvrir le casier pour récupérer'
+          }}</span>
+          <div class="container-code-digits">{{ deliveryCodeValue }}</div>
+          <p class="small muted">{{ deliveryCodeOpen.locker_name }} · {{ deliveryCodeOpen.locker_city }}</p>
+        </div>
+        <QrCode :value="deliveryCodeValue" :size="160" />
+        <p class="small muted center">Tapez le code ou scannez le QR sur le casier.</p>
+      </div>
+      <template #footer>
+        <button class="ghost medium" @click="deliveryCodeOpen = null">Fermer</button>
       </template>
     </AppModal>
   </DashboardLayout>

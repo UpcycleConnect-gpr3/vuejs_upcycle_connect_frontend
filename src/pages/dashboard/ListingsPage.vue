@@ -397,7 +397,7 @@ async function submitListing() {
         <div v-if="form.photos.length" class="photo-list">
           <div v-for="(p, i) in form.photos" :key="i" class="photo-chip">
             <span class="tiny mono">{{ p.name }}</span>
-            <button class="ghost small" @click="removePhoto(i)">✕</button>
+            <button class="ghost small" @click="removePhoto(i)"></button>
           </div>
         </div>
       </div>
@@ -424,14 +424,14 @@ async function submitListing() {
       <template #footer>
         <button class="ghost medium" @click="close">Annuler</button>
         <div class="layout-flex layout-gap-small">
-          <button v-if="step > 1" class="ghost medium" @click="step--">← Précédent</button>
+          <button v-if="step > 1" class="ghost medium" @click="step--"> Précédent</button>
           <button
             v-if="step < 3"
             class="primary medium"
             @click="step++"
             :disabled="step === 1 && !form.title"
           >
-            Suivant →
+            Suivant
           </button>
           <button v-else class="primary medium" @click="submitListing">Publier</button>
         </div>

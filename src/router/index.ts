@@ -185,8 +185,6 @@ router.beforeEach((to) => {
     return { name: 'login' }
   }
 
-  // Controle d'acces par role : chaque espace n'est ouvert qu'aux roles
-  // autorises. L'administrateur peut naviguer partout.
   const allowed = to.meta.roles as string[] | undefined
   if (allowed && allowed.length) {
     const role = roleFromToken(auth.bearerToken)

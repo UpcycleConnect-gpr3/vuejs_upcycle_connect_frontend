@@ -95,8 +95,6 @@ export const deleteTrainingContent = async (id: number | string): Promise<void> 
   await apiTraining.delete(`/training-content/${id}/`)
 }
 
-// Reserve and pay a training via Stripe Checkout (amount derived server-side
-// from the training price). Returns the hosted Stripe Checkout URL.
 export const createTrainingCheckout = async (
   id: number | string,
   successUrl: string,

@@ -38,7 +38,7 @@ const alerts = [
     <header class="dashboard-page-header">
       <div>
         <span class="eyebrow">Tableau de bord</span>
-        <h1>Bonjour Jean 👋</h1>
+        <h1>Bonjour Jean </h1>
         <p class="muted measure">Voici un aperçu de votre activité sur UpcycleConnect.</p>
       </div>
       <div class="layout-flex layout-gap-medium">
@@ -111,7 +111,7 @@ const alerts = [
           </li>
         </ul>
         <RouterLink to="/dashboard/planning" class="ghost small" style="align-self: flex-start"
-          >Voir tous mes rendez-vous →</RouterLink
+          >Voir tous mes rendez-vous </RouterLink
         >
       </article>
 
@@ -133,7 +133,7 @@ const alerts = [
           </li>
         </ul>
         <RouterLink to="/dashboard/advice" class="ghost small" style="align-self: flex-start"
-          >Voir tous les conseils →</RouterLink
+          >Voir tous les conseils </RouterLink
         >
       </article>
     </div>
