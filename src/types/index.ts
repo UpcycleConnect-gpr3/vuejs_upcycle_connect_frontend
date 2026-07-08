@@ -61,6 +61,7 @@ export interface UpcycleObject extends Timestamps {
   user_id: string
   score: number
   is_ad_validated: boolean
+  status?: string
 }
 
 export interface ScoreConfig {
@@ -174,6 +175,25 @@ export interface Locker extends Timestamps {
   street: string
   city: string
   zip_code: string
+  capacity?: number
+  available_slots?: number
+}
+
+export interface DepositResult {
+  code: string
+  expiry_date: string
+  score: number
+  package_id: string
+}
+
+export interface PackageInfo {
+  id: string
+  code: string
+  locker_id: string
+  object_id: string
+  status: string
+  expiry_date: string
+  weight: number
 }
 
 export type LockerPayload = Omit<Locker, 'id' | 'created_at' | 'updated_at'>

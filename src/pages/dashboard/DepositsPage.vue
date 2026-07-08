@@ -1,153 +1,131 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import QrCode from '@/components/QrCode.vue'
-import { getPackages, createPackage } from '@/services/upcycle'
+import { getObjects } from '@/api/clients/objectClient'
+import {
+  getAvailableLockers,
+  depositObject,
+  retrievePackage,
+} from '@/api/clients/depositClient'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useToastsStore } from '@/stores/toasts'
+import type { Locker, UpcycleObject } from '@/types'
 
 const toasts = useToastsStore()
+const { currentUserId } = useCurrentUser()
 
-type Status = 'pending' | 'approved' | 'deposited' | 'collected' | 'rejected'
+const myObjects = ref<UpcycleObject[]>([])
+const lockers = ref<Locker[]>([])
+const isLoading = ref(false)
 
-interface Deposit {
-  id: number
-  reference: string
-  object: string
-  category: string
-  intent: 'don' | 'vente'
-  status: Status
-  code: string | null
-  barcode: string | null
-  createdAt: string
+// Dépôts réalisés dans cette session (on garde leur code de récupération).
+interface DepositedItem {
+  code: string
+  objectName: string
+  lockerName: string
+  expiry: string
+  score: number
 }
+const myDeposits = ref<DepositedItem[]>([])
 
-const deposits = ref<Deposit[]>([
-  {
-    id: 1,
-    reference: 'DEP-204',
-    object: 'Lot vaisselle vintage',
-    category: 'Vaisselle',
-    intent: 'don',
-    status: 'approved',
-    code: '482917',
-    barcode: 'UC-DEP-204-X9K2',
-    createdAt: '2026-04-26',
-  },
-  {
-    id: 2,
-    reference: 'DEP-203',
-    object: 'Mixeur cassé',
-    category: 'Électroménager',
-    intent: 'don',
-    status: 'pending',
-    code: null,
-    barcode: null,
-    createdAt: '2026-04-25',
-  },
-  {
-    id: 3,
-    reference: 'DEP-198',
-    object: 'Bibliothèque IKEA',
-    category: 'Mobilier',
-    intent: 'vente',
-    status: 'collected',
-    code: '208451',
-    barcode: 'UC-DEP-198-B3M9',
-    createdAt: '2026-04-12',
-  },
-  {
-    id: 4,
-    reference: 'DEP-189',
-    object: 'Sèche-cheveux HS',
-    category: 'Électroménager',
-    intent: 'don',
-    status: 'rejected',
-    code: null,
-    barcode: null,
-    createdAt: '2026-04-05',
-  },
-])
-
-const statusMeta: Record<Status, { label: string; badge: string }> = {
-  pending: { label: 'Vérification Check', badge: 'badge--accent' },
-  approved: { label: 'Code disponible', badge: 'badge--success' },
-  deposited: { label: 'Déposé', badge: 'badge--muted' },
-  collected: { label: 'Collecté', badge: 'badge--muted' },
-  rejected: { label: 'Refusé', badge: 'badge--danger' },
-}
-
-onMounted(async () => {
+const load = async () => {
+  isLoading.value = true
   try {
-    const data = await getPackages()
-    if (Array.isArray(data) && data.length) {
-      deposits.value = data.map(
-        (p): Deposit => ({
-          id: Number(p.id),
-          reference: p.reference ?? `DEP-${p.id}`,
-          object: (p.object as string) ?? (p.name as string) ?? 'Objet',
-          category: (p.category as string) ?? 'Autre',
-          intent: ((p.intent as string) === 'vente' ? 'vente' : 'don') as 'don' | 'vente',
-          status: ((p.status as Status) ?? 'pending') as Status,
-          code: (p.code as string) ?? null,
-          barcode: (p.barcode as string) ?? null,
-          createdAt: (p.created_at as string)?.slice(0, 10) ?? '',
-        }),
-      )
-    }
+    const [objects, avail] = await Promise.all([getObjects(), getAvailableLockers()])
+    const me = currentUserId.value
+    // On ne peut déposer que ses propres objets encore disponibles.
+    myObjects.value = objects.filter(
+      (o) => o.user_id === me && (!o.status || o.status === 'available'),
+    )
+    lockers.value = avail
   } catch {
-    toasts.error('Impossible de charger vos dépôts, affichage des données de démonstration.')
+    toasts.error('Impossible de charger vos objets et les conteneurs disponibles.')
+  } finally {
+    isLoading.value = false
   }
-})
+}
 
-const filter = ref<'all' | 'active'>('active')
-const filtered = computed(() =>
-  filter.value === 'all'
-    ? deposits.value
-    : deposits.value.filter((d) => d.status === 'pending' || d.status === 'approved'),
-)
+// ---- Déposer ----
+const showDeposit = ref(false)
+const isDepositing = ref(false)
+const form = reactive({ objectId: '', lockerId: '', weight: 0 })
 
-const showNewModal = ref(false)
-const form = reactive({
-  object: '',
-  description: '',
-  category: '',
-  intent: 'don' as 'don' | 'vente',
-  photos: [] as { name: string }[],
-})
+const openDeposit = () => {
+  form.objectId = myObjects.value[0]?.id ?? ''
+  form.lockerId = lockers.value[0]?.id ?? ''
+  form.weight = 0
+  showDeposit.value = true
+}
 
-async function submit() {
+const submitDeposit = async () => {
+  if (!form.objectId || !form.lockerId) return
+  isDepositing.value = true
   try {
-    await createPackage({
-      object: form.object,
-      category: form.category,
-      intent: form.intent,
-      description: form.description,
+    const result = await depositObject({
+      object_id: form.objectId,
+      locker_id: form.lockerId,
+      weight: form.weight || 0,
     })
-    toasts.success('Demande de dépôt envoyée')
-  } catch {
-    toasts.error('Envoi impossible, demande enregistrée localement.')
+    const obj = myObjects.value.find((o) => o.id === form.objectId)
+    const locker = lockers.value.find((l) => l.id === form.lockerId)
+    myDeposits.value.unshift({
+      code: result.code,
+      objectName: obj?.name ?? 'Objet',
+      lockerName: locker?.name ?? 'Conteneur',
+      expiry: result.expiry_date,
+      score: result.score,
+    })
+    toasts.success('Objet déposé — voici votre code de récupération')
+    showDeposit.value = false
+    codeOpen.value = myDeposits.value[0] ?? null
+    await load()
+  } catch (e) {
+    const msg = (e as { response?: { data?: { message?: string } } }).response?.data?.message
+    toasts.error(msg === 'Locker is full' ? 'Ce conteneur est plein.' : 'Dépôt impossible.')
+  } finally {
+    isDepositing.value = false
   }
-  deposits.value.unshift({
-    id: Date.now(),
-    reference: `DEP-${Math.floor(200 + Math.random() * 100)}`,
-    object: form.object,
-    category: form.category,
-    intent: form.intent,
-    status: 'pending',
-    code: null,
-    barcode: null,
-    createdAt: new Date().toISOString().slice(0, 10),
-  })
-  Object.assign(form, { object: '', description: '', category: '', intent: 'don', photos: [] })
-  showNewModal.value = false
 }
 
-const codeOpen = ref<Deposit | null>(null)
+// ---- Voir un code ----
+const codeOpen = ref<DepositedItem | null>(null)
 const qrRef = ref<InstanceType<typeof QrCode> | null>(null)
-function downloadQr() {
-  qrRef.value?.download()
+const downloadQr = () => qrRef.value?.download()
+
+// ---- Récupérer ----
+const showRetrieve = ref(false)
+const isRetrieving = ref(false)
+const retrieveCode = ref('')
+
+const submitRetrieve = async () => {
+  const code = retrieveCode.value.trim().toUpperCase()
+  if (!code) return
+  isRetrieving.value = true
+  try {
+    await retrievePackage(code)
+    toasts.success('Objet récupéré avec succès !')
+    showRetrieve.value = false
+    retrieveCode.value = ''
+    await load()
+  } catch (e) {
+    const msg = (e as { response?: { data?: { message?: string } } }).response?.data?.message
+    const label =
+      msg === 'Package has expired'
+        ? 'Ce code a expiré.'
+        : msg === 'Package already retrieved'
+          ? 'Cet objet a déjà été récupéré.'
+          : 'Code invalide.'
+    toasts.error(label)
+  } finally {
+    isRetrieving.value = false
+  }
 }
+
+const selectedLocker = computed(() => lockers.value.find((l) => l.id === form.lockerId))
+
+onMounted(load)
 </script>
 
 <template>
@@ -155,131 +133,145 @@ function downloadQr() {
     <header class="dashboard-page-header">
       <div>
         <span class="eyebrow">Dépôt en conteneur</span>
-        <h1>Mes dépôts</h1>
+        <h1>Conteneurs</h1>
         <p class="muted measure">
-          Demandez un dépôt, l'équipe Check valide et vous reçevez un code conteneur + un QR pour le
-          retrait artisan.
+          Déposez un de vos objets dans un conteneur et recevez un code. Un professionnel peut
+          ensuite le récupérer avec ce code.
         </p>
       </div>
-      <button class="primary medium" @click="showNewModal = true">+ Nouvelle demande</button>
+      <div class="layout-flex layout-gap-small">
+        <button class="ghost medium" @click="showRetrieve = true">Récupérer un objet</button>
+        <button class="primary medium" :disabled="!myObjects.length || !lockers.length" @click="openDeposit">
+          + Déposer un objet
+        </button>
+      </div>
     </header>
 
-    <div class="layout-flex layout-gap-small">
-      <button class="forum-tab" :class="{ active: filter === 'active' }" @click="filter = 'active'">
-        Actifs
-      </button>
-      <button class="forum-tab" :class="{ active: filter === 'all' }" @click="filter = 'all'">
-        Tout · {{ deposits.length }}
-      </button>
-    </div>
+    <p v-if="isLoading && !lockers.length" class="muted">Chargement…</p>
 
-    <div class="layout-flex layout-columns layout-gap-medium">
-      <article v-for="d in filtered" :key="d.id" class="deposit-card">
-        <div
-          class="layout-flex layout-justify-between layout-items-start"
+    <section v-if="myDeposits.length" class="layout-flex layout-columns layout-gap-medium">
+      <h3>Mes dépôts récents</h3>
+      <div class="layout-flex layout-columns layout-gap-small">
+        <article
+          v-for="d in myDeposits"
+          :key="d.code"
+          class="dashboard-card layout-flex layout-justify-between layout-items-center"
           style="flex-wrap: wrap; gap: var(--space-3)"
         >
-          <div class="layout-flex layout-columns" style="gap: 4px">
-            <div class="layout-flex layout-gap-small layout-items-center">
-              <span class="badge mono">{{ d.reference }}</span>
-              <span class="badge">{{ d.intent }}</span>
-              <span class="badge" :class="statusMeta[d.status].badge">{{
-                statusMeta[d.status].label
-              }}</span>
-            </div>
-            <h4>{{ d.object }}</h4>
-            <span class="tiny muted">{{ d.category }} · créé le {{ d.createdAt }}</span>
+          <div>
+            <h4 style="margin: 0">{{ d.objectName }}</h4>
+            <span class="tiny muted">{{ d.lockerName }} · +{{ d.score }} kg CO₂ · expire le {{ d.expiry.slice(0, 10) }}</span>
           </div>
-          <div v-if="d.status === 'approved'" class="layout-flex layout-gap-small">
-            <button class="primary small" @click="codeOpen = d">Voir code conteneur</button>
-          </div>
-        </div>
-      </article>
-    </div>
+          <button class="primary small" @click="codeOpen = d">Voir le code</button>
+        </article>
+      </div>
+    </section>
 
-    <AppModal :open="showNewModal" title="Nouvelle demande de dépôt" @close="showNewModal = false">
-      <form class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submit">
+    <section class="layout-flex layout-columns layout-gap-medium">
+      <h3>Conteneurs disponibles</h3>
+      <p v-if="!lockers.length" class="muted small">Aucun conteneur disponible pour le moment.</p>
+      <div v-else class="dashboard-grid">
+        <article v-for="l in lockers" :key="l.id" class="dashboard-card">
+          <h4 style="margin: 0">{{ l.name }}</h4>
+          <span class="tiny muted">{{ l.street }}, {{ l.zip_code }} {{ l.city }}</span>
+          <div class="tiny" style="margin-top: var(--space-2)">
+            📦 {{ l.available_slots }} / {{ l.capacity }} places libres
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Déposer -->
+    <AppModal :open="showDeposit" title="Déposer un objet" @close="showDeposit = false">
+      <form id="deposit-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitDeposit">
         <div class="form-group">
-          <label class="uppercase">Objet à déposer</label>
-          <input
-            v-model="form.object"
-            type="text"
-            class="primary medium full-width"
-            placeholder="Ex: Lot vaisselle vintage"
-            required
-          />
-        </div>
-        <div class="layout-flex layout-gap-medium">
-          <div class="form-group" style="flex: 1">
-            <label class="uppercase">Catégorie</label>
-            <select v-model="form.category" class="primary medium full-width" required>
-              <option value="" disabled>Choisir…</option>
-              <option>Mobilier</option>
-              <option>Outils</option>
-              <option>Électronique</option>
-              <option>Électroménager</option>
-              <option>Textile</option>
-              <option>Vaisselle</option>
-              <option>Autre</option>
-            </select>
-          </div>
-          <div class="form-group" style="flex: 1">
-            <label class="uppercase">Intention</label>
-            <select v-model="form.intent" class="primary medium full-width">
-              <option value="don">Don</option>
-              <option value="vente">Vente potentielle</option>
-            </select>
-          </div>
+          <label class="uppercase">Objet</label>
+          <select v-model="form.objectId" class="primary medium full-width" required>
+            <option v-for="o in myObjects" :key="o.id" :value="o.id">{{ o.name }}</option>
+          </select>
+          <p v-if="!myObjects.length" class="tiny muted">Vous n'avez aucun objet disponible à déposer.</p>
         </div>
         <div class="form-group">
-          <label class="uppercase">Description &amp; état</label>
-          <textarea
-            v-model="form.description"
-            class="primary full-width"
-            rows="4"
-            placeholder="Décrivez l'objet, son état, ses dimensions…"
-          ></textarea>
+          <label class="uppercase">Conteneur</label>
+          <select v-model="form.lockerId" class="primary medium full-width" required>
+            <option v-for="l in lockers" :key="l.id" :value="l.id">
+              {{ l.name }} — {{ l.city }} ({{ l.available_slots }} libres)
+            </option>
+          </select>
         </div>
-        <p class="small muted">
-          L'équipe Check vérifie sous 24h si l'objet peut être donné ou vendu, puis génère un code
-          conteneur.
+        <div class="form-group">
+          <label class="uppercase">Poids (kg) — optionnel</label>
+          <input v-model.number="form.weight" type="number" min="0" class="primary medium full-width" />
+        </div>
+        <p v-if="selectedLocker" class="small muted">
+          Après validation, un code s'affichera pour ouvrir le tiroir du conteneur. Le code expire
+          sous 7 jours.
         </p>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showNewModal = false">Annuler</button>
-        <button class="primary medium" :disabled="!form.object || !form.category" @click="submit">
-          Envoyer la demande
+        <button class="ghost medium" @click="showDeposit = false">Annuler</button>
+        <button
+          type="submit"
+          form="deposit-form"
+          class="primary medium"
+          :disabled="isDepositing || !form.objectId || !form.lockerId"
+        >
+          {{ isDepositing ? 'Dépôt…' : 'Déposer' }}
         </button>
       </template>
     </AppModal>
 
+    <!-- Code -->
     <AppModal :open="!!codeOpen" size="small" @close="codeOpen = null">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
-          <span class="eyebrow">Dépôt {{ codeOpen?.reference }}</span>
-          <h3>{{ codeOpen?.object }}</h3>
+          <span class="eyebrow">Code de récupération</span>
+          <h3>{{ codeOpen?.objectName }}</h3>
         </div>
       </template>
-      <div class="layout-flex layout-columns layout-items-center layout-gap-large">
+      <div v-if="codeOpen" class="layout-flex layout-columns layout-items-center layout-gap-large">
         <div class="container-code">
           <span class="eyebrow">Code conteneur</span>
-          <div class="container-code-digits">{{ codeOpen?.code }}</div>
-          <p class="small muted">
-            Tapez ce code sur le clavier du conteneur pour ouvrir le tiroir.
-          </p>
+          <div class="container-code-digits">{{ codeOpen.code }}</div>
+          <p class="small muted">Tapez ce code sur le clavier du conteneur pour ouvrir le tiroir.</p>
         </div>
-
-        <div class="qr-mock">
-          <QrCode v-if="codeOpen?.barcode" ref="qrRef" :value="codeOpen.barcode" :size="160" />
-          <span class="tiny mono muted">{{ codeOpen?.barcode }}</span>
-        </div>
+        <QrCode ref="qrRef" :value="codeOpen.code" :size="160" />
         <p class="small muted center">
-          Le QR/code-barres est lu par l'artisan ou le professionnel pour récupérer l'objet.
+          Le professionnel scanne ce QR (ou saisit le code) pour récupérer l'objet.
         </p>
       </div>
       <template #footer>
         <button class="ghost medium" @click="codeOpen = null">Fermer</button>
         <button class="primary medium" @click="downloadQr">Imprimer / Télécharger</button>
+      </template>
+    </AppModal>
+
+    <!-- Récupérer -->
+    <AppModal :open="showRetrieve" title="Récupérer un objet" @close="showRetrieve = false">
+      <form id="retrieve-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitRetrieve">
+        <div class="form-group">
+          <label class="uppercase">Code de récupération</label>
+          <input
+            v-model="retrieveCode"
+            type="text"
+            class="primary medium full-width mono"
+            placeholder="Ex : XSWFVMVX"
+            style="text-transform: uppercase"
+            required
+          />
+        </div>
+        <p class="small muted">Saisissez le code fourni au dépôt pour récupérer l'objet.</p>
+      </form>
+      <template #footer>
+        <button class="ghost medium" @click="showRetrieve = false">Annuler</button>
+        <button
+          type="submit"
+          form="retrieve-form"
+          class="primary medium"
+          :disabled="isRetrieving || !retrieveCode.trim()"
+        >
+          {{ isRetrieving ? 'Récupération…' : 'Récupérer' }}
+        </button>
       </template>
     </AppModal>
   </DashboardLayout>
