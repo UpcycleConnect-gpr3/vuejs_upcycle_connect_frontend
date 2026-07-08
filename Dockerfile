@@ -15,7 +15,7 @@ RUN bun install
 COPY . .
 RUN bun run build
 
-FROM nginx:alpine3.23-slim AS prod
+FROM nginx:alpine AS prod
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
