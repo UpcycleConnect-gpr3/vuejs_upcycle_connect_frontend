@@ -1,0 +1,35 @@
+{
+  "_name": "English",
+  "nav": {
+    "home": "Home",
+    "service": "Services",
+    "resources": "Resources",
+    "pricing": "Pricing",
+    "forum": "Forum",
+    "listings": "Listings"
+  },
+  "auth": {
+    "signup": "Sign up",
+    "login": "Log in",
+    "logout": "Log out",
+    "myspace": "My space"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search…",
+    "free": "Free",
+    "language": "Language"
+  },
+  "home": {
+    "eyebrow": "The smart upcycling platform",
+    "title": "Give your items a second life",
+    "subtitle": "Individuals, craftspeople and companies come together to give, find and transform objects and materials — and measure their impact.",
+    "cta_primary": "Get started",
+    "cta_secondary": "Explore services"
+  }
+}
