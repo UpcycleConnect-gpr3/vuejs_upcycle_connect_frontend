@@ -72,7 +72,7 @@ export const useAuthStore = defineStore(
 
     const setToken = async (token: string) => {
       bearerToken.value = token
-      if (hasCookieStore()) {
+      if (hasCookieStore() && isRealDomain()) {
         await cookieStore.set(TOKEN_COOKIE_NAME, token, cookieStoreOptions())
       } else {
         writeCookieFallback(TOKEN_COOKIE_NAME, token)
@@ -81,11 +81,8 @@ export const useAuthStore = defineStore(
 
     const clearToken = async () => {
       bearerToken.value = ''
-      if (hasCookieStore()) {
-        await cookieStore.delete(
-          TOKEN_COOKIE_NAME,
-          isRealDomain() ? { domain: COOKIE_DOMAIN, path: COOKIE_PATH } : { path: COOKIE_PATH },
-        )
+      if (hasCookieStore() && isRealDomain()) {
+        await cookieStore.delete(TOKEN_COOKIE_NAME, { domain: COOKIE_DOMAIN, path: COOKIE_PATH })
       } else {
         deleteCookieFallback(TOKEN_COOKIE_NAME)
       }
