@@ -301,6 +301,8 @@ export type ForumEventPayload = Omit<ForumEvent, 'id'>
 export interface Talk extends Timestamps {
   id: number
   title: string
+  content: string
+  category_id: number
   type: string
   status: string
   description: string
