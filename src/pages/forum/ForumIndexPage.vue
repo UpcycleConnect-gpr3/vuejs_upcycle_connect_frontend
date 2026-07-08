@@ -1,73 +1,82 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
+
+const { t } = useI18n()
 
 const search = ref('')
 const activeCategory = ref<string | null>(null)
 
-const categories = [
-  { id: 'tips', name: 'Tips & Tricks', count: 24 },
-  { id: 'questions', name: 'Questions', count: 87 },
-  { id: 'show', name: 'Show & Tell', count: 41 },
-  { id: 'partners', name: 'Partners', count: 12 },
-  { id: 'general', name: 'General', count: 156 },
+const categoryDefs = [
+  { id: 'tips', count: 24 },
+  { id: 'questions', count: 87 },
+  { id: 'show', count: 41 },
+  { id: 'partners', count: 12 },
+  { id: 'general', count: 156 },
 ]
 
-const discussions = ref([
+const categories = computed(() =>
+  categoryDefs.map((c) => ({ ...c, name: t(`forumIndex.categories.${c.id}`) })),
+)
+
+function categoryLabel(id: string) {
+  return t(`forumIndex.categories.${id}`)
+}
+
+const discussionDefs = [
   {
     id: 1,
-    title: 'Comment transformer une vieille palette en table basse ?',
     author: 'Marie L.',
     authorInitials: 'ML',
     category: 'questions',
     replies: 12,
     reactions: 24,
-    lastActivity: 'il y a 2h',
-    excerpt:
-      "J'ai récupéré 3 palettes de chantier et je voudrais en faire une table basse industrielle...",
     pinned: true,
+    key: 'd1',
   },
   {
     id: 2,
-    title: 'Mon premier projet : lampe en bouteilles',
     author: 'Thomas M.',
     authorInitials: 'TM',
     category: 'show',
     replies: 8,
     reactions: 47,
-    lastActivity: 'il y a 5h',
-    excerpt: "Voici le résultat de mon weekend. Photos et tutoriel complet à l'intérieur.",
     pinned: false,
+    key: 'd2',
   },
   {
     id: 3,
-    title: "Outils essentiels pour démarrer l'upcycling",
     author: 'Julie B.',
     authorInitials: 'JB',
     category: 'tips',
     replies: 23,
     reactions: 89,
-    lastActivity: 'hier',
-    excerpt:
-      'La liste complète de ce que vous devez avoir avant de commencer votre premier projet.',
     pinned: false,
+    key: 'd3',
   },
   {
     id: 4,
-    title: 'Partenariat avec une ressourcerie locale ?',
     author: 'Alex D.',
     authorInitials: 'AD',
     category: 'partners',
     replies: 4,
     reactions: 11,
-    lastActivity: 'hier',
-    excerpt:
-      "Quelqu'un a déjà monté un partenariat avec une ressourcerie ? Comment vous avez procédé ?",
     pinned: false,
+    key: 'd4',
   },
-])
+]
+
+const discussions = computed(() =>
+  discussionDefs.map((d) => ({
+    ...d,
+    title: t(`forumIndex.discussions.${d.key}.title`),
+    excerpt: t(`forumIndex.discussions.${d.key}.excerpt`),
+    lastActivity: t(`forumIndex.discussions.${d.key}.lastActivity`),
+  })),
+)
 
 const filtered = computed(() =>
   discussions.value.filter((d) => {
@@ -89,13 +98,13 @@ const filtered = computed(() =>
           style="flex-wrap: wrap; gap: var(--space-5)"
         >
           <hgroup>
-            <span class="eyebrow">Forum</span>
-            <h1>Discussions de la communauté</h1>
+            <span class="eyebrow">{{ t('nav.forum') }}</span>
+            <h1>{{ t('forumIndex.title') }}</h1>
             <p class="lead measure">
-              Posez vos questions, partagez vos projets, échangez avec d'autres makers.
+              {{ t('forumIndex.subtitle') }}
             </p>
           </hgroup>
-          <RouterLink to="/forum/new" class="primary medium">+ Nouvelle discussion</RouterLink>
+          <RouterLink to="/forum/new" class="primary medium">{{ t('forumIndex.newDiscussion') }}</RouterLink>
         </div>
       </div>
     </section>
@@ -107,7 +116,7 @@ const filtered = computed(() =>
             v-model="search"
             type="search"
             class="primary medium"
-            placeholder="Rechercher une discussion..."
+            :placeholder="t('forumIndex.searchPlaceholder')"
             style="flex: 1"
           />
           <div class="forum-tabs">
@@ -116,7 +125,7 @@ const filtered = computed(() =>
               :class="{ active: activeCategory === null }"
               @click="activeCategory = null"
             >
-              Tout
+              {{ t('forumIndex.tabs.all') }}
             </button>
             <button
               v-for="c in categories"
@@ -141,14 +150,14 @@ const filtered = computed(() =>
             <div class="avatar">{{ d.authorInitials }}</div>
             <div class="discussion-body">
               <div class="layout-flex layout-gap-small layout-items-center" style="flex-wrap: wrap">
-                <span v-if="d.pinned" class="badge badge--accent">Épinglé</span>
-                <span class="badge">{{ d.category }}</span>
+                <span v-if="d.pinned" class="badge badge--accent">{{ t('forumIndex.pinned') }}</span>
+                <span class="badge">{{ categoryLabel(d.category) }}</span>
               </div>
               <h3 class="discussion-title">{{ d.title }}</h3>
               <p class="small muted measure">{{ d.excerpt }}</p>
               <div class="discussion-meta">
                 <span class="small muted"
-                  >par <strong style="color: var(--foreground-color)">{{ d.author }}</strong> ·
+                  >{{ t('forumIndex.by') }} <strong style="color: var(--foreground-color)">{{ d.author }}</strong> ·
                   {{ d.lastActivity }}</span
                 >
               </div>

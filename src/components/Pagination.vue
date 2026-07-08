@@ -21,8 +21,12 @@ const go = (p: number) => {
 
 <template>
   <nav v-if="totalPages > 1" class="layout-flex layout-gap-small layout-items-center">
-    <button class="ghost small" :disabled="!canPrev" @click="go(page - 1)"> Précédent</button>
-    <span class="tiny muted">Page {{ page }} / {{ totalPages }}</span>
-    <button class="ghost small" :disabled="!canNext" @click="go(page + 1)">Suivant </button>
+    <button class="ghost small" :disabled="!canPrev" @click="go(page - 1)">
+      {{ $t('pagination.previous') }}
+    </button>
+    <span class="tiny muted">{{ $t('pagination.pageInfo', { page, total: totalPages }) }}</span>
+    <button class="ghost small" :disabled="!canNext" @click="go(page + 1)">
+      {{ $t('pagination.next') }}
+    </button>
   </nav>
 </template>

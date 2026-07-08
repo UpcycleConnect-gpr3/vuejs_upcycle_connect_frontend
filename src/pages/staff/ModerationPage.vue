@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import StaffDashboardLayout from '@/components/StaffDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import {
@@ -11,6 +12,7 @@ import {
 } from '@/services/forum'
 import { useToastsStore } from '@/stores/toasts'
 
+const { t } = useI18n()
 const toasts = useToastsStore()
 
 const talks = ref<Talk[]>([])
@@ -38,7 +40,7 @@ const load = async () => {
   try {
     talks.value = await getTalks()
   } catch {
-    toasts.error('Impossible de charger les discussions.')
+    toasts.error(t('staffModeration.toasts.loadFailed'))
   } finally {
     isLoading.value = false
   }
@@ -58,11 +60,11 @@ const openDetail = async (talk: Talk) => {
 const remove = async (talk: Talk) => {
   try {
     await deleteTalk(talk.id)
-    toasts.success('Discussion supprimée')
+    toasts.success(t('staffModeration.toasts.deleted'))
     showDetail.value = false
     await load()
   } catch {
-    toasts.error('Suppression impossible.')
+    toasts.error(t('staffModeration.toasts.deleteFailed'))
   }
 }
 
@@ -73,10 +75,10 @@ onMounted(load)
   <StaffDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Modération</span>
-        <h1>Forum</h1>
+        <span class="eyebrow">{{ t('staffModeration.eyebrow') }}</span>
+        <h1>{{ t('staffModeration.title') }}</h1>
         <p class="muted measure">
-          Suivez les discussions de la communauté et retirez les contenus inappropriés.
+          {{ t('staffModeration.subtitle') }}
         </p>
       </div>
     </header>
@@ -85,13 +87,13 @@ onMounted(load)
       v-model="search"
       type="search"
       class="primary medium"
-      placeholder="Rechercher une discussion…"
+      :placeholder="t('staffModeration.searchPlaceholder')"
       style="max-width: 300px"
     />
 
-    <p v-if="isLoading && !talks.length" class="muted">Chargement…</p>
+    <p v-if="isLoading && !talks.length" class="muted">{{ t('common.loading') }}</p>
     <p v-else-if="!filtered.length" class="muted center" style="padding: var(--space-8)">
-      Aucune discussion.
+      {{ t('staffModeration.empty') }}
     </p>
 
     <div v-else class="layout-flex layout-columns layout-gap-medium">
@@ -107,7 +109,7 @@ onMounted(load)
             <h4 style="margin: 0">{{ talk.title }}</h4>
             <p class="small muted" style="margin: var(--space-1) 0 0">{{ talk.content }}</p>
           </div>
-          <button class="ghost small" @click.stop="remove(talk)">Supprimer</button>
+          <button class="ghost small" @click.stop="remove(talk)">{{ t('common.delete') }}</button>
         </div>
       </article>
     </div>
@@ -116,8 +118,8 @@ onMounted(load)
       <div v-if="selected" class="layout-flex layout-columns layout-gap-medium">
         <p class="muted">{{ selected.content }}</p>
         <div>
-          <h4 style="margin-bottom: var(--space-2)">Messages ({{ messages.length }})</h4>
-          <p v-if="!messages.length" class="small muted">Aucun message.</p>
+          <h4 style="margin-bottom: var(--space-2)">{{ t('staffModeration.messagesCount', { count: messages.length }) }}</h4>
+          <p v-if="!messages.length" class="small muted">{{ t('staffModeration.noMessages') }}</p>
           <ul v-else class="layout-flex layout-columns layout-gap-small">
             <li v-for="m in messages" :key="m.id" class="event-row">
               <span>{{ m.content }}</span>
@@ -126,14 +128,14 @@ onMounted(load)
         </div>
       </div>
       <template #footer>
-        <button class="ghost medium" @click="showDetail = false">Fermer</button>
+        <button class="ghost medium" @click="showDetail = false">{{ t('staffModeration.close') }}</button>
         <button
           v-if="selected"
           class="primary medium"
           style="background: var(--destructive-color)"
           @click="remove(selected)"
         >
-          Supprimer la discussion
+          {{ t('staffModeration.deleteDiscussion') }}
         </button>
       </template>
     </AppModal>

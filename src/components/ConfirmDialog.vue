@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import AppModal from '@/components/AppModal.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 withDefaults(
   defineProps<{
@@ -11,9 +14,9 @@ withDefaults(
     danger?: boolean
   }>(),
   {
-    title: 'Confirmer',
-    confirmLabel: 'Confirmer',
-    cancelLabel: 'Annuler',
+    title: () => t('confirmDialog.title'),
+    confirmLabel: () => t('confirmDialog.confirm'),
+    cancelLabel: () => t('common.cancel'),
     danger: false,
   },
 )

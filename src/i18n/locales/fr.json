@@ -30,6 +30,1626 @@
     "title": "Donnez une seconde vie à vos objets",
     "subtitle": "Particuliers, artisans et entreprises se retrouvent pour donner, trouver et transformer des objets et matériaux — et mesurer leur impact.",
     "cta_primary": "Commencer",
-    "cta_secondary": "Découvrir les services"
+    "cta_secondary": "Découvrir les services",
+    "whatWeDo": {
+      "eyebrow": "Ce que nous faisons",
+      "title": "Une boîte à outils circulaire complète"
+    },
+    "features": {
+      "marketplace": {
+        "title": "Marketplace d'upcycling",
+        "description": "Transformez les déchets en valeur grâce à notre marketplace sélectionnée."
+      },
+      "forum": {
+        "title": "Forum communautaire",
+        "description": "Échangez avec des personnes qui partagent les mêmes valeurs et partagez vos idées."
+      },
+      "training": {
+        "title": "Programmes de formation",
+        "description": "Apprenez les pratiques durables grâce à des formations animées par des experts."
+      }
+    },
+    "spotlight": {
+      "eyebrow": "À la une",
+      "title_line1": "Conçu pour la communauté,",
+      "title_line2": "par la communauté",
+      "description": "Chaque fonctionnalité d'UpcycleConnect a été façonnée par des designers, des artisans et des défenseurs de la durabilité. Nous ne sommes pas seulement une plateforme — nous sommes un mouvement.",
+      "cta_primary": "Commencer",
+      "cta_secondary": "En savoir plus"
+    },
+    "partnership": {
+      "eyebrow": "Partenariat",
+      "title": "Nos partenaires de confiance"
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Discutons",
+      "description": "Des questions, des partenariats, ou juste envie de dire bonjour ? Laissez-nous un message et nous vous répondrons.",
+      "form": {
+        "name_label": "Nom",
+        "name_placeholder": "Votre nom",
+        "email_label": "Email",
+        "email_placeholder": "vous@exemple.com",
+        "message_label": "Message",
+        "message_placeholder": "Écrivez votre message ici...",
+        "submit": "Envoyer le message",
+        "disabled_notice": "Le formulaire de contact sera bientôt disponible."
+      }
+    }
+  },
+  "footer": {
+    "tagline": "Construire un avenir circulaire, un objet à la fois.",
+    "product": "Produit",
+    "library": "Bibliothèque",
+    "about": "À propos",
+    "copyright": "© 2026 Alternext. Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies"
+  },
+  "dashLayout": {
+    "defaultAccount": "Mon compte",
+    "sections": {
+      "myActivity": "Mon activité",
+      "discover": "Découvrir",
+      "myProfile": "Mon profil"
+    },
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "deposits": "Dépôts conteneur",
+      "planning": "Planning",
+      "messages": "Messages",
+      "notifications": "Notifications",
+      "catalog": "Catalogue",
+      "advice": "Conseils",
+      "score": "Upcycling Score",
+      "orders": "Commandes"
+    }
+  },
+  "proLayout": {
+    "defaultAccount": "Mon compte",
+    "sections": {
+      "activity": "Activité",
+      "business": "Business"
+    },
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "marketplace": "Marketplace",
+      "pickups": "Récupérations",
+      "projects": "Projets",
+      "subscription": "Abonnement",
+      "ads": "Publicité",
+      "stats": "Statistiques"
+    }
+  },
+  "staffLayout": {
+    "defaultAccount": "Mon compte",
+    "sections": {
+      "animation": "Animation",
+      "content": "Contenus"
+    },
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "trainings": "Formations & ateliers",
+      "planning": "Planning",
+      "advice": "Conseils & news",
+      "moderation": "Modération forums"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": {
+        "title": "Bienvenue sur UpcycleConnect",
+        "description": "Visite express en 5 étapes pour prendre vos repères. Vous pouvez passer à tout moment."
+      },
+      "listings": {
+        "title": "Vos annonces",
+        "description": "Déposez une annonce de don ou de vente. Elles passent en validation rapide par notre équipe."
+      },
+      "deposits": {
+        "title": "Dépôt conteneur",
+        "description": "Demandez un dépôt en conteneur. Une fois validé, vous recevez un code et un QR pour le retrait."
+      },
+      "catalog": {
+        "title": "Catalogue",
+        "description": "Parcourez les services, formations et événements achetables ou réservables."
+      },
+      "score": {
+        "title": "Upcycling Score",
+        "description": "Suivez votre impact circulaire et débloquez des badges au fil de vos contributions."
+      }
+    },
+    "actions": {
+      "skip": "Passer",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "finish": "Terminer"
+    }
+  },
+  "authModal": {
+    "titleRegister": "Inscription",
+    "description": "La connexion et la création de compte se font sur le portail UpcycleConnect. Vous allez être redirigé, puis ramené sur le site une fois authentifié.",
+    "redirecting": "Redirection…",
+    "continueButton": "Continuer vers le portail"
+  },
+  "confirmDialog": {
+    "title": "Confirmer",
+    "confirm": "Confirmer"
+  },
+  "appModal": {
+    "close": "Fermer"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageInfo": "Page {page} / {total}"
+  },
+  "qrCode": {
+    "generationFailed": "Échec de la génération du QR code"
+  },
+  "dashHome": {
+    "eyebrow": "Tableau de bord",
+    "greeting": "Bonjour {name}",
+    "subtitle": "Voici un aperçu de votre activité sur UpcycleConnect.",
+    "ctaDeposit": "+ Dépôt conteneur",
+    "ctaNewListing": "+ Nouvelle annonce",
+    "stats": {
+      "scoreLabel": "Upcycling Score",
+      "scoreDelta": "{delta} ce mois",
+      "scoreRank": "Top 12% de la communauté",
+      "listingsLabel": "Annonces actives",
+      "listingsPending": "{count} en validation",
+      "sessionsLabel": "Prochaines sessions",
+      "sessionsThisWeek": "cette semaine",
+      "depositsLabel": "Dépôts en attente",
+      "action": "Action",
+      "depositsAvailable": "{count} code disponible"
+    },
+    "alerts": {
+      "listingApproved": "Annonce \"{title}\" approuvée par l'équipe.",
+      "depositCodeReceived": "Code conteneur reçu pour votre dépôt {code}."
+    },
+    "thisWeek": "Cette semaine",
+    "upcomingAppointments": "Prochains rendez-vous",
+    "detail": "Détail",
+    "seeAllAppointments": "Voir tous mes rendez-vous",
+    "adviceEyebrow": "Conseils",
+    "readThisWeek": "À lire cette semaine",
+    "adviceMini": {
+      "item1": {
+        "badge": "Débutant",
+        "title": "5 conseils pour bien démarrer"
+      },
+      "item2": {
+        "badge": "Outils",
+        "title": "Outils essentiels pour l'upcycling"
+      },
+      "readTime": "{min} min de lecture"
+    },
+    "seeAllAdvice": "Voir tous les conseils",
+    "upcoming": {
+      "item1": {
+        "title": "Atelier transformation palettes",
+        "date": "12 mai · 14h00",
+        "location": "Salle A",
+        "kind": "Atelier"
+      },
+      "item2": {
+        "title": "Webinaire textile éco-responsable",
+        "date": "18 mai · 19h00",
+        "location": "En ligne",
+        "kind": "Conseil"
+      }
+    }
+  },
+  "dashCatalog": {
+    "eyebrow": "Catalogue",
+    "title": "Services, formations & événements",
+    "subtitle": "Réservez, achetez, participez — tout ce que propose UpcycleConnect au même endroit.",
+    "searchPlaceholder": "Rechercher…",
+    "filters": {
+      "all": "Tout",
+      "services": "Services",
+      "trainings": "Formations",
+      "events": "Événements"
+    },
+    "sort": {
+      "date": "Trier : date",
+      "price": "Trier : prix"
+    },
+    "spotsLeft": "{count} places restantes",
+    "book": "Réserver",
+    "kinds": {
+      "service": "Service",
+      "training": "Formation",
+      "event": "Événement"
+    },
+    "toastLoadError": "Impossible de charger le catalogue, affichage des données de démonstration.",
+    "items": {
+      "1": {
+        "title": "Initiation à l'upcycling — Niveau 1",
+        "description": "Workshop d'introduction sur 3h pour découvrir les bases.",
+        "category": "Débutant",
+        "duration": "3h",
+        "location": "Atelier Paris 11"
+      },
+      "2": {
+        "title": "Restaurer un meuble en bois",
+        "description": "Formation complète : ponçage, traitement, finition huilée.",
+        "category": "Technique",
+        "duration": "6h",
+        "location": "Atelier Paris 11"
+      },
+      "3": {
+        "title": "Salon de l'économie circulaire",
+        "description": "Conférences et stands toute la journée.",
+        "category": "Événement",
+        "duration": "Journée",
+        "location": "Cité des Sciences"
+      },
+      "4": {
+        "title": "Diagnostic mobilier à domicile",
+        "description": "Un expert vient évaluer vos meubles à restaurer.",
+        "category": "Service",
+        "duration": "1h",
+        "location": "Île-de-France",
+        "date": "Sur RDV"
+      },
+      "5": {
+        "title": "Workshop textile — couture upcycling",
+        "description": "Transformez vos vieux vêtements en pièces uniques.",
+        "category": "Textile",
+        "duration": "4h",
+        "location": "En ligne"
+      },
+      "6": {
+        "title": "Repair Café d'avril",
+        "description": "Apportez vos objets à réparer, on vous aide.",
+        "category": "Événement",
+        "duration": "4h",
+        "location": "Atelier Paris 11"
+      }
+    }
+  },
+  "dashCatalogDetail": {
+    "backToCatalog": "Retour au catalogue",
+    "trainingBadge": "Formation",
+    "duration": "Durée",
+    "location": "Lieu",
+    "trainer": "Formateur",
+    "descriptionHeading": "Description",
+    "chooseSlot": "Choisissez votre créneau",
+    "spotsOfCapacity": "{left} / {capacity} places",
+    "perParticipant": "par participant",
+    "bookFree": "Réserver gratuitement",
+    "bookSpot": "Réserver ma place",
+    "freeCancellation": "Annulation gratuite jusqu'à 48h avant.",
+    "securePayment": "Paiement sécurisé",
+    "total": "Total",
+    "stripeNotice": "Le paiement s'effectue sur une page sécurisée Stripe. Vous allez être redirigé pour finaliser votre réservation.",
+    "bookingConfirmed": "Réservation confirmée",
+    "confirmationEmailSent": "Un email de confirmation vient de vous être envoyé. La session a été ajoutée à votre planning.",
+    "processing": "Traitement…",
+    "confirmFreeBooking": "Confirmer ma réservation",
+    "payViaStripe": "Payer {amount}€ via Stripe",
+    "seeMyPlanning": "Voir mon planning",
+    "demo": {
+      "title": "Initiation à l'upcycling — Niveau 1",
+      "description": "Workshop d'introduction sur 3h pour découvrir les bases de l'upcycling : matériaux, outils, techniques fondamentales.",
+      "category": "Débutant",
+      "location": "Atelier Paris 11",
+      "longText": "Cette formation s'adresse à toutes les personnes qui souhaitent débuter dans l'upcycling. Vous découvrirez les outils essentiels, apprendrez les techniques de base de ponçage et de finition, et repartirez avec un petit objet que vous aurez transformé.\n\nLe matériel est fourni. Apportez juste vos vêtements de travail."
+    },
+    "toastDetailError": "Détail indisponible, affichage des données de démonstration.",
+    "toastBookingError": "Réservation impossible, réessayez plus tard.",
+    "toastPaymentUnavailable": "Le paiement en ligne est indisponible. Réessayez plus tard.",
+    "scheduleTitled": "{title} (jour {day})",
+    "scheduleDay": "Jour {day}"
+  },
+  "dashListings": {
+    "eyebrow": "Annonces",
+    "title": "Mes annonces",
+    "subtitle": "Déposez vos objets en don ou en vente. Validation par l'équipe sous 24-48h.",
+    "newListing": "+ Nouvelle annonce",
+    "allCount": "Tout · {count}",
+    "status": {
+      "pending": "En validation",
+      "approved": "En ligne",
+      "rejected": "Refusée",
+      "sold": "Vendue"
+    },
+    "type": {
+      "don": "Don",
+      "vente": "Vente"
+    },
+    "photoCountSingular": "{count} photo",
+    "photoCountPlural": "{count} photos",
+    "viewsCreatedAt": "{views} vues · {date}",
+    "emptyState": "Aucune annonce dans cette catégorie.",
+    "depositFirst": "+ Déposer ma première annonce",
+    "stepOf": "Étape {step} / 3",
+    "modalTitle": "Déposer une annonce",
+    "form": {
+      "type": "Type d'annonce",
+      "freeDonation": "Don gratuit",
+      "sale": "Vente",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Ex: Table basse en palette restaurée",
+      "category": "Catégorie",
+      "choose": "Choisir…",
+      "condition": "État",
+      "priceLabel": "Prix (€)",
+      "description": "Description",
+      "descriptionPlaceholder": "Détaillez l'objet, son histoire, ses dimensions…",
+      "photoHint": "Ajoutez au moins une photo. Les annonces avec photos sont 5× plus consultées.",
+      "dropzoneLabel": "Glissez-déposez ou cliquez pour choisir",
+      "dropzoneHint": "JPG, PNG · 5 Mo max par photo",
+      "saleAt": "Vente · {price}€",
+      "photos": "Photos",
+      "reviewNotice": "Votre annonce sera examinée par l'équipe. Vous serez notifié dès validation.",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "publish": "Publier"
+    },
+    "categories": {
+      "furniture": "Mobilier",
+      "tools": "Outils",
+      "electronics": "Électronique",
+      "textile": "Textile",
+      "tableware": "Vaisselle",
+      "other": "Autre"
+    },
+    "condition": {
+      "new": "Comme neuf",
+      "good": "Bon état",
+      "fair": "Moyen",
+      "repair": "À réparer"
+    },
+    "toastLoadError": "Impossible de charger vos annonces, affichage des données de démonstration.",
+    "toastSubmitted": "Annonce envoyée pour validation",
+    "toastSubmitError": "Envoi impossible, annonce enregistrée localement.",
+    "defaultObjectName": "Objet",
+    "otherCategory": "Autre",
+    "demo": {
+      "1": {
+        "title": "Table basse palette",
+        "category": "Mobilier"
+      },
+      "2": {
+        "title": "Lot d'outils main",
+        "category": "Outils"
+      },
+      "3": {
+        "title": "Vélo enfant 16\"",
+        "category": "Sport"
+      },
+      "4": {
+        "title": "Vieille télé tube",
+        "category": "Électronique"
+      },
+      "5": {
+        "title": "Étagère bois massif",
+        "category": "Mobilier"
+      }
+    }
+  },
+  "dashNotifications": {
+    "eyebrow": "Notifications",
+    "title": "Mes notifications",
+    "subtitle": "Les informations envoyées par UpcycleConnect.",
+    "unreadCount": "{count} non lue(s).",
+    "empty": "Aucune notification pour le moment.",
+    "new": "Nouveau",
+    "toastLoadError": "Impossible de charger vos notifications.",
+    "toastActionError": "Action impossible."
+  },
+  "dashDeposits": {
+    "eyebrow": "Dépôt en conteneur",
+    "title": "Conteneurs",
+    "subtitle": "Déposez un de vos objets dans un conteneur et recevez un code. Un professionnel peut ensuite le récupérer avec ce code.",
+    "retrieveObject": "Récupérer un objet",
+    "depositObject": "+ Déposer un objet",
+    "salesToDeposit": "Mes ventes à déposer",
+    "salesHint": "Objets vendus : déposez-les dans le casier choisi par l'acheteur avec votre code de dépôt.",
+    "codeAndQr": "Code + QR",
+    "iDeposited": "J'ai déposé",
+    "purchasesToRetrieve": "Mes achats à récupérer",
+    "purchasesHint": "Objets achetés, déposés en casier : récupérez-les avec votre code de retrait.",
+    "retrieve": "Récupérer",
+    "recentDeposits": "Mes dépôts récents",
+    "depositMeta": "{locker} · +{score} kg CO₂ · expire le {expiry}",
+    "seeCode": "Voir le code",
+    "availableLockers": "Conteneurs disponibles",
+    "noLockersAvailable": "Aucun conteneur disponible pour le moment.",
+    "freeSlots": "{available} / {capacity} places libres",
+    "depositModalTitle": "Déposer un objet",
+    "form": {
+      "object": "Objet",
+      "noObjectAvailable": "Vous n'avez aucun objet disponible à déposer.",
+      "locker": "Conteneur",
+      "lockerOption": "{name} — {city} ({available} libres)",
+      "weight": "Poids (kg) — optionnel",
+      "codeExpiryNotice": "Après validation, un code s'affichera pour ouvrir le tiroir du conteneur. Le code expire sous 7 jours.",
+      "retrievalCodeLabel": "Code de récupération",
+      "retrievalCodePlaceholder": "Ex : XSWFVMVX",
+      "retrievalCodeHint": "Saisissez le code fourni au dépôt pour récupérer l'objet."
+    },
+    "depositing": "Dépôt…",
+    "depositAction": "Déposer",
+    "retrievalCode": "Code de récupération",
+    "containerCode": "Code conteneur",
+    "typeCodeOnKeypad": "Tapez ce code sur le clavier du conteneur pour ouvrir le tiroir.",
+    "professionalScanNotice": "Le professionnel scanne ce QR (ou saisit le code) pour récupérer l'objet.",
+    "close": "Fermer",
+    "printDownload": "Imprimer / Télécharger",
+    "retrieveModalTitle": "Récupérer un objet",
+    "retrieving": "Récupération…",
+    "depositCode": "Code de dépôt",
+    "withdrawalCode": "Code de retrait",
+    "openLockerToDeposit": "Ouvrir le casier pour déposer",
+    "openLockerToRetrieve": "Ouvrir le casier pour récupérer",
+    "typeOrScanCode": "Tapez le code ou scannez le QR sur le casier.",
+    "toastDeposited": "Objet déposé — le casier est ouvert",
+    "toastDepositError": "Dépôt impossible.",
+    "toastRetrieved": "Objet récupéré — le casier est ouvert",
+    "toastRetrieveError": "Récupération impossible.",
+    "toastLoadError": "Impossible de charger vos objets et les conteneurs disponibles.",
+    "defaultObjectName": "Objet",
+    "defaultLockerName": "Conteneur",
+    "toastDepositedWithCode": "Objet déposé — voici votre code de récupération",
+    "toastLockerFull": "Ce conteneur est plein.",
+    "toastRetrievedSuccess": "Objet récupéré avec succès !",
+    "toastCodeExpired": "Ce code a expiré.",
+    "toastAlreadyRetrieved": "Cet objet a déjà été récupéré.",
+    "toastInvalidCode": "Code invalide."
+  },
+  "dashOrders": {
+    "eyebrow": "Historique",
+    "title": "Mes commandes",
+    "subtitle": "Toutes vos réservations payées et factures téléchargeables.",
+    "stats": {
+      "orders": "Commandes",
+      "thisYear": "Cette année"
+    },
+    "table": {
+      "reference": "Référence",
+      "date": "Date",
+      "address": "Adresse",
+      "action": "Action",
+      "invoicePdf": "Facture PDF"
+    },
+    "toastLoadError": "Impossible de charger vos commandes, affichage des données de démonstration."
+  },
+  "dashScore": {
+    "eyebrow": "Mon impact",
+    "title": "Upcycling Score",
+    "subtitle": "Suivez votre impact circulaire et débloquez des badges au fil de vos contributions.",
+    "outOfPoints": "/ {max} points",
+    "deltaThisMonth": "{delta} ce mois",
+    "topCommunity": "Top 12% de la communauté",
+    "progressNotice": "Vous avez progressé de 70 points depuis le début du mois. Continuez sur cette lancée pour débloquer le badge \"1000 points\".",
+    "pointsBreakdown": "Répartition de vos points",
+    "ptsActions": "pts · {count} actions",
+    "evolutionOverWeeks": "Évolution sur 5 semaines",
+    "unlockedBadges": "Badges débloqués",
+    "breakdown": {
+      "donatedItems": "Objets donnés",
+      "ecoSales": "Ventes éco-friendly",
+      "trainingsAttended": "Formations suivies",
+      "forumContributions": "Contributions forum",
+      "events": "Évènements"
+    },
+    "badges": {
+      "firstDonation": "Premier don",
+      "tenTransactions": "10 transactions",
+      "apprentice": "Apprenti",
+      "communityPlusOne": "Communauté +1",
+      "top12": "Top 12%",
+      "thousandPoints": "1000 points",
+      "pointsRemaining": "{count} points restants",
+      "fiftyContributions": "50 contributions",
+      "contributionsRemaining": "{count} contributions restantes"
+    }
+  },
+  "dashPlanning": {
+    "eyebrow": "Mon planning",
+    "title": "Planning personnel",
+    "subtitle": "Vos formations, ateliers, événements et rendez-vous de dépôt à venir.",
+    "exportIcs": "Exporter (.ics)",
+    "add": "+ Ajouter",
+    "agenda": "Agenda",
+    "list": "Liste",
+    "stats": {
+      "upcoming": "À venir",
+      "thisWeek": "Cette semaine",
+      "thisMonth": "Ce mois",
+      "totalYear": "Total {year}"
+    },
+    "previousWeek": "Semaine précédente",
+    "today": "Aujourd'hui",
+    "nextWeek": "Semaine suivante",
+    "noTimeSet": "Sans horaire défini",
+    "noEventsPlanned": "Aucun événement planifié.",
+    "locationDuration": "{location} · {duration} min",
+    "detail": "Détail",
+    "date": "Date",
+    "notPlanned": "Non planifié",
+    "duration": "Durée",
+    "minutes": "{count} min",
+    "location": "Lieu",
+    "unsubscribe": "Se désinscrire",
+    "closeModal": "Fermer",
+    "addModalTitle": "Ajouter au planning",
+    "form": {
+      "titleLabel": "Titre",
+      "type": "Type",
+      "durationLabel": "Durée (min)",
+      "dateTime": "Date et heure"
+    },
+    "saving": "Enregistrement…",
+    "kinds": {
+      "training": "Formation",
+      "workshop": "Atelier",
+      "event": "Événement",
+      "deposit": "Dépôt"
+    },
+    "dayNumber": "Jour {day}",
+    "toastEventsUnavailable": "Événements indisponibles, affichage des données de démonstration.",
+    "toastAppointmentsUnavailable": "Rendez-vous indisponibles.",
+    "toastAppointmentAdded": "Rendez-vous ajouté au planning",
+    "toastAddError": "Impossible d'ajouter le rendez-vous.",
+    "toastUnsubscribed": "Désinscription enregistrée",
+    "demo": {
+      "1": {
+        "title": "Atelier upcycling N1",
+        "location": "Atelier Paris 11"
+      },
+      "2": {
+        "title": "Restaurer un meuble",
+        "location": "Atelier Paris 11"
+      },
+      "3": {
+        "title": "Repair Café",
+        "location": "Atelier Paris 11"
+      },
+      "4": {
+        "title": "Dépôt DEP-204",
+        "location": "Conteneur Bastille"
+      },
+      "5": {
+        "title": "Coaching réemploi",
+        "location": "En ligne"
+      }
+    }
+  },
+  "dashMessages": {
+    "title": "Messages",
+    "subtitle": "Discutez avec les autres membres de la communauté.",
+    "conversation": "Conversation",
+    "selectConversation": "Sélectionnez une conversation",
+    "newConversation": "Nouvelle conversation…",
+    "noConversations": "Aucune conversation pour le moment.",
+    "noMessages": "Aucun message. Écrivez le premier !",
+    "messagePlaceholder": "Votre message…",
+    "send": "Envoyer"
+  },
+  "dashAdvice": {
+    "eyebrow": "Conseils & News",
+    "title": "Espace Conseils",
+    "subtitle": "Guides, techniques et inspirations rédigés par notre équipe pour vous aider à progresser.",
+    "searchPlaceholder": "Rechercher un article…",
+    "all": "Tout",
+    "featured": "À la une",
+    "readTimeAuthorDate": "{min} min · {author} · {date}",
+    "readTimeAuthor": "{min} min · {author}",
+    "removeBookmark": "Retirer des favoris",
+    "addBookmark": "Ajouter aux favoris",
+    "noResults": "Aucun article ne correspond à votre recherche.",
+    "defaultArticleTitle": "Article",
+    "defaultAuthor": "Équipe",
+    "toastLoadError": "Conseils indisponibles, affichage des données de démonstration.",
+    "categories": {
+      "debutant": "Débutant",
+      "outils": "Outils",
+      "technique": "Technique",
+      "tendances": "Tendances",
+      "inspiration": "Inspiration"
+    },
+    "articles": {
+      "1": {
+        "title": "5 conseils pour bien démarrer votre premier projet",
+        "excerpt": "Avant de vous lancer dans votre premier projet d'upcycling, voici les 5 erreurs à éviter et les bonnes pratiques à adopter."
+      },
+      "2": {
+        "title": "Outils essentiels pour l'upcycling de meubles",
+        "excerpt": "Liste exhaustive des outils indispensables pour démarrer la rénovation de meubles en bois, métal ou textile."
+      },
+      "3": {
+        "title": "Comment poncer correctement",
+        "excerpt": "Grain 80 → 120 → 220 : la méthode pas-à-pas pour un fini parfait sur tous types de bois."
+      },
+      "4": {
+        "title": "Tendances 2026 : matériaux à privilégier",
+        "excerpt": "Le retour du laiton brossé, le textile recyclé technique, et les finitions huilées naturelles."
+      },
+      "5": {
+        "title": "Galerie : 10 transformations spectaculaires",
+        "excerpt": "Sélection de la rédaction des projets les plus inspirants partagés par la communauté ce mois-ci."
+      },
+      "6": {
+        "title": "Sécurité : les EPI à avoir absolument",
+        "excerpt": "Lunettes, gants, masques : la liste minimale pour travailler en toute sécurité dans votre atelier."
+      }
+    }
+  },
+  "dashAdviceDetail": {
+    "backToAdvice": "Retour aux conseils",
+    "readTime": "{min} min de lecture",
+    "publishedOn": "Publié le {date}",
+    "saved": "Sauvé",
+    "save": "Sauvegarder",
+    "relatedArticles": "Articles liés",
+    "toastLoadError": "Article indisponible, affichage des données de démonstration.",
+    "demo": {
+      "title": "5 conseils pour bien démarrer votre premier projet",
+      "category": "Débutant",
+      "publishedAt": "22 avril 2026",
+      "content": {
+        "intro": "Lancer son premier projet d'upcycling peut sembler intimidant. Voici les conseils essentiels pour partir sur de bonnes bases et éviter les erreurs classiques.",
+        "h1": "1. Commencez petit",
+        "p1": "N'attaquez pas une armoire normande pour votre premier projet. Choisissez plutôt un objet simple : une chaise, une caisse en bois, un petit cadre. Vous gagnerez en confiance et en compétence avant de vous lancer dans des projets plus ambitieux.",
+        "h2": "2. Investissez dans les bons outils",
+        "p2": "Quelques outils essentiels suffisent pour bien démarrer : ponceuse électrique, tournevis, marteau, mètre, papier de verre (grains 80, 120, 220), pinceaux. Évitez les outils trop bas de gamme qui vous décourageront rapidement.",
+        "h3": "3. Préparez votre espace",
+        "p3": "Travaillez dans un endroit ventilé, avec un bon éclairage. Posez une bâche. Portez les EPI (équipement de protection individuelle) adaptés : lunettes, masque, gants.",
+        "h4": "4. Documentez votre projet",
+        "p4": "Prenez des photos avant/pendant/après. C'est gratifiant, ça vous aide à progresser, et c'est parfait pour partager votre travail sur le forum UpcycleConnect.",
+        "h5": "5. Demandez de l'aide",
+        "p5": "Notre communauté est là pour vous. N'hésitez pas à poster vos questions sur le forum — la plupart des questions reçoivent une réponse en moins de 24h."
+      }
+    },
+    "related": {
+      "1": {
+        "title": "Outils essentiels pour l'upcycling de meubles",
+        "category": "Outils"
+      },
+      "2": {
+        "title": "Sécurité : les EPI à avoir absolument",
+        "category": "Débutant"
+      },
+      "3": {
+        "title": "Comment poncer correctement",
+        "category": "Technique"
+      }
+    }
+  },
+  "proHome": {
+    "eyebrow": "Tableau de bord Pro",
+    "greeting": "Bonjour",
+    "subtitle": "Votre espace professionnel UpcycleConnect — matériaux, projets et collectes.",
+    "newProject": "+ Nouveau projet",
+    "browseListings": "Parcourir les annonces",
+    "stats": {
+      "availableListings": "Annonces disponibles",
+      "availableListingsHint": "Objets en don ou en vente",
+      "myProjects": "Mes projets",
+      "myProjectsHint": "Projets d'upcycling",
+      "subscription": "Abonnement",
+      "subscriptionAction": "Gérer",
+      "subscriptionHint": "Formules et facturation"
+    },
+    "marketplace": {
+      "eyebrow": "Marketplace",
+      "title": "Annonces récentes",
+      "empty": "Aucune annonce pour l'instant.",
+      "donation": "Don",
+      "co2": "{score} kg CO₂",
+      "view": "Voir",
+      "viewAll": "Voir toutes les annonces"
+    },
+    "projects": {
+      "eyebrow": "Upcycling",
+      "title": "Vos projets récents",
+      "empty": "Aucun projet pour l'instant.",
+      "manage": "Gérer",
+      "manageAll": "Gérer mes projets"
+    }
+  },
+  "proMarketplace": {
+    "eyebrow": "Marketplace",
+    "title": "Annonces particuliers",
+    "subtitle": "Parcourez les objets mis en don ou en vente par les particuliers. Achetez ou réservez pour vos projets d'upcycling.",
+    "filters": {
+      "all": "Tout",
+      "donations": "Dons",
+      "sales": "Ventes",
+      "allCategories": "Toutes catégories"
+    },
+    "categories": {
+      "clothing": "Vêtements",
+      "electronics": "Électronique",
+      "furniture": "Mobilier",
+      "books": "Livres",
+      "toys": "Jouets",
+      "appliances": "Électroménager",
+      "sports": "Sport",
+      "other": "Autre"
+    },
+    "loading": "Chargement des annonces…",
+    "photoPlaceholder": "Photo",
+    "donation": "Don",
+    "sale": "Vente",
+    "co2": "{score} kg CO₂",
+    "view": "Voir",
+    "empty": {
+      "title": "Aucune annonce ne correspond à vos critères.",
+      "reset": "Réinitialiser les filtres"
+    }
+  },
+  "proPickups": {
+    "eyebrow": "Conteneurs & boîtes",
+    "title": "Récupérations",
+    "subtitle": "Parcourez les objets disponibles en conteneur, puis récupérez-en un avec le code fourni par le déposant.",
+    "retrieveWithCode": "Récupérer avec un code",
+    "searchPlaceholder": "Rechercher un objet, une catégorie, une ville…",
+    "empty": "Aucun objet en conteneur pour le moment.",
+    "locker": "{name} · {city}",
+    "expiresOn": "à récupérer avant le {date}",
+    "retrieve": "Récupérer",
+    "modal": {
+      "title": "Récupérer un objet",
+      "codeLabel": "Code du conteneur",
+      "codePlaceholder": "Ex : XSWFVMVX",
+      "verify": "Vérifier",
+      "foundPrefix": "Objet trouvé — code",
+      "foundSuffix": ", à récupérer avant le {date}.",
+      "confirm": "Récupérer et ouvrir",
+      "opening": "Ouverture…"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les objets en conteneur.",
+      "alreadyTaken": "Cet objet a déjà été récupéré ou n'est plus disponible.",
+      "codeNotFound": "Code introuvable.",
+      "codeExpired": "Ce code a expiré.",
+      "retrieveFailed": "Récupération impossible."
+    },
+    "success": {
+      "retrieved": "Objet récupéré — le conteneur s'ouvre."
+    }
+  },
+  "proProjects": {
+    "eyebrow": "Upcycling",
+    "title": "Mes projets",
+    "subtitle": "Suivez vos créations et documentez les étapes de transformation.",
+    "newProject": "+ Nouveau projet",
+    "loading": "Chargement des projets…",
+    "featuredBadge": "Mis en avant",
+    "noDescription": "Sans description",
+    "createdOn": "Créé le {date}",
+    "viewSteps": "Voir les étapes",
+    "removeFromShowcase": "Retirer de la vitrine",
+    "addToShowcase": "Mettre en avant",
+    "empty": {
+      "message": "Vous n'avez encore aucun projet. Commencez dès maintenant !",
+      "cta": "+ Créer mon premier projet"
+    },
+    "modal": {
+      "newTitle": "Nouveau projet",
+      "nameLabel": "Nom du projet",
+      "namePlaceholder": "Ex : Lampe vintage bocaux",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Décrivez votre projet, ses objectifs, l'histoire des matériaux…",
+      "creating": "Création…",
+      "create": "Créer le projet",
+      "stepsCount": "Étapes ({count})",
+      "noSteps": "Aucune étape pour l'instant.",
+      "addStepLabel": "Ajouter une étape",
+      "stepNamePlaceholder": "Nom de l'étape",
+      "stepDescriptionPlaceholder": "Description (optionnel)",
+      "addStep": "+ Ajouter l'étape",
+      "close": "Fermer"
+    },
+    "toasts": {
+      "created": "Projet créé",
+      "deleted": "Projet supprimé",
+      "removedFromShowcase": "Retiré de la vitrine",
+      "addedToShowcase": "Projet mis en avant",
+      "stepAdded": "Étape ajoutée"
+    }
+  },
+  "proSubscription": {
+    "eyebrow": "Mon abonnement",
+    "title": "Abonnement & facturation",
+    "subtitle": "Gérez votre formule, consultez vos factures et téléchargez vos justificatifs.",
+    "genericPlanName": "Abonnement",
+    "currentPlan": {
+      "title": "Formule actuelle",
+      "active": "Actif",
+      "pending": "En attente",
+      "priceMonthly": "{price}€ / mois",
+      "none": "Vous n'avez pas d'abonnement actif. Choisissez une formule pour accéder aux outils Pro.",
+      "change": "Changer de formule",
+      "choose": "Choisir une formule",
+      "cancelSubscription": "Résilier l'abonnement"
+    },
+    "billing": {
+      "title": "Historique de facturation",
+      "empty": "Aucune facture pour le moment.",
+      "date": "Date",
+      "reference": "Référence",
+      "label": "Désignation",
+      "amount": "Montant",
+      "pdf": "PDF"
+    },
+    "changeModal": {
+      "title": "Changer de formule",
+      "description": "Sélectionnez la formule qui correspond à votre activité.",
+      "recommended": "Recommandé",
+      "priceMonthly": "{price}€ / mois",
+      "confirm": "Confirmer le changement"
+    },
+    "cancelModal": {
+      "title": "Résilier l'abonnement",
+      "warning": "En résiliant, vous perdrez l'accès aux fonctionnalités Pro à la fin de la période en cours.",
+      "note": "Vous pouvez vous réabonner à tout moment. Votre historique de projets sera conservé.",
+      "keep": "Conserver mon abonnement",
+      "confirm": "Confirmer la résiliation"
+    },
+    "plans": {
+      "starterFeatures": {
+        "listings": "Accès aux annonces",
+        "alerts": "Alertes de collecte",
+        "featured": "1 projet mis en avant / mois"
+      },
+      "premiumFeatures": {
+        "listings": "Accès prioritaire aux annonces",
+        "alerts": "Alertes en temps réel",
+        "stats": "Statistiques avancées",
+        "featured": "3 projets mis en avant / mois",
+        "support": "Support prioritaire"
+      }
+    },
+    "errors": {
+      "planNotConfigured": "Cette formule n'est pas configurée.",
+      "checkoutFailed": "Impossible de démarrer le paiement. Réessayez.",
+      "downloadFailed": "Téléchargement du PDF impossible."
+    }
+  },
+  "proAds": {
+    "eyebrow": "Publicité",
+    "title": "Mes campagnes",
+    "subtitle": "Sponsorisez vos objets et projets pour gagner en visibilité auprès de la communauté.",
+    "newCampaign": "+ Nouvelle campagne",
+    "stats": {
+      "activeCampaigns": "Campagnes actives",
+      "totalBudget": "Budget total"
+    },
+    "status": {
+      "active": "Active",
+      "paused": "En pause"
+    },
+    "noDescription": "Sans description",
+    "budget": "Budget : {amount}€",
+    "pause": "Mettre en pause",
+    "activate": "Activer",
+    "empty": {
+      "message": "Aucune campagne pour l'instant.",
+      "cta": "+ Créer ma première campagne"
+    },
+    "modal": {
+      "title": "Nouvelle campagne",
+      "titleLabel": "Titre de la campagne",
+      "titlePlaceholder": "Ex : Mise en avant chaise design",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Objet ou projet sponsorisé, message…",
+      "budgetLabel": "Budget (€)",
+      "creating": "Création…",
+      "launch": "Lancer la campagne"
+    },
+    "toasts": {
+      "created": "Publicité créée",
+      "loadFailed": "Impossible de charger les publicités.",
+      "createFailed": "Création impossible.",
+      "updateFailed": "Mise à jour impossible.",
+      "deleted": "Publicité supprimée",
+      "deleteFailed": "Suppression impossible."
+    }
+  },
+  "proStats": {
+    "eyebrow": "Statistiques",
+    "title": "Mon impact",
+    "subtitle": "Suivez votre activité et votre impact écologique sur UpcycleConnect.",
+    "co2Saved": "CO₂ économisé",
+    "co2Value": "{value} kg",
+    "co2Hint": "Cumul de vos annonces",
+    "listingsPublished": "Annonces publiées",
+    "projects": "Projets",
+    "breakdown": {
+      "eyebrow": "Répartition",
+      "title": "Vos annonces par catégorie",
+      "empty": "Aucune annonce publiée pour l'instant."
+    },
+    "categories": {
+      "clothing": "Vêtements",
+      "electronics": "Électronique",
+      "furniture": "Mobilier",
+      "books": "Livres",
+      "toys": "Jouets",
+      "appliances": "Électroménager",
+      "sports": "Sport",
+      "other": "Autre"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les statistiques."
+    }
+  },
+  "servicePage": {
+    "hero": {
+      "title": "Un titre qui marque durablement vos visiteurs",
+      "subtitle": "Lorem ipsum est simplement un texte factice utilisé dans l'imprimerie et la composition depuis les années 1500.",
+      "cta_primary": "Commencer",
+      "cta_secondary": "En savoir plus"
+    },
+    "services": {
+      "description": "Lorem Ipsum est simplement un texte factice utilisé dans l'imprimerie et la composition depuis les années 1500, lorsqu'un imprimeur inconnu a composé un jeu de caractères pour créer un spécimen.",
+      "cta_primary": "Commencer",
+      "cta_secondary": "En savoir plus",
+      "training": {
+        "title": "Formation exceptionnelle"
+      },
+      "workshop": {
+        "title": "Atelier exceptionnel"
+      },
+      "community": {
+        "title": "Communauté exceptionnelle"
+      },
+      "marketplace": {
+        "title": "Marketplace exceptionnelle"
+      }
+    },
+    "cta": {
+      "eyebrow": "Prêt ?",
+      "title": "Prêt à vous lancer ?",
+      "subtitle": "Rejoignez des milliers d'utilisateurs qui construisent déjà un avenir circulaire.",
+      "primary": "Commencer",
+      "secondary": "Voir les tarifs"
+    }
+  },
+  "resourcesPage": {
+    "hero": {
+      "eyebrow": "Ressources",
+      "title": "Guides, tutoriels et rapports",
+      "subtitle": "Le savoir de la communauté UpcycleConnect, sélectionné et prêt à appliquer."
+    },
+    "types": {
+      "guide": "GUIDE",
+      "tutorial": "TUTORIEL",
+      "case_study": "ÉTUDE DE CAS",
+      "report": "RAPPORT"
+    },
+    "items": {
+      "beginnerGuide": {
+        "title": "Guide du débutant pour l'upcycling",
+        "date": "28 Février 2026"
+      },
+      "furnitureTransform": {
+        "title": "Transformer un meuble ancien en 5 étapes",
+        "date": "12 Mars 2026"
+      },
+      "caseStudyWaste": {
+        "title": "Comment l'entreprise X a réduit ses déchets de 80 %",
+        "date": "20 Mars 2026"
+      },
+      "circularEconomyReport": {
+        "title": "L'état de l'économie circulaire en 2026",
+        "date": "1 Avril 2026"
+      },
+      "materialSourcing": {
+        "title": "Approvisionnement durable en matériaux",
+        "date": "8 Avril 2026"
+      },
+      "sustainablePackaging": {
+        "title": "Un emballage qui ne coûte pas la terre",
+        "date": "15 Avril 2026"
+      }
+    },
+    "fallbackTitle": "Ressource",
+    "error": "Ressources indisponibles, affichage des données de démonstration."
+  },
+  "aboutPage": {
+    "hero": {
+      "eyebrow": "À propos",
+      "title_line1": "Chaque objet a",
+      "title_line2": "une seconde vie",
+      "subtitle": "UpcycleConnect est la plateforme où designers, artisans et entreprises transforment les déchets en merveilles."
+    },
+    "mission": {
+      "eyebrow": "Mission",
+      "title": "Circulaire par nature",
+      "description": "Permettre une économie véritablement circulaire en connectant les personnes, les produits et les savoirs. Nous voulons que l'upcycling devienne la norme, pas l'exception."
+    },
+    "team": {
+      "eyebrow": "Équipe",
+      "title": "Notre équipe",
+      "subtitle": "Des personnes passionnées qui poursuivent le même objectif."
+    },
+    "roles": {
+      "ceoFounder": "PDG et fondateur",
+      "cto": "Directrice technique",
+      "headOfProduct": "Responsable produit",
+      "headOfCommunity": "Responsable communauté"
+    }
+  },
+  "pricingPage": {
+    "hero": {
+      "eyebrow": "Tarifs",
+      "title_line1": "Une tarification simple,",
+      "title_line2": "une plateforme puissante",
+      "subtitle": "Choisissez un forfait adapté à vos ambitions. Aucun frais caché. Annulez à tout moment."
+    },
+    "planLabel": "Forfait {name}",
+    "perMonth": "/mois",
+    "redirecting": "Redirection…",
+    "plans": {
+      "basic": {
+        "description": "Pour les particuliers qui débutent.",
+        "cta": "Commencer gratuitement",
+        "features": {
+          "project": "1 projet",
+          "forum": "Forum communautaire",
+          "marketplace": "Marketplace publique",
+          "support": "Support par email",
+          "analytics": "Statistiques standard",
+          "training": "Formation de base"
+        }
+      },
+      "pro": {
+        "description": "Pour les créateurs et petites équipes.",
+        "cta": "Essayer Pro",
+        "features": {
+          "projects": "Projets illimités",
+          "forum": "Espaces de forum privés",
+          "marketplace": "Marketplace prioritaire",
+          "support": "Support prioritaire",
+          "analytics": "Statistiques avancées",
+          "training": "Toutes les formations",
+          "branding": "Marque personnalisée",
+          "api": "Accès API",
+          "webhooks": "Webhooks"
+        }
+      },
+      "business": {
+        "description": "Pour les organisations en croissance.",
+        "cta": "S'abonner",
+        "features": {
+          "everything": "Tout ce qui est inclus dans Pro",
+          "manager": "Gestionnaire dédié",
+          "sso": "SSO",
+          "auditLogs": "Journaux d'audit",
+          "integrations": "Intégrations personnalisées",
+          "sla": "SLA 99,9 %"
+        }
+      }
+    },
+    "toast": {
+      "checkoutError": "Impossible de démarrer le paiement. Réessayez dans un instant.",
+      "checkoutCanceled": "Paiement annulé. Vous pouvez réessayer quand vous voulez."
+    },
+    "beyond": {
+      "eyebrow": "Au-delà des abonnements",
+      "title": "Autres modèles de tarification",
+      "subtitle": "Des sources de revenus complémentaires pour les créateurs, vendeurs et organismes de formation.",
+      "ads": {
+        "label": "Publicités",
+        "value": "100-500€",
+        "unit": "/ mois · entreprise",
+        "description": "Mettez votre marque en avant auprès de notre communauté engagée."
+      },
+      "commission": {
+        "label": "Commission",
+        "value": "5-10%",
+        "unit": "/ ventes",
+        "description": "Des frais transparents sur chaque transaction de la marketplace."
+      },
+      "training": {
+        "label": "Formation",
+        "value": "20-100",
+        "unit": "/ personnes",
+        "description": "Une tarification par participant pour les sessions de formation en interne."
+      }
+    },
+    "cta": {
+      "eyebrow": "Prêt ?",
+      "title": "Démarrez en quelques minutes",
+      "subtitle": "Créez votre compte, publiez votre premier projet et rejoignez l'économie circulaire.",
+      "primary": "Créer un compte",
+      "secondary": "Contacter les ventes"
+    }
+  },
+  "forumPage": {
+    "eyebrow": "Communauté",
+    "subtitle": "Posez vos questions, partagez vos astuces d'upcycling et échangez avec la communauté.",
+    "newDiscussion": "Nouvelle discussion",
+    "loading": "Chargement des discussions…",
+    "defaultCategory": "Général",
+    "empty": {
+      "title": "Aucune discussion pour le moment",
+      "subtitle": "Lancez la première conversation de la communauté.",
+      "cta": "Créer une discussion"
+    },
+    "modal": {
+      "title": "Partager avec la communauté",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Titre de la discussion",
+      "categoryLabel": "Catégorie",
+      "noCategoriesAvailable": "Aucune catégorie disponible.",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Votre message…",
+      "publishing": "Publication…",
+      "publish": "Publier"
+    },
+    "toast": {
+      "validation": "Titre, message et catégorie sont requis.",
+      "published": "Discussion publiée",
+      "publishError": "Impossible de publier la discussion."
+    }
+  },
+  "loginConfirm": {
+    "title": "Confirmez votre compte",
+    "subtitle": "Merci de vérifier qu'il s'agit du bon compte avant de continuer.",
+    "loading": "Chargement des informations utilisateur...",
+    "error": "Échec du chargement des informations utilisateur.",
+    "tryAgain": "Réessayer",
+    "form": {
+      "email": "Email",
+      "firstName": "Prénom",
+      "lastName": "Nom"
+    },
+    "useAnotherAccount": "Non, utiliser un autre compte",
+    "confirmAccount": "Oui, se connecter avec ce compte"
+  },
+  "annonces": {
+    "eyebrow": "Marketplace",
+    "title": "Les annonces",
+    "search": {
+      "placeholder": "Rechercher un objet…"
+    },
+    "filter": {
+      "all": "Tout",
+      "donations": "Dons",
+      "sales": "Ventes"
+    },
+    "create": {
+      "button": "Créer une annonce",
+      "modalTitle": "Créer une annonce"
+    },
+    "loading": "Chargement des annonces…",
+    "empty": "Aucune annonce ne correspond à votre recherche.",
+    "card": {
+      "donation": "Don",
+      "saleLabel": "Vente · {price}€",
+      "available": "{count} disponible(s)",
+      "scoreSaved": "{score} kg CO₂ économisés"
+    },
+    "category": {
+      "clothing": "Vêtements",
+      "electronics": "Électronique",
+      "furniture": "Mobilier",
+      "books": "Livres",
+      "toys": "Jouets",
+      "appliances": "Électroménager",
+      "sports": "Sport",
+      "other": "Autre"
+    },
+    "condition": {
+      "new": "Neuf",
+      "likeNew": "Comme neuf",
+      "good": "Bon état",
+      "used": "Usagé"
+    },
+    "form": {
+      "photoTooLarge": "{name} dépasse 10 Mo",
+      "nameLabel": "Nom de l'objet",
+      "namePlaceholder": "Palettes en bois (x3)",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "État, dimensions, conditions de retrait…",
+      "categoryLabel": "Catégorie",
+      "conditionLabel": "État",
+      "scoreHint": "La catégorie et l'état déterminent l'Upcycler Score (CO₂ économisé) de l'annonce.",
+      "photosLabel": "Photos",
+      "removePhoto": "Supprimer la photo",
+      "typeLabel": "Type",
+      "optionDon": "Don",
+      "optionSale": "Vente",
+      "priceLabel": "Prix (€)",
+      "quantityLabel": "Quantité",
+      "publishing": "Publication…",
+      "publish": "Publier"
+    },
+    "toast": {
+      "published": "Annonce publiée",
+      "uploadFailed": "Échec de l'envoi des photos, réessayez."
+    }
+  },
+  "annonceDetail": {
+    "backToListings": "Retour aux annonces",
+    "loading": "Chargement de l'annonce…",
+    "donationLabel": "Don",
+    "saleLabel": "Vente",
+    "available": "{count} disponible(s)",
+    "meta": {
+      "price": "Prix",
+      "score": "Upcycler Score",
+      "scoreValue": "{score} kg CO₂",
+      "categoryCondition": "Catégorie / État",
+      "delivery": "Livraison",
+      "deliveryTBD": "À convenir",
+      "proposedBy": "Proposé par",
+      "noValue": "—"
+    },
+    "locker": {
+      "label": "Casier de retrait (livraison)",
+      "slotsFree": "{count} libres",
+      "none": "Aucun casier disponible."
+    },
+    "buy": {
+      "redirecting": "Redirection…",
+      "cta": "Acheter · {price}€"
+    },
+    "contact": {
+      "opening": "Ouverture…",
+      "cta": "Contacter le vendeur"
+    },
+    "seeOthers": "Voir d'autres annonces",
+    "notFound": "Annonce introuvable.",
+    "category": {
+      "clothing": "Vêtements",
+      "electronics": "Électronique",
+      "furniture": "Mobilier",
+      "books": "Livres",
+      "toys": "Jouets",
+      "appliances": "Électroménager",
+      "sports": "Sport",
+      "other": "Autre"
+    },
+    "condition": {
+      "new": "Neuf",
+      "likeNew": "Comme neuf",
+      "good": "Bon état",
+      "used": "Usagé"
+    },
+    "fallbackSellerName": "le vendeur",
+    "conversationTitlePrefix": "Annonce : {name}",
+    "toast": {
+      "chooseLocker": "Choisissez un casier de retrait.",
+      "paymentError": "Impossible de démarrer le paiement pour le moment.",
+      "contactError": "Impossible de contacter le vendeur pour le moment."
+    }
+  },
+  "billingSuccess": {
+    "eyebrow": "Paiement",
+    "loading": {
+      "title": "Confirmation en cours…",
+      "description": "Nous vérifions votre paiement auprès de Stripe. Merci de patienter quelques secondes."
+    },
+    "paid": {
+      "titleAnnonce": "Achat confirmé",
+      "titleSubscription": "Abonnement activé",
+      "descriptionAnnonce": "Votre paiement a bien été confirmé. Le vendeur va être notifié de votre achat.",
+      "descriptionSubscription": "Votre paiement a bien été confirmé. Votre abonnement est actif.",
+      "ctaAnnonce": "Retour aux annonces"
+    },
+    "dashboardCta": "Accéder au tableau de bord",
+    "pending": {
+      "title": "Paiement reçu",
+      "description": "Merci ! Votre paiement a été pris en compte. L'activation peut prendre un court instant le temps de la confirmation. Vous pouvez déjà accéder à votre espace."
+    },
+    "error": {
+      "title": "Paiement non confirmé",
+      "description": "Nous n'avons pas pu confirmer votre paiement. Si vous avez été débité, contactez le support — sinon réessayez.",
+      "backToPricing": "Revenir aux tarifs"
+    }
+  },
+  "staffHome": {
+    "eyebrow": "Tableau de bord",
+    "greeting": "Bonjour",
+    "subtitle": "Voici un aperçu de vos activités d'animation et de contenu.",
+    "actions": {
+      "newTraining": "+ Créer une formation",
+      "newAdvice": "+ Rédiger un conseil"
+    },
+    "stats": {
+      "sessions": {
+        "label": "Sessions planifiées",
+        "hint": "à animer"
+      },
+      "trainings": {
+        "label": "Formations",
+        "hint": "au catalogue"
+      },
+      "advice": {
+        "label": "Conseils publiés",
+        "hint": "ressources"
+      }
+    },
+    "planning": {
+      "eyebrow": "Planning",
+      "title": "Prochaines sessions à animer",
+      "empty": "Aucune session planifiée.",
+      "viewLink": "Voir mon planning"
+    },
+    "shortcuts": {
+      "eyebrow": "Raccourcis",
+      "title": "Gérer mes contenus",
+      "trainingItem": "Créer une formation ou un atelier",
+      "adviceItem": "Rédiger un conseil",
+      "moderationItem": "Modérer le forum",
+      "open": "Ouvrir"
+    }
+  },
+  "staffTrainings": {
+    "toasts": {
+      "updated": "Formation modifiée",
+      "created": "Formation créée",
+      "deleted": "Formation supprimée"
+    },
+    "status": {
+      "validated": "Validée",
+      "rejected": "Refusée",
+      "pending": "En attente de validation"
+    },
+    "eyebrow": "Formations & ateliers",
+    "title": "Mes formations",
+    "subtitle": "Créez et gérez les formations et ateliers UpcycleConnect.",
+    "newTraining": "+ Nouvelle formation",
+    "loading": "Chargement des formations…",
+    "empty": {
+      "text": "Aucune formation pour l'instant.",
+      "cta": "+ Créer ma première formation"
+    },
+    "card": {
+      "maxParticipants": "{count} max"
+    },
+    "modal": {
+      "editTitle": "Modifier la formation",
+      "createTitle": "Nouvelle formation"
+    },
+    "form": {
+      "name": "Nom",
+      "namePlaceholder": "Ex : Restaurer un meuble en bois",
+      "type": "Type",
+      "typeFormation": "Formation",
+      "typeAtelier": "Atelier",
+      "mode": "Modalité",
+      "modeOnsite": "Présentiel",
+      "modeOnline": "En ligne",
+      "duration": "Durée",
+      "durationPlaceholder": "Ex : 3h",
+      "maxParticipants": "Participants max",
+      "location": "Lieu",
+      "locationPlaceholder": "Ex : Atelier Paris 11",
+      "price": "Prix (€) — 0 = gratuit",
+      "pricePlaceholder": "Ex : 45",
+      "saving": "Enregistrement…"
+    }
+  },
+  "staffPlanning": {
+    "toasts": {
+      "added": "Session ajoutée au planning",
+      "addFailed": "Ajout impossible.",
+      "removed": "Session retirée"
+    },
+    "kind": {
+      "training": "Formation",
+      "workshop": "Atelier",
+      "event": "Événement"
+    },
+    "eyebrow": "Mon planning",
+    "title": "Planning des sessions",
+    "subtitle": "Vos formations, ateliers et événements à animer.",
+    "actions": {
+      "add": "+ Ajouter",
+      "export": "Exporter (.ics)"
+    },
+    "view": {
+      "week": "Agenda",
+      "list": "Liste"
+    },
+    "stats": {
+      "upcoming": "Sessions à venir",
+      "thisWeek": "Cette semaine",
+      "thisMonth": "Ce mois",
+      "totalYear": "Total {year}"
+    },
+    "week": {
+      "prev": "Semaine précédente",
+      "next": "Semaine suivante",
+      "today": "Aujourd'hui"
+    },
+    "empty": "Aucune session planifiée.",
+    "detailLink": "Détail",
+    "recap": {
+      "date": "Date",
+      "duration": "Durée",
+      "location": "Lieu",
+      "notScheduled": "Non planifié"
+    },
+    "close": "Fermer",
+    "unsubscribe": "Retirer du planning",
+    "addModal": {
+      "title": "Ajouter une session",
+      "formTitle": "Titre",
+      "type": "Type",
+      "durationMin": "Durée (min)",
+      "dateTime": "Date et heure",
+      "saving": "Enregistrement…",
+      "submit": "Ajouter"
+    }
+  },
+  "staffAdvice": {
+    "toasts": {
+      "loadFailed": "Impossible de charger les conseils.",
+      "updated": "Conseil modifié",
+      "created": "Conseil publié",
+      "saveFailed": "Enregistrement impossible.",
+      "deleted": "Conseil supprimé",
+      "deleteFailed": "Suppression impossible."
+    },
+    "eyebrow": "Conseils & ressources",
+    "title": "Conseils",
+    "subtitle": "Rédigez et publiez les conseils et ressources pédagogiques de la communauté.",
+    "newAdvice": "+ Nouveau conseil",
+    "searchPlaceholder": "Rechercher un conseil…",
+    "empty": "Aucun conseil ne correspond.",
+    "modal": {
+      "editTitle": "Modifier le conseil",
+      "createTitle": "Nouveau conseil"
+    },
+    "form": {
+      "title": "Titre",
+      "titlePlaceholder": "Ex : Bien poncer le bois",
+      "type": "Type",
+      "typeAdvice": "Conseil",
+      "typeNews": "News",
+      "typeResource": "Ressource",
+      "content": "Contenu",
+      "contentPlaceholder": "Rédigez le conseil…",
+      "saving": "Enregistrement…",
+      "publish": "Publier"
+    }
+  },
+  "staffModeration": {
+    "toasts": {
+      "loadFailed": "Impossible de charger les discussions.",
+      "deleted": "Discussion supprimée",
+      "deleteFailed": "Suppression impossible."
+    },
+    "eyebrow": "Modération",
+    "title": "Forum",
+    "subtitle": "Suivez les discussions de la communauté et retirez les contenus inappropriés.",
+    "searchPlaceholder": "Rechercher une discussion…",
+    "empty": "Aucune discussion.",
+    "messagesCount": "Messages ({count})",
+    "noMessages": "Aucun message.",
+    "close": "Fermer",
+    "deleteDiscussion": "Supprimer la discussion"
+  },
+  "forumIndex": {
+    "title": "Discussions de la communauté",
+    "subtitle": "Posez vos questions, partagez vos projets, échangez avec d'autres makers.",
+    "newDiscussion": "+ Nouvelle discussion",
+    "searchPlaceholder": "Rechercher une discussion...",
+    "tabs": {
+      "all": "Tout"
+    },
+    "pinned": "Épinglé",
+    "by": "par",
+    "categories": {
+      "tips": "Astuces & Trucs",
+      "questions": "Questions",
+      "show": "Vitrine",
+      "partners": "Partenaires",
+      "general": "Général"
+    },
+    "discussions": {
+      "d1": {
+        "title": "Comment transformer une vieille palette en table basse ?",
+        "excerpt": "J'ai récupéré 3 palettes de chantier et je voudrais en faire une table basse industrielle...",
+        "lastActivity": "il y a 2h"
+      },
+      "d2": {
+        "title": "Mon premier projet : lampe en bouteilles",
+        "excerpt": "Voici le résultat de mon weekend. Photos et tutoriel complet à l'intérieur.",
+        "lastActivity": "il y a 5h"
+      },
+      "d3": {
+        "title": "Outils essentiels pour démarrer l'upcycling",
+        "excerpt": "La liste complète de ce que vous devez avoir avant de commencer votre premier projet.",
+        "lastActivity": "hier"
+      },
+      "d4": {
+        "title": "Partenariat avec une ressourcerie locale ?",
+        "excerpt": "Quelqu'un a déjà monté un partenariat avec une ressourcerie ? Comment vous avez procédé ?",
+        "lastActivity": "hier"
+      }
+    }
+  },
+  "forumNew": {
+    "backToForum": "Retour au forum",
+    "eyebrow": "Nouvelle discussion",
+    "title": "Démarrer une discussion",
+    "subtitle": "Posez votre question ou partagez votre projet avec la communauté.",
+    "toasts": {
+      "categoriesFailed": "Catégories indisponibles, valeurs par défaut affichées.",
+      "published": "Discussion publiée",
+      "publishFailed": "Publication impossible, réessayez plus tard."
+    },
+    "categories": {
+      "tips": "Astuces & Trucs",
+      "questions": "Questions",
+      "show": "Vitrine",
+      "partners": "Partenaires",
+      "general": "Général"
+    },
+    "form": {
+      "category": "Catégorie",
+      "categoryPlaceholder": "Choisissez une catégorie",
+      "categoryHint": "Indicatif — non enregistré pour le moment.",
+      "title": "Titre",
+      "titlePlaceholder": "Ex: Comment transformer une palette en table basse ?",
+      "titleCount": "{count} / 120",
+      "content": "Contenu",
+      "contentPlaceholder": "Décrivez votre projet, votre question, partagez vos photos…",
+      "contentHint": "Markdown supporté · 5000 caractères max",
+      "publishing": "Publication…",
+      "submit": "Publier la discussion"
+    }
+  },
+  "forumDetail": {
+    "backToForum": "Retour au forum",
+    "authorBadge": "Auteur",
+    "memberSince": "Membre depuis {joined}",
+    "repliesCount": "{count} réponse | {count} réponses",
+    "reactionsCount": "{count} réaction | {count} réactions",
+    "yourReply": "Votre réponse",
+    "replyPlaceholder": "Partagez votre avis, vos conseils, vos questions…",
+    "markdownSupported": "Markdown supporté",
+    "sending": "Envoi…",
+    "submitReply": "Répondre",
+    "justNow": "à l'instant",
+    "you": "Vous",
+    "toasts": {
+      "talkUnavailable": "Discussion indisponible, affichage des données de démonstration.",
+      "replyPublished": "Réponse publiée",
+      "replyFailed": "Envoi impossible, réponse affichée localement."
+    },
+    "categories": {
+      "tips": "Astuces & Trucs",
+      "questions": "Questions",
+      "show": "Vitrine",
+      "partners": "Partenaires",
+      "general": "Général"
+    },
+    "seed": {
+      "title": "Comment transformer une vieille palette en table basse ?",
+      "authorJoined": "Mai 2025",
+      "createdAt": "il y a 5 heures",
+      "memberFallback": "Membre",
+      "content": "J'ai récupéré 3 palettes de chantier en bon état et je voudrais en faire une table basse pour mon salon.\n\nQuestions :\n- Faut-il poncer les palettes avant assemblage ?\n- Quelle finition pour usage intérieur ?\n- Comment fixer les roulettes ?\n\nMerci d'avance !",
+      "messages": {
+        "m1": {
+          "createdAt": "il y a 4h",
+          "content": "Salut Marie, super projet !\n\n1. Oui ponçage essentiel : grain 80, 120, 220.\n2. Pour intérieur, huile dure type Rubio Monocoat.\n3. Roulettes pivotantes 75mm avec tire-fond + écrous noyés."
+        },
+        "m2": {
+          "createdAt": "il y a 2h",
+          "content": "Attention aux palettes traitées (marquage HT = OK, MB = à éviter pour intérieur)."
+        },
+        "m3": {
+          "createdAt": "il y a 1h",
+          "content": "Merci à vous deux ! Mes palettes sont bien marquées HT"
+        }
+      }
+    }
   }
 }

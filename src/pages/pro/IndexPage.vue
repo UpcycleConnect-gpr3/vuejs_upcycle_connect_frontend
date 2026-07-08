@@ -29,81 +29,81 @@ onMounted(() => {
   <ProDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Tableau de bord Pro</span>
-        <h1>Bonjour </h1>
+        <span class="eyebrow">{{ $t('proHome.eyebrow') }}</span>
+        <h1>{{ $t('proHome.greeting') }}</h1>
         <p class="muted measure">
-          Votre espace professionnel UpcycleConnect — matériaux, projets et collectes.
+          {{ $t('proHome.subtitle') }}
         </p>
       </div>
       <div class="layout-flex layout-gap-medium">
-        <RouterLink to="/pro/projects" class="ghost medium">+ Nouveau projet</RouterLink>
-        <RouterLink to="/pro/marketplace" class="primary medium">Parcourir les annonces</RouterLink>
+        <RouterLink to="/pro/projects" class="ghost medium">{{ $t('proHome.newProject') }}</RouterLink>
+        <RouterLink to="/pro/marketplace" class="primary medium">{{ $t('proHome.browseListings') }}</RouterLink>
       </div>
     </header>
 
     <div class="stats-row">
       <RouterLink to="/pro/marketplace" class="stat-tile">
-        <span class="stat-tile-label">Annonces disponibles</span>
+        <span class="stat-tile-label">{{ $t('proHome.stats.availableListings') }}</span>
         <span class="stat-tile-value">{{ stats.availableObjects }}</span>
-        <p class="small muted">Objets en don ou en vente</p>
+        <p class="small muted">{{ $t('proHome.stats.availableListingsHint') }}</p>
       </RouterLink>
 
       <RouterLink to="/pro/projects" class="stat-tile">
-        <span class="stat-tile-label">Mes projets</span>
+        <span class="stat-tile-label">{{ $t('proHome.stats.myProjects') }}</span>
         <span class="stat-tile-value">{{ stats.activeProjects }}</span>
-        <p class="small muted">Projets d'upcycling</p>
+        <p class="small muted">{{ $t('proHome.stats.myProjectsHint') }}</p>
       </RouterLink>
 
       <RouterLink to="/pro/subscription" class="stat-tile">
-        <span class="stat-tile-label">Abonnement</span>
-        <span class="stat-tile-value" style="font-size: var(--font-size-xlarge)">Gérer</span>
-        <p class="small muted">Formules et facturation</p>
+        <span class="stat-tile-label">{{ $t('proHome.stats.subscription') }}</span>
+        <span class="stat-tile-value" style="font-size: var(--font-size-xlarge)">{{ $t('proHome.stats.subscriptionAction') }}</span>
+        <p class="small muted">{{ $t('proHome.stats.subscriptionHint') }}</p>
       </RouterLink>
     </div>
 
     <div class="dashboard-grid">
       <article class="dashboard-card">
         <div class="card-header">
-          <span class="eyebrow">Marketplace</span>
-          <h3>Annonces récentes</h3>
+          <span class="eyebrow">{{ $t('proHome.marketplace.eyebrow') }}</span>
+          <h3>{{ $t('proHome.marketplace.title') }}</h3>
         </div>
-        <p v-if="!newMaterials.length" class="small muted">Aucune annonce pour l'instant.</p>
+        <p v-if="!newMaterials.length" class="small muted">{{ $t('proHome.marketplace.empty') }}</p>
         <ul v-else class="layout-flex layout-columns layout-gap-medium">
           <li v-for="m in newMaterials" :key="m.id" class="event-row">
             <div class="event-row-date">
               <span class="badge" :class="!m.price ? 'badge--success' : ''">
-                {{ !m.price ? 'Don' : `${m.price}€` }}
+                {{ !m.price ? $t('proHome.marketplace.donation') : `${m.price}€` }}
               </span>
             </div>
             <div style="flex: 1">
               <div style="font-weight: 600">{{ m.name }}</div>
-              <div v-if="m.score > 0" class="tiny muted"> {{ m.score }} kg CO₂</div>
+              <div v-if="m.score > 0" class="tiny muted"> {{ $t('proHome.marketplace.co2', { score: m.score }) }}</div>
             </div>
-            <RouterLink :to="`/annonces/${m.id}`" class="ghost small">Voir</RouterLink>
+            <RouterLink :to="`/annonces/${m.id}`" class="ghost small">{{ $t('proHome.marketplace.view') }}</RouterLink>
           </li>
         </ul>
         <RouterLink to="/pro/marketplace" class="ghost small" style="align-self: flex-start">
-          Voir toutes les annonces
+          {{ $t('proHome.marketplace.viewAll') }}
         </RouterLink>
       </article>
 
       <article class="dashboard-card">
         <div class="card-header">
-          <span class="eyebrow">Upcycling</span>
-          <h3>Vos projets récents</h3>
+          <span class="eyebrow">{{ $t('proHome.projects.eyebrow') }}</span>
+          <h3>{{ $t('proHome.projects.title') }}</h3>
         </div>
-        <p v-if="!recentProjects.length" class="small muted">Aucun projet pour l'instant.</p>
+        <p v-if="!recentProjects.length" class="small muted">{{ $t('proHome.projects.empty') }}</p>
         <ul v-else class="layout-flex layout-columns layout-gap-medium">
           <li v-for="p in recentProjects" :key="p.id" class="event-row">
             <div style="flex: 1">
               <div style="font-weight: 600">{{ p.name }}</div>
               <div class="tiny muted">{{ (p.description || '').slice(0, 60) }}</div>
             </div>
-            <RouterLink to="/pro/projects" class="ghost small">Gérer</RouterLink>
+            <RouterLink to="/pro/projects" class="ghost small">{{ $t('proHome.projects.manage') }}</RouterLink>
           </li>
         </ul>
         <RouterLink to="/pro/projects" class="ghost small" style="align-self: flex-start">
-          Gérer mes projets
+          {{ $t('proHome.projects.manageAll') }}
         </RouterLink>
       </article>
     </div>

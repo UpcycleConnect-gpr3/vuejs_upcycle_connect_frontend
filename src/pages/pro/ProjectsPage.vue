@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { useProjectStore } from '@/stores/projectStore'
@@ -9,6 +10,7 @@ import type { Project } from '@/types'
 
 const projectStore = useProjectStore()
 const toasts = useToastsStore()
+const { t } = useI18n()
 const { projects, currentProjectSteps, isLoading, error } = storeToRefs(projectStore)
 
 const showNewModal = ref(false)
@@ -36,7 +38,7 @@ const createProject = async () => {
   })
   isSaving.value = false
   if (created) {
-    toasts.success('Projet créé')
+    toasts.success(t('proProjects.toasts.created'))
     showNewModal.value = false
     Object.assign(newForm, { name: '', description: '' })
   }
@@ -44,12 +46,17 @@ const createProject = async () => {
 
 const removeProject = async (project: Project) => {
   const ok = await projectStore.removeProject(project.id)
-  if (ok !== null) toasts.success('Projet supprimé')
+  if (ok !== null) toasts.success(t('proProjects.toasts.deleted'))
 }
 
 const toggleFeatured = async (project: Project) => {
   const ok = await projectStore.setFeatured(project.id, !project.featured)
-  if (ok) toasts.success(project.featured ? 'Retiré de la vitrine' : 'Projet mis en avant')
+  if (ok)
+    toasts.success(
+      project.featured
+        ? t('proProjects.toasts.removedFromShowcase')
+        : t('proProjects.toasts.addedToShowcase'),
+    )
 }
 
 const addStep = async () => {
@@ -65,7 +72,7 @@ const addStep = async () => {
   })
   isSaving.value = false
   if (created) {
-    toasts.success('Étape ajoutée')
+    toasts.success(t('proProjects.toasts.stepAdded'))
     Object.assign(stepForm, { name: '', description: '' })
     await projectStore.fetchProjectSteps(selectedProject.value.id)
   }
@@ -80,82 +87,82 @@ onMounted(() => {
   <ProDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Upcycling</span>
-        <h1>Mes projets</h1>
+        <span class="eyebrow">{{ $t('proProjects.eyebrow') }}</span>
+        <h1>{{ $t('proProjects.title') }}</h1>
         <p class="muted measure">
-          Suivez vos créations et documentez les étapes de transformation.
+          {{ $t('proProjects.subtitle') }}
         </p>
       </div>
-      <button class="primary medium" @click="showNewModal = true">+ Nouveau projet</button>
+      <button class="primary medium" @click="showNewModal = true">{{ $t('proProjects.newProject') }}</button>
     </header>
 
     <p v-if="error" class="small" style="color: var(--destructive-color)">{{ error }}</p>
-    <p v-else-if="isLoading && !projects.length" class="muted">Chargement des projets…</p>
+    <p v-else-if="isLoading && !projects.length" class="muted">{{ $t('proProjects.loading') }}</p>
 
     <div v-else-if="projects.length" class="dashboard-grid">
       <article v-for="project in projects" :key="project.id" class="dashboard-card">
         <div class="card-header">
           <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
-            <span v-if="project.featured" class="badge badge--success"> Mis en avant</span>
+            <span v-if="project.featured" class="badge badge--success"> {{ $t('proProjects.featuredBadge') }}</span>
           </div>
           <h4 style="margin-top: var(--space-1)">{{ project.name }}</h4>
         </div>
-        <p class="small muted">{{ project.description || 'Sans description' }}</p>
+        <p class="small muted">{{ project.description || $t('proProjects.noDescription') }}</p>
         <div class="tiny muted" style="margin-top: var(--space-2)">
-          Créé le {{ (project.created_at ?? '').slice(0, 10) }}
+          {{ $t('proProjects.createdOn', { date: (project.created_at ?? '').slice(0, 10) }) }}
         </div>
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3); flex-wrap: wrap">
-          <button class="ghost small" @click="openDetail(project)">Voir les étapes</button>
+          <button class="ghost small" @click="openDetail(project)">{{ $t('proProjects.viewSteps') }}</button>
           <button class="ghost small" @click="toggleFeatured(project)">
-            {{ project.featured ? ' Retirer de la vitrine' : ' Mettre en avant' }}
+            {{ project.featured ? ' ' + $t('proProjects.removeFromShowcase') : ' ' + $t('proProjects.addToShowcase') }}
           </button>
-          <button class="ghost small" @click="removeProject(project)">Supprimer</button>
+          <button class="ghost small" @click="removeProject(project)">{{ $t('common.delete') }}</button>
         </div>
       </article>
     </div>
 
     <div v-else class="empty-state">
-      <p>Vous n'avez encore aucun projet. Commencez dès maintenant !</p>
+      <p>{{ $t('proProjects.empty.message') }}</p>
       <button class="primary medium" @click="showNewModal = true">
-        + Créer mon premier projet
+        {{ $t('proProjects.empty.cta') }}
       </button>
     </div>
 
-    <AppModal :open="showNewModal" size="medium" title="Nouveau projet" @close="showNewModal = false">
+    <AppModal :open="showNewModal" size="medium" :title="$t('proProjects.modal.newTitle')" @close="showNewModal = false">
       <form
         id="new-project-form"
         class="layout-flex layout-columns layout-gap-medium"
         @submit.prevent="createProject"
       >
         <div class="form-group">
-          <label class="uppercase">Nom du projet</label>
+          <label class="uppercase">{{ $t('proProjects.modal.nameLabel') }}</label>
           <input
             v-model="newForm.name"
             type="text"
             class="primary medium full-width"
-            placeholder="Ex : Lampe vintage bocaux"
+            :placeholder="$t('proProjects.modal.namePlaceholder')"
             required
           />
         </div>
         <div class="form-group">
-          <label class="uppercase">Description</label>
+          <label class="uppercase">{{ $t('proProjects.modal.descriptionLabel') }}</label>
           <textarea
             v-model="newForm.description"
             class="primary full-width"
             rows="4"
-            placeholder="Décrivez votre projet, ses objectifs, l'histoire des matériaux…"
+            :placeholder="$t('proProjects.modal.descriptionPlaceholder')"
           ></textarea>
         </div>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showNewModal = false">Annuler</button>
+        <button class="ghost medium" @click="showNewModal = false">{{ $t('common.cancel') }}</button>
         <button
           type="submit"
           form="new-project-form"
           class="primary medium"
           :disabled="isSaving || !newForm.name.trim()"
         >
-          {{ isSaving ? 'Création…' : 'Créer le projet' }}
+          {{ isSaving ? $t('proProjects.modal.creating') : $t('proProjects.modal.create') }}
         </button>
       </template>
     </AppModal>
@@ -167,11 +174,11 @@ onMounted(() => {
       @close="showDetailModal = false"
     >
       <div v-if="selectedProject" class="layout-flex layout-columns layout-gap-large">
-        <p class="muted">{{ selectedProject.description || 'Sans description' }}</p>
+        <p class="muted">{{ selectedProject.description || $t('proProjects.noDescription') }}</p>
 
         <div>
-          <h4 style="margin-bottom: var(--space-2)">Étapes ({{ currentProjectSteps.length }})</h4>
-          <p v-if="!currentProjectSteps.length" class="small muted">Aucune étape pour l'instant.</p>
+          <h4 style="margin-bottom: var(--space-2)">{{ $t('proProjects.modal.stepsCount', { count: currentProjectSteps.length }) }}</h4>
+          <p v-if="!currentProjectSteps.length" class="small muted">{{ $t('proProjects.modal.noSteps') }}</p>
           <ul v-else class="layout-flex layout-columns layout-gap-small">
             <li v-for="(step, i) in currentProjectSteps" :key="step.id" class="event-row">
               <span class="step-num">{{ i + 1 }}</span>
@@ -184,26 +191,26 @@ onMounted(() => {
         </div>
 
         <form class="layout-flex layout-columns layout-gap-small" @submit.prevent="addStep">
-          <span class="tiny uppercase muted">Ajouter une étape</span>
+          <span class="tiny uppercase muted">{{ $t('proProjects.modal.addStepLabel') }}</span>
           <input
             v-model="stepForm.name"
             type="text"
             class="primary medium full-width"
-            placeholder="Nom de l'étape"
+            :placeholder="$t('proProjects.modal.stepNamePlaceholder')"
           />
           <input
             v-model="stepForm.description"
             type="text"
             class="primary medium full-width"
-            placeholder="Description (optionnel)"
+            :placeholder="$t('proProjects.modal.stepDescriptionPlaceholder')"
           />
           <button type="submit" class="secondary medium" :disabled="isSaving || !stepForm.name.trim()">
-            + Ajouter l'étape
+            {{ $t('proProjects.modal.addStep') }}
           </button>
         </form>
       </div>
       <template #footer>
-        <button class="ghost medium" @click="showDetailModal = false">Fermer</button>
+        <button class="ghost medium" @click="showDetailModal = false">{{ $t('proProjects.modal.close') }}</button>
       </template>
     </AppModal>
   </ProDashboardLayout>

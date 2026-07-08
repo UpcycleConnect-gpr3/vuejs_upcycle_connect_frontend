@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import { getMyNotifications, markNotificationRead, type Notification } from '@/services/notifications'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 const notifications = ref<Notification[]>([])
 const isLoading = ref(false)
 
@@ -15,7 +17,7 @@ const load = async () => {
   try {
     notifications.value = await getMyNotifications()
   } catch {
-    toasts.error('Impossible de charger vos notifications.')
+    toasts.error(t('dashNotifications.toastLoadError'))
   } finally {
     isLoading.value = false
   }
@@ -27,7 +29,7 @@ const markRead = async (n: Notification) => {
     await markNotificationRead(n.id)
     n.is_read = true
   } catch {
-    toasts.error('Action impossible.')
+    toasts.error(t('dashNotifications.toastActionError'))
   }
 }
 
@@ -38,18 +40,18 @@ onMounted(load)
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Notifications</span>
-        <h1>Mes notifications</h1>
+        <span class="eyebrow">{{ $t('dashNotifications.eyebrow') }}</span>
+        <h1>{{ $t('dashNotifications.title') }}</h1>
         <p class="muted measure">
-          Les informations envoyées par UpcycleConnect.
-          <span v-if="unreadCount"> {{ unreadCount }} non lue(s).</span>
+          {{ $t('dashNotifications.subtitle') }}
+          <span v-if="unreadCount"> {{ $t('dashNotifications.unreadCount', { count: unreadCount }) }}</span>
         </p>
       </div>
     </header>
 
-    <p v-if="isLoading && !notifications.length" class="muted">Chargement…</p>
+    <p v-if="isLoading && !notifications.length" class="muted">{{ $t('common.loading') }}</p>
     <p v-else-if="!notifications.length" class="muted center" style="padding: var(--space-8)">
-      Aucune notification pour le moment.
+      {{ $t('dashNotifications.empty') }}
     </p>
 
     <div v-else class="layout-flex layout-columns layout-gap-small">
@@ -63,7 +65,7 @@ onMounted(load)
       >
         <div class="layout-flex layout-justify-between layout-items-center" style="gap: var(--space-3)">
           <h4 style="margin: 0">{{ n.title }}</h4>
-          <span v-if="!n.is_read" class="badge badge--accent">Nouveau</span>
+          <span v-if="!n.is_read" class="badge badge--accent">{{ $t('dashNotifications.new') }}</span>
         </div>
         <p v-if="n.body" class="small muted" style="margin: var(--space-1) 0 0">{{ n.body }}</p>
         <span class="tiny muted">{{ (n.created_at || '').slice(0, 16).replace('T', ' ') }}</span>

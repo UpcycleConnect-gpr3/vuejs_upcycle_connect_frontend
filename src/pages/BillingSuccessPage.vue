@@ -48,48 +48,46 @@ onMounted(async () => {
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
         <div class="billing-result">
           <template v-if="state === 'loading'">
-            <span class="eyebrow">Paiement</span>
-            <h1 class="center">Confirmation en cours…</h1>
+            <span class="eyebrow">{{ $t('billingSuccess.eyebrow') }}</span>
+            <h1 class="center">{{ $t('billingSuccess.loading.title') }}</h1>
             <p class="muted measure center">
-              Nous vérifions votre paiement auprès de Stripe. Merci de patienter quelques secondes.
+              {{ $t('billingSuccess.loading.description') }}
             </p>
           </template>
 
           <template v-else-if="state === 'paid'">
             <span class="billing-result-icon billing-result-icon--ok"></span>
-            <h1 class="center">{{ isAnnonce ? 'Achat confirmé ' : 'Abonnement activé ' }}</h1>
+            <h1 class="center">{{ isAnnonce ? $t('billingSuccess.paid.titleAnnonce') : $t('billingSuccess.paid.titleSubscription') }}</h1>
             <p class="muted measure center">
               {{
                 isAnnonce
-                  ? 'Votre paiement a bien été confirmé. Le vendeur va être notifié de votre achat.'
-                  : 'Votre paiement a bien été confirmé. Votre abonnement est actif.'
+                  ? $t('billingSuccess.paid.descriptionAnnonce')
+                  : $t('billingSuccess.paid.descriptionSubscription')
               }}
             </p>
             <RouterLink :to="isAnnonce ? '/annonces' : '/dashboard'" class="primary large">{{
-              isAnnonce ? 'Retour aux annonces' : 'Accéder au tableau de bord'
+              isAnnonce ? $t('billingSuccess.paid.ctaAnnonce') : $t('billingSuccess.dashboardCta')
             }}</RouterLink>
           </template>
 
           <template v-else-if="state === 'pending'">
             <span class="billing-result-icon"></span>
-            <h1 class="center">Paiement reçu</h1>
+            <h1 class="center">{{ $t('billingSuccess.pending.title') }}</h1>
             <p class="muted measure center">
-              Merci ! Votre paiement a été pris en compte. L'activation peut prendre un court
-              instant le temps de la confirmation. Vous pouvez déjà accéder à votre espace.
+              {{ $t('billingSuccess.pending.description') }}
             </p>
             <RouterLink to="/dashboard" class="primary large"
-              >Accéder au tableau de bord</RouterLink
+              >{{ $t('billingSuccess.dashboardCta') }}</RouterLink
             >
           </template>
 
           <template v-else>
             <span class="billing-result-icon billing-result-icon--error"></span>
-            <h1 class="center">Paiement non confirmé</h1>
+            <h1 class="center">{{ $t('billingSuccess.error.title') }}</h1>
             <p class="muted measure center">
-              Nous n'avons pas pu confirmer votre paiement. Si vous avez été débité, contactez le
-              support — sinon réessayez.
+              {{ $t('billingSuccess.error.description') }}
             </p>
-            <RouterLink to="/pricing" class="secondary large">Revenir aux tarifs</RouterLink>
+            <RouterLink to="/pricing" class="secondary large">{{ $t('billingSuccess.error.backToPricing') }}</RouterLink>
           </template>
         </div>
       </div>

@@ -7,10 +7,10 @@ import { useUiAuthModalStore } from '@/stores/uiAuthModal'
 const ui = useUiAuthModalStore()
 
 const services = [
-  { title: 'Training incredible', imageLeft: true },
-  { title: 'Workshop incredible', imageLeft: false },
-  { title: 'Community incredible', imageLeft: true },
-  { title: 'Marketplace incredible', imageLeft: false },
+  { titleKey: 'servicePage.services.training.title', imageLeft: true },
+  { titleKey: 'servicePage.services.workshop.title', imageLeft: false },
+  { titleKey: 'servicePage.services.community.title', imageLeft: true },
+  { titleKey: 'servicePage.services.marketplace.title', imageLeft: false },
 ]
 </script>
 
@@ -21,20 +21,21 @@ const services = [
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
         <hgroup class="center">
-          <h1 class="center secondary">A headline to make a big impact on visitors</h1>
+          <h1 class="center secondary">{{ $t('servicePage.hero.title') }}</h1>
           <p class="lead center measure" style="margin-inline: auto">
-            Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum
-            has been the industry's standard dummy text ever since the 1500s.
+            {{ $t('servicePage.hero.subtitle') }}
           </p>
         </hgroup>
         <div class="layout-flex layout-gap-medium">
-          <button class="primary medium" @click="ui.open('register')">Get started</button>
-          <button class="secondary medium">Learn more</button>
+          <button class="primary medium" @click="ui.open('register')">
+            {{ $t('servicePage.hero.cta_primary') }}
+          </button>
+          <button class="secondary medium">{{ $t('servicePage.hero.cta_secondary') }}</button>
         </div>
       </div>
     </section>
 
-    <section v-for="s in services" :key="s.title">
+    <section v-for="s in services" :key="s.titleKey">
       <div class="container">
         <div class="card grid-2" style="padding: 0; overflow: hidden">
           <div
@@ -44,16 +45,16 @@ const services = [
           ></div>
           <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12)">
             <hgroup>
-              <h2 class="secondary">{{ s.title }}</h2>
+              <h2 class="secondary">{{ $t(s.titleKey) }}</h2>
               <p class="measure">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                unknown printer took a galley of type and scrambled it to make a type specimen book.
+                {{ $t('servicePage.services.description') }}
               </p>
             </hgroup>
             <div class="layout-flex layout-gap-medium">
-              <button class="primary medium" @click="ui.open('register')">Get started</button>
-              <button class="secondary medium">Learn more</button>
+              <button class="primary medium" @click="ui.open('register')">
+                {{ $t('servicePage.services.cta_primary') }}
+              </button>
+              <button class="secondary medium">{{ $t('servicePage.services.cta_secondary') }}</button>
             </div>
           </div>
           <div
@@ -71,14 +72,16 @@ const services = [
           class="card layout-flex layout-columns layout-items-center layout-gap-large"
           style="padding: var(--space-16); text-align: center"
         >
-          <span class="eyebrow">Ready ?</span>
-          <h2 class="center secondary">Ready to get started ?</h2>
+          <span class="eyebrow">{{ $t('servicePage.cta.eyebrow') }}</span>
+          <h2 class="center secondary">{{ $t('servicePage.cta.title') }}</h2>
           <p class="lead center measure" style="margin-inline: auto">
-            Join thousands of users already building a circular future.
+            {{ $t('servicePage.cta.subtitle') }}
           </p>
           <div class="layout-flex layout-gap-medium">
-            <button class="primary large" @click="ui.open('register')">Get started</button>
-            <RouterLink to="/pricing" class="secondary large">See pricing</RouterLink>
+            <button class="primary large" @click="ui.open('register')">
+              {{ $t('servicePage.cta.primary') }}
+            </button>
+            <RouterLink to="/pricing" class="secondary large">{{ $t('servicePage.cta.secondary') }}</RouterLink>
           </div>
         </div>
       </div>

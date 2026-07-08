@@ -28,17 +28,16 @@ const goToAuthPortal = async () => {
 <template>
   <AppModal :open="isOpen" size="small" @close="close">
     <template #header>
-      <h3>{{ tab === 'register' ? 'Inscription' : 'Connexion' }}</h3>
+      <h3>{{ tab === 'register' ? $t('authModal.titleRegister') : $t('auth.login') }}</h3>
     </template>
 
     <div class="layout-flex layout-columns layout-gap-medium">
       <p class="muted">
-        La connexion et la création de compte se font sur le portail UpcycleConnect. Vous allez être
-        redirigé, puis ramené sur le site une fois authentifié.
+        {{ $t('authModal.description') }}
       </p>
       <p v-if="auth.error" class="tiny" style="color: var(--destructive-color)">{{ auth.error }}</p>
       <button class="primary medium full-width" :disabled="auth.isLoading" @click="goToAuthPortal">
-        {{ auth.isLoading ? 'Redirection…' : 'Continuer vers le portail' }}
+        {{ auth.isLoading ? $t('authModal.redirecting') : $t('authModal.continueButton') }}
       </button>
     </div>
   </AppModal>

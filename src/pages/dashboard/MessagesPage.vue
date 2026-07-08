@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import { useConversationStore } from '@/stores/conversationStore'
 import { useCurrentUser } from '@/composables/useCurrentUser'
@@ -10,6 +11,7 @@ const store = useConversationStore()
 const { conversations, contacts, messages, currentConversationId, isLoading, error } =
   storeToRefs(store)
 const { currentUserId } = useCurrentUser()
+const { t } = useI18n()
 
 const newContactId = ref('')
 const draft = ref('')
@@ -23,7 +25,7 @@ const displayName = (user: ConversationUser) => {
 
 const partnerNames = (conversation: Conversation) => {
   const others = conversation.users.filter((u) => u.id !== currentUserId.value)
-  if (!others.length) return conversation.title || 'Conversation'
+  if (!others.length) return conversation.title || t('dashMessages.conversation')
   return others.map(displayName).join(', ')
 }
 
@@ -33,7 +35,7 @@ const availableContacts = computed(() =>
 
 const currentTitle = computed(() => {
   const conversation = conversations.value.find((c) => c.id === currentConversationId.value)
-  return conversation ? partnerNames(conversation) : 'Sélectionnez une conversation'
+  return conversation ? partnerNames(conversation) : t('dashMessages.selectConversation')
 })
 
 const scrollToBottom = async () => {
@@ -74,8 +76,8 @@ onUnmounted(() => {
 <template>
   <DashboardLayout>
     <hgroup>
-      <h1>Messages</h1>
-      <p class="muted">Discutez avec les autres membres de la communauté.</p>
+      <h1>{{ $t('dashMessages.title') }}</h1>
+      <p class="muted">{{ $t('dashMessages.subtitle') }}</p>
     </hgroup>
 
     <p v-if="error" class="tiny" style="color: var(--destructive-color)">{{ error }}</p>
@@ -84,19 +86,19 @@ onUnmounted(() => {
       <aside class="card conversations-panel">
         <form class="layout-flex layout-gap-small" @submit.prevent="handleStart">
           <select v-model="newContactId" class="primary medium" style="flex: 1">
-            <option value="" disabled>Nouvelle conversation…</option>
+            <option value="" disabled>{{ $t('dashMessages.newConversation') }}</option>
             <option v-for="contact in availableContacts" :key="contact.id" :value="contact.id">
               {{ displayName(contact) }}
             </option>
           </select>
           <button type="submit" class="primary medium" :disabled="!newContactId || isLoading">
-            Créer
+            {{ $t('common.create') }}
           </button>
         </form>
 
         <div class="conversations-list">
           <p v-if="!conversations.length" class="small muted">
-            Aucune conversation pour le moment.
+            {{ $t('dashMessages.noConversations') }}
           </p>
           <button
             v-for="conversation in conversations"
@@ -116,7 +118,7 @@ onUnmounted(() => {
 
         <div ref="threadEl" class="thread-messages">
           <p v-if="currentConversationId && !messages.length" class="small muted center">
-            Aucun message. Écrivez le premier !
+            {{ $t('dashMessages.noMessages') }}
           </p>
           <div
             v-for="message in messages"
@@ -138,11 +140,11 @@ onUnmounted(() => {
             v-model="draft"
             type="text"
             class="primary medium full-width"
-            placeholder="Votre message…"
+            :placeholder="$t('dashMessages.messagePlaceholder')"
             maxlength="2000"
           />
           <button type="submit" class="primary medium" :disabled="isLoading || !draft.trim()">
-            Envoyer
+            {{ $t('dashMessages.send') }}
           </button>
         </form>
       </section>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import StaffDashboardLayout from '@/components/StaffDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { useAppointmentStore } from '@/stores/appointmentStore'
 import { useToastsStore } from '@/stores/toasts'
 import type { Appointment } from '@/types'
 
+const { t } = useI18n()
 const appointmentStore = useAppointmentStore()
 const toasts = useToastsStore()
 const APPOINTMENT_ID_OFFSET = 200000
@@ -203,11 +205,11 @@ const kindColor: Record<EventKind, string> = {
   event: 'var(--lime-300)',
 }
 
-const kindLabel: Record<EventKind, string> = {
-  training: 'Formation',
-  workshop: 'Atelier',
-  event: 'Événement',
-}
+const kindLabel = computed<Record<EventKind, string>>(() => ({
+  training: t('staffPlanning.kind.training'),
+  workshop: t('staffPlanning.kind.workshop'),
+  event: t('staffPlanning.kind.event'),
+}))
 
 function eventStyle(p: PlacedEvent) {
   const color = kindColor[p.event.kind]
@@ -264,11 +266,11 @@ async function submitAdd() {
     const d = parseStart(ev.start)
     if (d) currentWeekStart.value = startOfWeek(d)
     view.value = 'week'
-    toasts.success('Session ajoutée au planning')
+    toasts.success(t('staffPlanning.toasts.added'))
     showAdd.value = false
     Object.assign(addForm, { title: '', kind: 'event', date: '', duration: 60, location: '' })
   } else {
-    toasts.error(appointmentStore.error ?? 'Ajout impossible.')
+    toasts.error(appointmentStore.error ?? t('staffPlanning.toasts.addFailed'))
   }
 }
 
@@ -281,7 +283,7 @@ async function unsubscribeStaff() {
   }
   events.value = events.value.filter((e) => e.id !== id)
   detailEvent.value = null
-  toasts.success('Session retirée')
+  toasts.success(t('staffPlanning.toasts.removed'))
 }
 
 onMounted(async () => {
@@ -318,19 +320,19 @@ function exportICS() {
   <StaffDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Mon planning</span>
-        <h1>Planning des sessions</h1>
-        <p class="muted measure">Vos formations, ateliers et événements à animer.</p>
+        <span class="eyebrow">{{ t('staffPlanning.eyebrow') }}</span>
+        <h1>{{ t('staffPlanning.title') }}</h1>
+        <p class="muted measure">{{ t('staffPlanning.subtitle') }}</p>
       </div>
       <div class="layout-flex layout-gap-medium">
-        <button class="primary medium" @click="showAdd = true">+ Ajouter</button>
-        <button class="ghost medium" @click="exportICS">Exporter (.ics)</button>
+        <button class="primary medium" @click="showAdd = true">{{ t('staffPlanning.actions.add') }}</button>
+        <button class="ghost medium" @click="exportICS">{{ t('staffPlanning.actions.export') }}</button>
         <div class="planning-view-toggle">
           <button type="button" :class="{ 'is-active': view === 'week' }" @click="view = 'week'">
-            Agenda
+            {{ t('staffPlanning.view.week') }}
           </button>
           <button type="button" :class="{ 'is-active': view === 'list' }" @click="view = 'list'">
-            Liste
+            {{ t('staffPlanning.view.list') }}
           </button>
         </div>
       </div>
@@ -338,19 +340,19 @@ function exportICS() {
 
     <div class="stats-row">
       <div class="stat-tile">
-        <span class="stat-tile-label">Sessions à venir</span>
+        <span class="stat-tile-label">{{ t('staffPlanning.stats.upcoming') }}</span>
         <span class="stat-tile-value">{{ stats.upcoming }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Cette semaine</span>
+        <span class="stat-tile-label">{{ t('staffPlanning.stats.thisWeek') }}</span>
         <span class="stat-tile-value">{{ stats.thisWeek }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Ce mois</span>
+        <span class="stat-tile-label">{{ t('staffPlanning.stats.thisMonth') }}</span>
         <span class="stat-tile-value">{{ stats.thisMonth }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Total {{ today.getFullYear() }}</span>
+        <span class="stat-tile-label">{{ t('staffPlanning.stats.totalYear', { year: today.getFullYear() }) }}</span>
         <span class="stat-tile-value">{{ stats.year }}</span>
       </div>
     </div>
@@ -365,11 +367,11 @@ function exportICS() {
     <section v-if="view === 'week'" class="planning-week">
       <div class="planning-week-toolbar">
         <div class="planning-week-nav">
-          <button class="planning-nav-btn" title="Semaine précédente" @click="shiftWeek(-1)">
+          <button class="planning-nav-btn" :title="t('staffPlanning.week.prev')" @click="shiftWeek(-1)">
             ‹
           </button>
-          <button class="ghost small" @click="goToday">Aujourd'hui</button>
-          <button class="planning-nav-btn" title="Semaine suivante" @click="shiftWeek(1)">›</button>
+          <button class="ghost small" @click="goToday">{{ t('staffPlanning.week.today') }}</button>
+          <button class="planning-nav-btn" :title="t('staffPlanning.week.next')" @click="shiftWeek(1)">›</button>
         </div>
         <span class="planning-week-range">{{ weekRangeLabel }}</span>
       </div>
@@ -431,7 +433,7 @@ function exportICS() {
     </section>
 
     <section v-else class="layout-flex layout-columns layout-gap-extra-large">
-      <p v-if="!sorted.length" class="muted">Aucune session planifiée.</p>
+      <p v-if="!sorted.length" class="muted">{{ t('staffPlanning.empty') }}</p>
       <div v-for="(monthEvents, month) in groupedByMonth" :key="month">
         <h3 class="planning-month">{{ month }}</h3>
         <div class="layout-flex layout-columns layout-gap-small" style="margin-top: var(--space-3)">
@@ -457,7 +459,7 @@ function exportICS() {
                 {{ e.location }} · {{ e.duration }} min · {{ e.participants }} participants
               </div>
             </div>
-            <span class="ghost small">Détail </span>
+            <span class="ghost small">{{ t('staffPlanning.detailLink') }}</span>
           </article>
         </div>
       </div>
@@ -474,64 +476,64 @@ function exportICS() {
           <span class="badge">{{ kindLabel[detailEvent.kind] }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Date</span>
-          <span>{{ detailEvent.start || 'Non planifié' }}</span>
+          <span class="tiny uppercase muted">{{ t('staffPlanning.recap.date') }}</span>
+          <span>{{ detailEvent.start || t('staffPlanning.recap.notScheduled') }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Durée</span>
+          <span class="tiny uppercase muted">{{ t('staffPlanning.recap.duration') }}</span>
           <span>{{ detailEvent.duration }} min</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Lieu</span>
+          <span class="tiny uppercase muted">{{ t('staffPlanning.recap.location') }}</span>
           <span>{{ detailEvent.location }}</span>
         </div>
       </div>
       <template #footer>
-        <button class="ghost medium" @click="detailEvent = null">Fermer</button>
+        <button class="ghost medium" @click="detailEvent = null">{{ t('staffPlanning.close') }}</button>
         <button
           v-if="detailEvent && detailEvent.id >= APPOINTMENT_ID_OFFSET"
           class="primary medium"
           style="background: var(--destructive-color)"
           @click="unsubscribeStaff"
         >
-          Retirer du planning
+          {{ t('staffPlanning.unsubscribe') }}
         </button>
       </template>
     </AppModal>
 
-    <AppModal :open="showAdd" title="Ajouter une session" @close="showAdd = false">
+    <AppModal :open="showAdd" :title="t('staffPlanning.addModal.title')" @close="showAdd = false">
       <form id="staff-appt-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitAdd">
         <div class="form-group">
-          <label class="uppercase">Titre</label>
+          <label class="uppercase">{{ t('staffPlanning.addModal.formTitle') }}</label>
           <input v-model="addForm.title" type="text" class="primary medium full-width" required />
         </div>
         <div class="layout-flex layout-gap-medium">
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Type</label>
+            <label class="uppercase">{{ t('staffPlanning.addModal.type') }}</label>
             <select v-model="addForm.kind" class="primary medium full-width">
-              <option value="event">Événement</option>
-              <option value="training">Formation</option>
-              <option value="workshop">Atelier</option>
+              <option value="event">{{ t('staffPlanning.kind.event') }}</option>
+              <option value="training">{{ t('staffPlanning.kind.training') }}</option>
+              <option value="workshop">{{ t('staffPlanning.kind.workshop') }}</option>
             </select>
           </div>
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Durée (min)</label>
+            <label class="uppercase">{{ t('staffPlanning.addModal.durationMin') }}</label>
             <input v-model.number="addForm.duration" type="number" min="15" step="15" class="primary medium full-width" required />
           </div>
         </div>
         <div class="form-group">
-          <label class="uppercase">Date et heure</label>
+          <label class="uppercase">{{ t('staffPlanning.addModal.dateTime') }}</label>
           <input v-model="addForm.date" type="datetime-local" class="primary medium full-width" required />
         </div>
         <div class="form-group">
-          <label class="uppercase">Lieu</label>
+          <label class="uppercase">{{ t('staffPlanning.recap.location') }}</label>
           <input v-model="addForm.location" type="text" class="primary medium full-width" />
         </div>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showAdd = false">Annuler</button>
+        <button class="ghost medium" @click="showAdd = false">{{ t('common.cancel') }}</button>
         <button type="submit" form="staff-appt-form" class="primary medium" :disabled="isSaving || !addForm.title.trim() || !addForm.date">
-          {{ isSaving ? 'Enregistrement…' : 'Ajouter' }}
+          {{ isSaving ? t('staffPlanning.addModal.saving') : t('staffPlanning.addModal.submit') }}
         </button>
       </template>
     </AppModal>

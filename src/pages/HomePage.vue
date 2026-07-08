@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
@@ -6,20 +7,24 @@ import { useToastsStore } from '@/stores/toasts'
 
 const ui = useUiAuthModalStore()
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 const onContact = () => {
-  toasts.info('Le formulaire de contact sera bientôt disponible.')
+  toasts.info(t('home.contact.form.disabled_notice'))
 }
 
 const features = [
   {
-    title: 'Upcycling marketplace',
-    description: 'Transform waste into value through our curated marketplace.',
+    titleKey: 'home.features.marketplace.title',
+    descriptionKey: 'home.features.marketplace.description',
   },
-  { title: 'Community forum', description: 'Connect with like-minded people and share ideas.' },
   {
-    title: 'Training programs',
-    description: 'Learn sustainable practices through expert-led courses.',
+    titleKey: 'home.features.forum.title',
+    descriptionKey: 'home.features.forum.description',
+  },
+  {
+    titleKey: 'home.features.training.title',
+    descriptionKey: 'home.features.training.description',
   },
 ]
 </script>
@@ -49,8 +54,8 @@ const features = [
     <section>
       <div class="container layout-flex layout-columns layout-gap-extra-large">
         <hgroup class="center">
-          <span class="eyebrow">What we do</span>
-          <h2 class="center">A complete circular toolkit</h2>
+          <span class="eyebrow">{{ $t('home.whatWeDo.eyebrow') }}</span>
+          <h2 class="center">{{ $t('home.whatWeDo.title') }}</h2>
         </hgroup>
 
         <div class="grid-3">
@@ -61,8 +66,8 @@ const features = [
           >
             <span class="eyebrow">0{{ i + 1 }}</span>
             <hgroup>
-              <h4>{{ f.title }}</h4>
-              <p class="measure">{{ f.description }}</p>
+              <h4>{{ $t(f.titleKey) }}</h4>
+              <p class="measure">{{ $t(f.descriptionKey) }}</p>
             </hgroup>
           </article>
         </div>
@@ -74,17 +79,18 @@ const features = [
         <div class="card grid-2" style="padding: 0; overflow: hidden">
           <div class="image-placeholder" style="min-height: 420px; align-self: stretch"></div>
           <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12)">
-            <span class="eyebrow">Spotlight</span>
+            <span class="eyebrow">{{ $t('home.spotlight.eyebrow') }}</span>
             <hgroup>
-              <h2>Built for the community,<br />by the community</h2>
+              <h2>{{ $t('home.spotlight.title_line1') }}<br />{{ $t('home.spotlight.title_line2') }}</h2>
               <p class="measure">
-                Every feature of UpcycleConnect has been shaped by designers, craftspeople, and
-                sustainability advocates. We're not just a platform — we're a movement.
+                {{ $t('home.spotlight.description') }}
               </p>
             </hgroup>
             <div class="layout-flex layout-gap-medium">
-              <button class="primary medium" @click="ui.open('register')">Get started</button>
-              <button class="ghost medium">Learn more </button>
+              <button class="primary medium" @click="ui.open('register')">
+                {{ $t('home.spotlight.cta_primary') }}
+              </button>
+              <button class="ghost medium">{{ $t('home.spotlight.cta_secondary') }}</button>
             </div>
           </div>
         </div>
@@ -94,8 +100,8 @@ const features = [
     <section>
       <div class="container layout-flex layout-columns layout-items-center layout-gap-extra-large">
         <hgroup class="center">
-          <span class="eyebrow">Partnership</span>
-          <h2 class="center">Our trusted partners</h2>
+          <span class="eyebrow">{{ $t('home.partnership.eyebrow') }}</span>
+          <h2 class="center">{{ $t('home.partnership.title') }}</h2>
         </hgroup>
         <div class="grid-3" style="width: 100%">
           <div v-for="i in 3" :key="i" class="image-placeholder" style="min-height: 160px"></div>
@@ -107,46 +113,47 @@ const features = [
       <div class="container">
         <div class="card grid-2" style="padding: 0; overflow: hidden">
           <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12)">
-            <span class="eyebrow">Contact</span>
+            <span class="eyebrow">{{ $t('home.contact.eyebrow') }}</span>
             <hgroup>
-              <h2>Let's talk</h2>
+              <h2>{{ $t('home.contact.title') }}</h2>
               <p class="measure">
-                Questions, partnerships, or just want to say hi ? Drop us a note and we'll get back
-                to you.
+                {{ $t('home.contact.description') }}
               </p>
             </hgroup>
             <form class="layout-flex layout-columns layout-gap-large" @submit.prevent="onContact">
               <div class="form-group">
-                <label for="name">Name</label>
+                <label for="name">{{ $t('home.contact.form.name_label') }}</label>
                 <input
                   id="name"
                   type="text"
                   class="primary medium full-width"
-                  placeholder="Your name"
+                  :placeholder="$t('home.contact.form.name_placeholder')"
                   disabled
                 />
               </div>
               <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">{{ $t('home.contact.form.email_label') }}</label>
                 <input
                   id="email"
                   type="email"
                   class="primary medium full-width"
-                  placeholder="you@example.com"
+                  :placeholder="$t('home.contact.form.email_placeholder')"
                   disabled
                 />
               </div>
               <div class="form-group">
-                <label for="message">Message</label>
+                <label for="message">{{ $t('home.contact.form.message_label') }}</label>
                 <textarea
                   id="message"
                   class="primary full-width"
-                  placeholder="Type your message here..."
+                  :placeholder="$t('home.contact.form.message_placeholder')"
                   disabled
                 ></textarea>
               </div>
-              <button type="submit" class="primary medium" disabled>Send message</button>
-              <span class="tiny muted">Le formulaire de contact sera bientôt disponible.</span>
+              <button type="submit" class="primary medium" disabled>
+                {{ $t('home.contact.form.submit') }}
+              </button>
+              <span class="tiny muted">{{ $t('home.contact.form.disabled_notice') }}</span>
             </form>
           </div>
           <div class="image-placeholder" style="align-self: stretch; min-height: 520px"></div>

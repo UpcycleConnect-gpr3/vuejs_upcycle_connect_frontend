@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { getEventSteps } from '@/services/upcycle'
@@ -10,6 +11,7 @@ import type { Appointment } from '@/types'
 
 const toasts = useToastsStore()
 const appointmentStore = useAppointmentStore()
+const { t } = useI18n()
 
 const APPOINTMENT_ID_OFFSET = 200000
 const KIND_VALUES = ['training', 'workshop', 'event', 'deposit'] as const
@@ -43,43 +45,43 @@ interface PEvent {
 const events = ref<PEvent[]>([
   {
     id: 1,
-    title: 'Atelier upcycling N1',
+    title: t('dashPlanning.demo.1.title'),
     kind: 'workshop',
     start: '2026-05-12 14:00',
     duration: 180,
-    location: 'Atelier Paris 11',
+    location: t('dashPlanning.demo.1.location'),
   },
   {
     id: 2,
-    title: 'Restaurer un meuble',
+    title: t('dashPlanning.demo.2.title'),
     kind: 'training',
     start: '2026-05-20 10:00',
     duration: 360,
-    location: 'Atelier Paris 11',
+    location: t('dashPlanning.demo.2.location'),
   },
   {
     id: 3,
-    title: 'Repair Café',
+    title: t('dashPlanning.demo.3.title'),
     kind: 'event',
     start: '2026-04-30 10:00',
     duration: 240,
-    location: 'Atelier Paris 11',
+    location: t('dashPlanning.demo.3.location'),
   },
   {
     id: 4,
-    title: 'Dépôt DEP-204',
+    title: t('dashPlanning.demo.4.title'),
     kind: 'deposit',
     start: '2026-04-29 16:00',
     duration: 30,
-    location: 'Conteneur Bastille',
+    location: t('dashPlanning.demo.4.location'),
   },
   {
     id: 5,
-    title: 'Coaching réemploi',
+    title: t('dashPlanning.demo.5.title'),
     kind: 'training',
     start: '2026-05-12 16:30',
     duration: 90,
-    location: 'En ligne',
+    location: t('dashPlanning.demo.5.location'),
   },
 ])
 
@@ -92,7 +94,7 @@ onMounted(async () => {
     for (const s of steps ?? []) {
       collected.push({
         id: Number(s.id),
-        title: ((s.name as string) || (s.title as string)) ?? 'Événement',
+        title: ((s.name as string) || (s.title as string)) ?? t('dashPlanning.kinds.event'),
         kind: 'event',
         start: (((s.scheduled_at as string) || (s.start_at as string)) ?? '')
           .replace('T', ' ')
@@ -102,7 +104,7 @@ onMounted(async () => {
       })
     }
   } catch {
-    toasts.error('Événements indisponibles, affichage des données de démonstration.')
+    toasts.error(t('dashPlanning.toastEventsUnavailable'))
   }
   try {
     await appointmentStore.fetchAppointments()
@@ -110,18 +112,18 @@ onMounted(async () => {
       collected.push(appointmentToEvent(a))
     }
   } catch {
-    toasts.error('Rendez-vous indisponibles.')
+    toasts.error(t('dashPlanning.toastAppointmentsUnavailable'))
   }
   try {
     const schedules = await getSchedules()
     for (const s of schedules ?? []) {
       collected.push({
         id: Number(s.id) + 100000,
-        title: s.title ?? 'Formation',
+        title: s.title ?? t('dashPlanning.kinds.training'),
         kind: 'training',
         start: '',
         duration: Number(s.duration) || 120,
-        location: `Jour ${s.day_number ?? 1}`,
+        location: t('dashPlanning.dayNumber', { day: s.day_number ?? 1 }),
       })
     }
   } catch {}
@@ -294,10 +296,10 @@ const kindColor: Record<EventKind, string> = {
 }
 
 const kindLabel: Record<EventKind, string> = {
-  training: 'Formation',
-  workshop: 'Atelier',
-  event: 'Événement',
-  deposit: 'Dépôt',
+  training: t('dashPlanning.kinds.training'),
+  workshop: t('dashPlanning.kinds.workshop'),
+  event: t('dashPlanning.kinds.event'),
+  deposit: t('dashPlanning.kinds.deposit'),
 }
 
 function eventStyle(p: PlacedEvent) {
@@ -361,11 +363,11 @@ async function submitAdd() {
     const startDate = parseStart(newEvent.start)
     if (startDate) currentWeekStart.value = startOfWeek(startDate)
     view.value = 'week'
-    toasts.success('Rendez-vous ajouté au planning')
+    toasts.success(t('dashPlanning.toastAppointmentAdded'))
     showAdd.value = false
     Object.assign(addForm, { title: '', kind: 'event', date: '', duration: 60, location: '' })
   } else {
-    toasts.error(appointmentStore.error ?? 'Impossible d’ajouter le rendez-vous.')
+    toasts.error(appointmentStore.error ?? t('dashPlanning.toastAddError'))
   }
 }
 
@@ -377,7 +379,7 @@ async function unsubscribe() {
     if (!ok) return
   }
   events.value = events.value.filter((e) => e.id !== removedId)
-  toasts.success('Désinscription enregistrée')
+  toasts.success(t('dashPlanning.toastUnsubscribed'))
   detailEvent.value = null
 }
 
@@ -410,21 +412,21 @@ function exportICS() {
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Mon planning</span>
-        <h1>Planning personnel</h1>
+        <span class="eyebrow">{{ $t('dashPlanning.eyebrow') }}</span>
+        <h1>{{ $t('dashPlanning.title') }}</h1>
         <p class="muted measure">
-          Vos formations, ateliers, événements et rendez-vous de dépôt à venir.
+          {{ $t('dashPlanning.subtitle') }}
         </p>
       </div>
       <div class="layout-flex layout-gap-medium">
-        <button class="ghost medium" @click="exportICS">Exporter (.ics)</button>
-        <button class="primary medium" @click="showAdd = true">+ Ajouter</button>
+        <button class="ghost medium" @click="exportICS">{{ $t('dashPlanning.exportIcs') }}</button>
+        <button class="primary medium" @click="showAdd = true">{{ $t('dashPlanning.add') }}</button>
         <div class="planning-view-toggle">
           <button type="button" :class="{ 'is-active': view === 'week' }" @click="view = 'week'">
-            Agenda
+            {{ $t('dashPlanning.agenda') }}
           </button>
           <button type="button" :class="{ 'is-active': view === 'list' }" @click="view = 'list'">
-            Liste
+            {{ $t('dashPlanning.list') }}
           </button>
         </div>
       </div>
@@ -432,19 +434,19 @@ function exportICS() {
 
     <div class="stats-row">
       <div class="stat-tile">
-        <span class="stat-tile-label">À venir</span>
+        <span class="stat-tile-label">{{ $t('dashPlanning.stats.upcoming') }}</span>
         <span class="stat-tile-value">{{ stats.upcoming }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Cette semaine</span>
+        <span class="stat-tile-label">{{ $t('dashPlanning.stats.thisWeek') }}</span>
         <span class="stat-tile-value">{{ stats.thisWeek }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Ce mois</span>
+        <span class="stat-tile-label">{{ $t('dashPlanning.stats.thisMonth') }}</span>
         <span class="stat-tile-value">{{ stats.thisMonth }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Total {{ today.getFullYear() }}</span>
+        <span class="stat-tile-label">{{ $t('dashPlanning.stats.totalYear', { year: today.getFullYear() }) }}</span>
         <span class="stat-tile-value">{{ stats.year }}</span>
       </div>
     </div>
@@ -459,17 +461,17 @@ function exportICS() {
     <section v-if="view === 'week'" class="planning-week">
       <div class="planning-week-toolbar">
         <div class="planning-week-nav">
-          <button class="planning-nav-btn" title="Semaine précédente" @click="shiftWeek(-1)">
+          <button class="planning-nav-btn" :title="$t('dashPlanning.previousWeek')" @click="shiftWeek(-1)">
             ‹
           </button>
-          <button class="ghost small" @click="goToday">Aujourd'hui</button>
-          <button class="planning-nav-btn" title="Semaine suivante" @click="shiftWeek(1)">›</button>
+          <button class="ghost small" @click="goToday">{{ $t('dashPlanning.today') }}</button>
+          <button class="planning-nav-btn" :title="$t('dashPlanning.nextWeek')" @click="shiftWeek(1)">›</button>
         </div>
         <span class="planning-week-range">{{ weekRangeLabel }}</span>
       </div>
 
       <div v-if="undatedEvents.length" class="planning-undated">
-        <span class="tiny uppercase muted">Sans horaire défini</span>
+        <span class="tiny uppercase muted">{{ $t('dashPlanning.noTimeSet') }}</span>
         <div class="planning-undated-list">
           <button
             v-for="e in undatedEvents"
@@ -540,7 +542,7 @@ function exportICS() {
     </section>
 
     <section v-else class="layout-flex layout-columns layout-gap-extra-large">
-      <p v-if="!sorted.length" class="muted">Aucun événement planifié.</p>
+      <p v-if="!sorted.length" class="muted">{{ $t('dashPlanning.noEventsPlanned') }}</p>
       <div v-for="(monthEvents, month) in groupedByMonth" :key="month">
         <h3 class="planning-month">{{ month }}</h3>
         <div class="layout-flex layout-columns layout-gap-small" style="margin-top: var(--space-3)">
@@ -562,9 +564,9 @@ function exportICS() {
                 <span class="badge">{{ kindLabel[e.kind] }}</span>
               </div>
               <div style="font-weight: 600; margin-top: 2px">{{ e.title }}</div>
-              <div class="tiny muted">{{ e.location }} · {{ e.duration }} min</div>
+              <div class="tiny muted">{{ $t('dashPlanning.locationDuration', { location: e.location, duration: e.duration }) }}</div>
             </div>
-            <span class="ghost small">Détail </span>
+            <span class="ghost small">{{ $t('dashPlanning.detail') }} </span>
           </article>
         </div>
       </div>
@@ -581,45 +583,45 @@ function exportICS() {
           <span class="badge">{{ kindLabel[detailEvent.kind] }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Date</span
-          ><span>{{ detailEvent.start || 'Non planifié' }}</span>
+          <span class="tiny uppercase muted">{{ $t('dashPlanning.date') }}</span
+          ><span>{{ detailEvent.start || $t('dashPlanning.notPlanned') }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Durée</span><span>{{ detailEvent.duration }} min</span>
+          <span class="tiny uppercase muted">{{ $t('dashPlanning.duration') }}</span><span>{{ $t('dashPlanning.minutes', { count: detailEvent.duration }) }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Lieu</span><span>{{ detailEvent.location }}</span>
+          <span class="tiny uppercase muted">{{ $t('dashPlanning.location') }}</span><span>{{ detailEvent.location }}</span>
         </div>
       </div>
       <template #footer>
         <button class="ghost medium" style="color: var(--destructive-color)" @click="unsubscribe">
-          Se désinscrire
+          {{ $t('dashPlanning.unsubscribe') }}
         </button>
-        <button class="primary medium" @click="detailEvent = null">Fermer</button>
+        <button class="primary medium" @click="detailEvent = null">{{ $t('dashPlanning.closeModal') }}</button>
       </template>
     </AppModal>
-    <AppModal :open="showAdd" title="Ajouter au planning" @close="showAdd = false">
+    <AppModal :open="showAdd" :title="$t('dashPlanning.addModalTitle')" @close="showAdd = false">
       <form
         id="add-appointment-form"
         class="layout-flex layout-columns layout-gap-medium"
         @submit.prevent="submitAdd"
       >
         <div class="form-group">
-          <label class="uppercase">Titre</label>
+          <label class="uppercase">{{ $t('dashPlanning.form.titleLabel') }}</label>
           <input v-model="addForm.title" type="text" class="primary medium full-width" required />
         </div>
         <div class="layout-flex layout-gap-medium">
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Type</label>
+            <label class="uppercase">{{ $t('dashPlanning.form.type') }}</label>
             <select v-model="addForm.kind" class="primary medium full-width">
-              <option value="event">Événement</option>
-              <option value="training">Formation</option>
-              <option value="workshop">Atelier</option>
-              <option value="deposit">Dépôt</option>
+              <option value="event">{{ $t('dashPlanning.kinds.event') }}</option>
+              <option value="training">{{ $t('dashPlanning.kinds.training') }}</option>
+              <option value="workshop">{{ $t('dashPlanning.kinds.workshop') }}</option>
+              <option value="deposit">{{ $t('dashPlanning.kinds.deposit') }}</option>
             </select>
           </div>
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Durée (min)</label>
+            <label class="uppercase">{{ $t('dashPlanning.form.durationLabel') }}</label>
             <input
               v-model.number="addForm.duration"
               type="number"
@@ -631,11 +633,11 @@ function exportICS() {
           </div>
         </div>
         <div class="form-group">
-          <label class="uppercase">Date et heure</label>
+          <label class="uppercase">{{ $t('dashPlanning.form.dateTime') }}</label>
           <input v-model="addForm.date" type="datetime-local" class="primary medium full-width" required />
         </div>
         <div class="form-group">
-          <label class="uppercase">Lieu</label>
+          <label class="uppercase">{{ $t('dashPlanning.location') }}</label>
           <input v-model="addForm.location" type="text" class="primary medium full-width" />
         </div>
         <p v-if="appointmentStore.error" class="small" style="color: var(--destructive-color)">
@@ -643,14 +645,14 @@ function exportICS() {
         </p>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showAdd = false">Annuler</button>
+        <button class="ghost medium" @click="showAdd = false">{{ $t('common.cancel') }}</button>
         <button
           type="submit"
           form="add-appointment-form"
           class="primary medium"
           :disabled="isSaving || !addForm.title.trim() || !addForm.date"
         >
-          {{ isSaving ? 'Enregistrement…' : 'Ajouter' }}
+          {{ isSaving ? $t('dashPlanning.saving') : $t('dashPlanning.add') }}
         </button>
       </template>
     </AppModal>

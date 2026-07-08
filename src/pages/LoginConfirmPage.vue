@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import { useAuthStore, getTokenFromCookies } from '@/stores/authStore'
 import type { ApiResponse, User } from '@/types/api'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
+
+const { t } = useI18n()
 
 const AUTH_URL = import.meta.env.VITE_AUTH_URL
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
@@ -34,7 +37,7 @@ const fetchUser = async () => {
 
     user.value = response.data.data
   } catch (err) {
-    error.value = 'Failed to load user information'
+    error.value = t('loginConfirm.error')
     console.error(err)
   } finally {
     isLoading.value = false
@@ -82,37 +85,37 @@ onMounted(fetchUser)
         <div class="card">
           <div class="layout-flex layout-columns layout-gap-large">
             <hgroup class="center">
-              <h2>Confirm your account</h2>
-              <p class="muted">Please verify this is the correct account before proceeding.</p>
+              <h2>{{ $t('loginConfirm.title') }}</h2>
+              <p class="muted">{{ $t('loginConfirm.subtitle') }}</p>
             </hgroup>
 
             <div v-if="isLoading" class="layout-flex layout-items-center layout-justify-center">
-              <p>Loading user information...</p>
+              <p>{{ $t('loginConfirm.loading') }}</p>
             </div>
 
             <div v-else-if="error" class="alert alert--error">
               <p>{{ error }}</p>
-              <button class="ghost small" @click="handleCancel">Try again</button>
+              <button class="ghost small" @click="handleCancel">{{ $t('loginConfirm.tryAgain') }}</button>
             </div>
 
             <div v-else-if="user" class="layout-flex layout-columns layout-gap-medium">
               <div class="form-group">
-                <label>Email</label>
+                <label>{{ $t('loginConfirm.form.email') }}</label>
                 <p class="primary medium">{{ user.email }}</p>
               </div>
               <div class="form-group">
-                <label>First Name</label>
+                <label>{{ $t('loginConfirm.form.firstName') }}</label>
                 <p class="primary medium">{{ user.firstname }}</p>
               </div>
               <div class="form-group">
-                <label>Last Name</label>
+                <label>{{ $t('loginConfirm.form.lastName') }}</label>
                 <p class="primary medium">{{ user.lastname }}</p>
               </div>
 
               <div class="layout-flex layout-gap-medium layout-justify-end">
-                <button class="ghost medium" @click="handleCancel">No, use another account</button>
+                <button class="ghost medium" @click="handleCancel">{{ $t('loginConfirm.useAnotherAccount') }}</button>
                 <button class="primary medium" @click="handleConfirm">
-                  Yes, connect with this account
+                  {{ $t('loginConfirm.confirmAccount') }}
                 </button>
               </div>
             </div>

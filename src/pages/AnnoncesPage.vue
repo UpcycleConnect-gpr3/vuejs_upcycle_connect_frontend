@@ -2,6 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import AppModal from '@/components/AppModal.vue'
@@ -15,24 +16,25 @@ const router = useRouter()
 const objectStore = useObjectStore()
 const toasts = useToastsStore()
 const { objects, isLoading, error } = storeToRefs(objectStore)
+const { t } = useI18n()
 
 const UPCYCLE_URL = import.meta.env.VITE_UPCYCLE_URL ?? 'http://localhost:4343'
 
 const CATEGORY_LABELS: Record<string, string> = {
-  clothing: 'Vêtements',
-  electronics: 'Électronique',
-  furniture: 'Mobilier',
-  books: 'Livres',
-  toys: 'Jouets',
-  appliances: 'Électroménager',
-  sports: 'Sport',
-  other: 'Autre',
+  clothing: t('annonces.category.clothing'),
+  electronics: t('annonces.category.electronics'),
+  furniture: t('annonces.category.furniture'),
+  books: t('annonces.category.books'),
+  toys: t('annonces.category.toys'),
+  appliances: t('annonces.category.appliances'),
+  sports: t('annonces.category.sports'),
+  other: t('annonces.category.other'),
 }
 const CONDITION_LABELS: Record<string, string> = {
-  new: 'Neuf',
-  like_new: 'Comme neuf',
-  good: 'Bon état',
-  used: 'Usagé',
+  new: t('annonces.condition.new'),
+  like_new: t('annonces.condition.likeNew'),
+  good: t('annonces.condition.good'),
+  used: t('annonces.condition.used'),
 }
 
 const categories = ref<string[]>(Object.keys(CATEGORY_LABELS))
@@ -95,7 +97,7 @@ const addPhotos = (e: Event) => {
   if (!files) return
   for (const f of Array.from(files)) {
     if (f.size > 10 * 1024 * 1024) {
-      toasts.error(`${f.name} dépasse 10 Mo`)
+      toasts.error(t('annonces.form.photoTooLarge', { name: f.name }))
       continue
     }
     photoFiles.value.push(f)
@@ -129,13 +131,13 @@ const submitCreate = async () => {
       is_ad_validated: false,
     })
     if (created) {
-      toasts.success('Annonce publiée')
+      toasts.success(t('annonces.toast.published'))
       showCreate.value = false
       resetCreateForm()
       await objectStore.fetchObjects()
     }
   } catch {
-    toasts.error("Échec de l'envoi des photos, réessayez.")
+    toasts.error(t('annonces.toast.uploadFailed'))
   } finally {
     isSubmitting.value = false
   }
@@ -160,8 +162,8 @@ onMounted(async () => {
     <section>
       <div class="container layout-flex layout-columns layout-gap-extra-large">
         <hgroup>
-          <span class="eyebrow">Marketplace</span>
-          <h2>Les annonces</h2>
+          <span class="eyebrow">{{ $t('annonces.eyebrow') }}</span>
+          <h2>{{ $t('annonces.title') }}</h2>
         </hgroup>
 
         <div class="annonces-toolbar">
@@ -169,7 +171,7 @@ onMounted(async () => {
             v-model="search"
             type="search"
             class="primary medium"
-            placeholder="Rechercher un objet…"
+            :placeholder="$t('annonces.search.placeholder')"
             style="flex: 1"
           />
           <div class="layout-flex layout-gap-small">
@@ -178,30 +180,32 @@ onMounted(async () => {
               :class="typeFilter === 'all' ? 'primary' : 'secondary'"
               @click="typeFilter = 'all'"
             >
-              Tout
+              {{ $t('annonces.filter.all') }}
             </button>
             <button
               class="medium"
               :class="typeFilter === 'don' ? 'primary' : 'secondary'"
               @click="typeFilter = 'don'"
             >
-              Dons
+              {{ $t('annonces.filter.donations') }}
             </button>
             <button
               class="medium"
               :class="typeFilter === 'vente' ? 'primary' : 'secondary'"
               @click="typeFilter = 'vente'"
             >
-              Ventes
+              {{ $t('annonces.filter.sales') }}
             </button>
           </div>
-          <button class="primary medium" @click="showCreate = true">+ Créer une annonce</button>
+          <button class="primary medium" @click="showCreate = true">
+            + {{ $t('annonces.create.button') }}
+          </button>
         </div>
 
         <p v-if="error" class="small" style="color: var(--destructive-color)">{{ error }}</p>
-        <p v-else-if="isLoading && !objects.length" class="muted">Chargement des annonces…</p>
+        <p v-else-if="isLoading && !objects.length" class="muted">{{ $t('annonces.loading') }}</p>
         <p v-else-if="!filteredObjects.length" class="muted center" style="padding: var(--space-8)">
-          Aucune annonce ne correspond à votre recherche.
+          {{ $t('annonces.empty') }}
         </p>
 
         <div v-else class="annonces-grid layout-items-stretch">
@@ -214,62 +218,64 @@ onMounted(async () => {
             <img v-if="imageUrl(o)" :src="imageUrl(o)" :alt="o.name" class="annonce-image" />
             <div v-else class="image-placeholder annonce-placeholder"></div>
             <span class="eyebrow"
-              >{{ isDon(o) ? 'Don' : `Vente · ${o.price}€` }} · {{ o.quantity }}
-              disponible(s)</span
+              >{{ isDon(o) ? $t('annonces.card.donation') : $t('annonces.card.saleLabel', { price: o.price }) }} ·
+              {{ $t('annonces.card.available', { count: o.quantity }) }}</span
             >
             <hgroup>
               <h3>{{ o.name }}</h3>
               <p class="measure annonce-description">{{ o.description }}</p>
             </hgroup>
-            <span v-if="o.score > 0" class="annonce-score"> {{ o.score }} kg CO₂ économisés</span>
+            <span v-if="o.score > 0" class="annonce-score">
+              {{ $t('annonces.card.scoreSaved', { score: o.score }) }}</span
+            >
           </article>
         </div>
       </div>
     </section>
-    <AppModal :open="showCreate" title="Créer une annonce" @close="showCreate = false">
+    <AppModal :open="showCreate" :title="$t('annonces.create.modalTitle')" @close="showCreate = false">
       <form
         id="create-annonce-form"
         class="layout-flex layout-columns layout-gap-medium"
         @submit.prevent="submitCreate"
       >
         <div class="form-group">
-          <label class="uppercase">Nom de l'objet</label>
+          <label class="uppercase">{{ $t('annonces.form.nameLabel') }}</label>
           <input
             v-model="createForm.name"
             type="text"
             class="primary medium full-width"
-            placeholder="Palettes en bois (x3)"
+            :placeholder="$t('annonces.form.namePlaceholder')"
             required
           />
         </div>
         <div class="form-group">
-          <label class="uppercase">Description</label>
+          <label class="uppercase">{{ $t('annonces.form.descriptionLabel') }}</label>
           <textarea
             v-model="createForm.description"
             class="primary medium full-width"
             rows="3"
-            placeholder="État, dimensions, conditions de retrait…"
+            :placeholder="$t('annonces.form.descriptionPlaceholder')"
           ></textarea>
         </div>
         <div class="layout-flex layout-gap-medium">
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Catégorie</label>
+            <label class="uppercase">{{ $t('annonces.form.categoryLabel') }}</label>
             <select v-model="createForm.category" class="primary medium full-width">
               <option v-for="c in categories" :key="c" :value="c">{{ categoryLabel(c) }}</option>
             </select>
           </div>
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">État</label>
+            <label class="uppercase">{{ $t('annonces.form.conditionLabel') }}</label>
             <select v-model="createForm.condition" class="primary medium full-width">
               <option v-for="c in conditions" :key="c" :value="c">{{ conditionLabel(c) }}</option>
             </select>
           </div>
         </div>
         <p class="tiny muted">
-          La catégorie et l'état déterminent l'Upcycler Score (CO₂ économisé) de l'annonce.
+          {{ $t('annonces.form.scoreHint') }}
         </p>
         <div class="form-group">
-          <label class="uppercase">Photos</label>
+          <label class="uppercase">{{ $t('annonces.form.photosLabel') }}</label>
           <input
             ref="photoInput"
             type="file"
@@ -285,6 +291,7 @@ onMounted(async () => {
                 type="button"
                 class="ghost small"
                 style="padding: 0 var(--space-1)"
+                :aria-label="$t('annonces.form.removePhoto')"
                 @click="removePhoto(i)"
               >
 
@@ -294,14 +301,14 @@ onMounted(async () => {
         </div>
         <div class="layout-flex layout-gap-medium">
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Type</label>
+            <label class="uppercase">{{ $t('annonces.form.typeLabel') }}</label>
             <select v-model="createForm.type" class="primary medium full-width">
-              <option value="don">Don</option>
-              <option value="vente">Vente</option>
+              <option value="don">{{ $t('annonces.form.optionDon') }}</option>
+              <option value="vente">{{ $t('annonces.form.optionSale') }}</option>
             </select>
           </div>
           <div v-if="createForm.type === 'vente'" class="form-group" style="flex: 1">
-            <label class="uppercase">Prix (€)</label>
+            <label class="uppercase">{{ $t('annonces.form.priceLabel') }}</label>
             <input
               v-model.number="createForm.price"
               type="number"
@@ -312,7 +319,7 @@ onMounted(async () => {
             />
           </div>
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Quantité</label>
+            <label class="uppercase">{{ $t('annonces.form.quantityLabel') }}</label>
             <input
               v-model.number="createForm.quantity"
               type="number"
@@ -325,14 +332,14 @@ onMounted(async () => {
         <p v-if="error" class="tiny" style="color: var(--destructive-color)">{{ error }}</p>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showCreate = false">Annuler</button>
+        <button class="ghost medium" @click="showCreate = false">{{ $t('common.cancel') }}</button>
         <button
           type="submit"
           form="create-annonce-form"
           class="primary medium"
           :disabled="isSubmitting || !createForm.name.trim()"
         >
-          {{ isSubmitting ? 'Publication…' : 'Publier' }}
+          {{ isSubmitting ? $t('annonces.form.publishing') : $t('annonces.form.publish') }}
         </button>
       </template>
     </AppModal>

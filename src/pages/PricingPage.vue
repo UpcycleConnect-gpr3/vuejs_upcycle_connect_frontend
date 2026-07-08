@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useUiAuthModalStore } from '@/stores/uiAuthModal'
@@ -12,6 +13,7 @@ const ui = useUiAuthModalStore()
 const auth = useAuthStore()
 const toasts = useToastsStore()
 const route = useRoute()
+const { t } = useI18n()
 
 interface Plan {
   name: string
@@ -27,51 +29,51 @@ const plans: Plan[] = [
   {
     name: 'Basic',
     price: '0',
-    description: 'For individuals getting started.',
+    description: t('pricingPage.plans.basic.description'),
     features: [
-      '1 project',
-      'Community forum',
-      'Public marketplace',
-      'Email support',
-      'Standard analytics',
-      'Basic training',
+      t('pricingPage.plans.basic.features.project'),
+      t('pricingPage.plans.basic.features.forum'),
+      t('pricingPage.plans.basic.features.marketplace'),
+      t('pricingPage.plans.basic.features.support'),
+      t('pricingPage.plans.basic.features.analytics'),
+      t('pricingPage.plans.basic.features.training'),
     ],
     featured: false,
-    cta: 'Start for free',
+    cta: t('pricingPage.plans.basic.cta'),
   },
   {
     name: 'Pro',
     price: '15',
-    description: 'For makers and small teams.',
+    description: t('pricingPage.plans.pro.description'),
     features: [
-      'Unlimited projects',
-      'Private forum spaces',
-      'Priority marketplace',
-      'Priority support',
-      'Advanced analytics',
-      'All trainings',
-      'Custom branding',
-      'API access',
-      'Webhooks',
+      t('pricingPage.plans.pro.features.projects'),
+      t('pricingPage.plans.pro.features.forum'),
+      t('pricingPage.plans.pro.features.marketplace'),
+      t('pricingPage.plans.pro.features.support'),
+      t('pricingPage.plans.pro.features.analytics'),
+      t('pricingPage.plans.pro.features.training'),
+      t('pricingPage.plans.pro.features.branding'),
+      t('pricingPage.plans.pro.features.api'),
+      t('pricingPage.plans.pro.features.webhooks'),
     ],
     featured: true,
-    cta: 'Start Pro trial',
+    cta: t('pricingPage.plans.pro.cta'),
     priceId: import.meta.env.VITE_STRIPE_PRICE_BASIC,
   },
   {
     name: 'Business',
     price: '30',
-    description: 'For organisations that scale.',
+    description: t('pricingPage.plans.business.description'),
     features: [
-      'Everything in Pro',
-      'Dedicated manager',
-      'SSO',
-      'Audit logs',
-      'Custom integrations',
-      'SLA 99.9%',
+      t('pricingPage.plans.business.features.everything'),
+      t('pricingPage.plans.business.features.manager'),
+      t('pricingPage.plans.business.features.sso'),
+      t('pricingPage.plans.business.features.auditLogs'),
+      t('pricingPage.plans.business.features.integrations'),
+      t('pricingPage.plans.business.features.sla'),
     ],
     featured: false,
-    cta: 'Subscribe',
+    cta: t('pricingPage.plans.business.cta'),
     priceId: import.meta.env.VITE_STRIPE_PRICE_BUSINESS,
   },
 ]
@@ -92,14 +94,14 @@ async function choosePlan(plan: Plan) {
     const { url } = await createSubscriptionCheckout(plan.priceId)
     window.location.href = url
   } catch {
-    toasts.error('Impossible de démarrer le paiement. Réessayez dans un instant.')
+    toasts.error(t('pricingPage.toast.checkoutError'))
     loadingPlan.value = null
   }
 }
 
 onMounted(() => {
   if (route.query.checkout === 'canceled') {
-    toasts.error('Paiement annulé. Vous pouvez réessayer quand vous voulez.')
+    toasts.error(t('pricingPage.toast.checkoutCanceled'))
   }
 })
 </script>
@@ -110,11 +112,11 @@ onMounted(() => {
   <main>
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
-        <span class="eyebrow">Pricing</span>
+        <span class="eyebrow">{{ $t('pricingPage.hero.eyebrow') }}</span>
         <hgroup class="center">
-          <h1 class="center">Simple pricing,<br />powerful platform</h1>
+          <h1 class="center">{{ $t('pricingPage.hero.title_line1') }}<br />{{ $t('pricingPage.hero.title_line2') }}</h1>
           <p class="lead center measure" style="margin-inline: auto">
-            Choose a plan that fits your ambition. No hidden fees. Cancel anytime.
+            {{ $t('pricingPage.hero.subtitle') }}
           </p>
         </hgroup>
       </div>
@@ -130,10 +132,10 @@ onMounted(() => {
             :class="{ featured: plan.featured }"
           >
             <div class="plan-header">
-              <span class="plan-name">{{ plan.name }} plan</span>
+              <span class="plan-name">{{ $t('pricingPage.planLabel', { name: plan.name }) }}</span>
               <div class="plan-price-row">
                 <span class="plan-price">{{ plan.price }}€</span>
-                <span class="plan-price-unit">/mois</span>
+                <span class="plan-price-unit">{{ $t('pricingPage.perMonth') }}</span>
               </div>
               <p class="small muted">{{ plan.description }}</p>
             </div>
@@ -160,7 +162,7 @@ onMounted(() => {
               :disabled="loadingPlan === plan.name"
               @click="choosePlan(plan)"
             >
-              {{ loadingPlan === plan.name ? 'Redirection…' : plan.cta }}
+              {{ loadingPlan === plan.name ? $t('pricingPage.redirecting') : plan.cta }}
             </button>
           </div>
         </div>
@@ -170,37 +172,37 @@ onMounted(() => {
     <section>
       <div class="container layout-flex layout-columns layout-items-center layout-gap-extra-large">
         <hgroup class="center">
-          <span class="eyebrow">Beyond subscriptions</span>
-          <h2 class="center">Other Pricing plan</h2>
+          <span class="eyebrow">{{ $t('pricingPage.beyond.eyebrow') }}</span>
+          <h2 class="center">{{ $t('pricingPage.beyond.title') }}</h2>
           <p class="center measure" style="margin-inline: auto">
-            Additional revenue streams for creators, sellers, and training providers.
+            {{ $t('pricingPage.beyond.subtitle') }}
           </p>
         </hgroup>
 
         <div class="stats-grid">
           <div class="stat-box">
-            <span class="stat-label">Ads</span>
+            <span class="stat-label">{{ $t('pricingPage.beyond.ads.label') }}</span>
             <div class="stat-value-row">
-              <span class="stat-value">100-500€</span>
-              <span class="stat-value-unit">/ month · company</span>
+              <span class="stat-value">{{ $t('pricingPage.beyond.ads.value') }}</span>
+              <span class="stat-value-unit">{{ $t('pricingPage.beyond.ads.unit') }}</span>
             </div>
-            <p class="small muted">Showcase your brand to our engaged community.</p>
+            <p class="small muted">{{ $t('pricingPage.beyond.ads.description') }}</p>
           </div>
           <div class="stat-box">
-            <span class="stat-label">Commission</span>
+            <span class="stat-label">{{ $t('pricingPage.beyond.commission.label') }}</span>
             <div class="stat-value-row">
-              <span class="stat-value">5-10%</span>
-              <span class="stat-value-unit">/ sales</span>
+              <span class="stat-value">{{ $t('pricingPage.beyond.commission.value') }}</span>
+              <span class="stat-value-unit">{{ $t('pricingPage.beyond.commission.unit') }}</span>
             </div>
-            <p class="small muted">Transparent fees on each marketplace transaction.</p>
+            <p class="small muted">{{ $t('pricingPage.beyond.commission.description') }}</p>
           </div>
           <div class="stat-box">
-            <span class="stat-label">Training</span>
+            <span class="stat-label">{{ $t('pricingPage.beyond.training.label') }}</span>
             <div class="stat-value-row">
-              <span class="stat-value">20-100</span>
-              <span class="stat-value-unit">/ people</span>
+              <span class="stat-value">{{ $t('pricingPage.beyond.training.value') }}</span>
+              <span class="stat-value-unit">{{ $t('pricingPage.beyond.training.unit') }}</span>
             </div>
-            <p class="small muted">Per-seat pricing for in-house training sessions.</p>
+            <p class="small muted">{{ $t('pricingPage.beyond.training.description') }}</p>
           </div>
         </div>
       </div>
@@ -212,14 +214,16 @@ onMounted(() => {
           class="card layout-flex layout-columns layout-items-center layout-gap-large"
           style="padding: var(--space-16); text-align: center"
         >
-          <span class="eyebrow">Ready ?</span>
-          <h2 class="center">Get started in minutes</h2>
+          <span class="eyebrow">{{ $t('pricingPage.cta.eyebrow') }}</span>
+          <h2 class="center">{{ $t('pricingPage.cta.title') }}</h2>
           <p class="lead center measure" style="margin-inline: auto">
-            Create your account, list your first project, and join the circular economy.
+            {{ $t('pricingPage.cta.subtitle') }}
           </p>
           <div class="layout-flex layout-gap-medium">
-            <button class="primary large" @click="ui.open('register')">Create account</button>
-            <button class="secondary large">Talk to sales</button>
+            <button class="primary large" @click="ui.open('register')">
+              {{ $t('pricingPage.cta.primary') }}
+            </button>
+            <button class="secondary large">{{ $t('pricingPage.cta.secondary') }}</button>
           </div>
         </div>
       </div>

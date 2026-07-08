@@ -1,59 +1,43 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import { getTrainingContent } from '@/services/training'
 import { useToastsStore } from '@/stores/toasts'
 
 const route = useRoute()
 const toasts = useToastsStore()
+const { t } = useI18n()
 const id = computed(() => Number(route.params.id))
 
 const article = ref({
   id: 1,
-  title: '5 conseils pour bien démarrer votre premier projet',
-  category: 'Débutant',
+  title: t('dashAdviceDetail.demo.title'),
+  category: t('dashAdviceDetail.demo.category'),
   author: 'Marie L.',
-  publishedAt: '22 avril 2026',
+  publishedAt: t('dashAdviceDetail.demo.publishedAt'),
   readTime: 5,
   bookmarked: true,
   content: [
-    {
-      type: 'p',
-      text: "Lancer son premier projet d'upcycling peut sembler intimidant. Voici les conseils essentiels pour partir sur de bonnes bases et éviter les erreurs classiques.",
-    },
-    { type: 'h2', text: '1. Commencez petit' },
-    {
-      type: 'p',
-      text: "N'attaquez pas une armoire normande pour votre premier projet. Choisissez plutôt un objet simple : une chaise, une caisse en bois, un petit cadre. Vous gagnerez en confiance et en compétence avant de vous lancer dans des projets plus ambitieux.",
-    },
-    { type: 'h2', text: '2. Investissez dans les bons outils' },
-    {
-      type: 'p',
-      text: 'Quelques outils essentiels suffisent pour bien démarrer : ponceuse électrique, tournevis, marteau, mètre, papier de verre (grains 80, 120, 220), pinceaux. Évitez les outils trop bas de gamme qui vous décourageront rapidement.',
-    },
-    { type: 'h2', text: '3. Préparez votre espace' },
-    {
-      type: 'p',
-      text: 'Travaillez dans un endroit ventilé, avec un bon éclairage. Posez une bâche. Portez les EPI (équipement de protection individuelle) adaptés : lunettes, masque, gants.',
-    },
-    { type: 'h2', text: '4. Documentez votre projet' },
-    {
-      type: 'p',
-      text: "Prenez des photos avant/pendant/après. C'est gratifiant, ça vous aide à progresser, et c'est parfait pour partager votre travail sur le forum UpcycleConnect.",
-    },
-    { type: 'h2', text: "5. Demandez de l'aide" },
-    {
-      type: 'p',
-      text: "Notre communauté est là pour vous. N'hésitez pas à poster vos questions sur le forum — la plupart des questions reçoivent une réponse en moins de 24h.",
-    },
+    { type: 'p', text: t('dashAdviceDetail.demo.content.intro') },
+    { type: 'h2', text: t('dashAdviceDetail.demo.content.h1') },
+    { type: 'p', text: t('dashAdviceDetail.demo.content.p1') },
+    { type: 'h2', text: t('dashAdviceDetail.demo.content.h2') },
+    { type: 'p', text: t('dashAdviceDetail.demo.content.p2') },
+    { type: 'h2', text: t('dashAdviceDetail.demo.content.h3') },
+    { type: 'p', text: t('dashAdviceDetail.demo.content.p3') },
+    { type: 'h2', text: t('dashAdviceDetail.demo.content.h4') },
+    { type: 'p', text: t('dashAdviceDetail.demo.content.p4') },
+    { type: 'h2', text: t('dashAdviceDetail.demo.content.h5') },
+    { type: 'p', text: t('dashAdviceDetail.demo.content.p5') },
   ],
 })
 
 const related = [
-  { id: 2, title: "Outils essentiels pour l'upcycling de meubles", category: 'Outils' },
-  { id: 6, title: 'Sécurité : les EPI à avoir absolument', category: 'Débutant' },
-  { id: 3, title: 'Comment poncer correctement', category: 'Technique' },
+  { id: 2, title: t('dashAdviceDetail.related.1.title'), category: t('dashAdviceDetail.related.1.category') },
+  { id: 6, title: t('dashAdviceDetail.related.2.title'), category: t('dashAdviceDetail.related.2.category') },
+  { id: 3, title: t('dashAdviceDetail.related.3.title'), category: t('dashAdviceDetail.related.3.category') },
 ]
 
 onMounted(async () => {
@@ -72,7 +56,7 @@ onMounted(async () => {
       }
     }
   } catch {
-    toasts.error('Article indisponible, affichage des données de démonstration.')
+    toasts.error(t('dashAdviceDetail.toastLoadError'))
   }
 })
 
@@ -84,14 +68,14 @@ function toggleBookmark() {
 <template>
   <DashboardLayout>
     <RouterLink to="/dashboard/advice" class="ghost" style="align-self: flex-start"
-      > Retour aux conseils</RouterLink
+      > {{ $t('dashAdviceDetail.backToAdvice') }}</RouterLink
     >
 
     <article class="advice-article">
       <header class="advice-article-header">
         <div class="layout-flex layout-gap-small layout-items-center">
           <span class="badge">{{ article.category }}</span>
-          <span class="tiny muted">{{ article.readTime }} min de lecture</span>
+          <span class="tiny muted">{{ $t('dashAdviceDetail.readTime', { min: article.readTime }) }}</span>
         </div>
         <h1>{{ article.title }}</h1>
         <div class="layout-flex layout-justify-between layout-items-center">
@@ -106,7 +90,7 @@ function toggleBookmark() {
             </div>
             <div>
               <div style="font-weight: 600">{{ article.author }}</div>
-              <div class="tiny muted">Publié le {{ article.publishedAt }}</div>
+              <div class="tiny muted">{{ $t('dashAdviceDetail.publishedOn', { date: article.publishedAt }) }}</div>
             </div>
           </div>
           <button
@@ -122,7 +106,7 @@ function toggleBookmark() {
             >
               <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
             </svg>
-            <span class="tiny">{{ article.bookmarked ? 'Sauvé' : 'Sauvegarder' }}</span>
+            <span class="tiny">{{ article.bookmarked ? $t('dashAdviceDetail.saved') : $t('dashAdviceDetail.save') }}</span>
           </button>
         </div>
       </header>
@@ -141,7 +125,7 @@ function toggleBookmark() {
       class="layout-flex layout-columns layout-gap-medium"
       style="margin-top: var(--space-10)"
     >
-      <h3>Articles liés</h3>
+      <h3>{{ $t('dashAdviceDetail.relatedArticles') }}</h3>
       <div class="advice-related">
         <RouterLink
           v-for="r in related"

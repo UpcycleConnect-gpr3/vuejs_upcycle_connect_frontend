@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import { getTrainings } from '@/services/training'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 type ItemKind = 'service' | 'training' | 'event'
 
@@ -31,113 +33,113 @@ const items = ref<CatalogItem[]>([
   {
     id: 1,
     kind: 'training',
-    title: "Initiation à l'upcycling — Niveau 1",
-    description: "Workshop d'introduction sur 3h pour découvrir les bases.",
-    category: 'Débutant',
+    title: t('dashCatalog.items.1.title'),
+    description: t('dashCatalog.items.1.description'),
+    category: t('dashCatalog.items.1.category'),
     price: 35,
     date: '2026-05-12 14:00',
     spotsLeft: 4,
     capacity: 12,
-    duration: '3h',
-    location: 'Atelier Paris 11',
+    duration: t('dashCatalog.items.1.duration'),
+    location: t('dashCatalog.items.1.location'),
   },
   {
     id: 2,
     kind: 'training',
-    title: 'Restaurer un meuble en bois',
-    description: 'Formation complète : ponçage, traitement, finition huilée.',
-    category: 'Technique',
+    title: t('dashCatalog.items.2.title'),
+    description: t('dashCatalog.items.2.description'),
+    category: t('dashCatalog.items.2.category'),
     price: 85,
     date: '2026-05-20 10:00',
     spotsLeft: 7,
     capacity: 10,
-    duration: '6h',
-    location: 'Atelier Paris 11',
+    duration: t('dashCatalog.items.2.duration'),
+    location: t('dashCatalog.items.2.location'),
   },
   {
     id: 3,
     kind: 'event',
-    title: "Salon de l'économie circulaire",
-    description: 'Conférences et stands toute la journée.',
-    category: 'Événement',
+    title: t('dashCatalog.items.3.title'),
+    description: t('dashCatalog.items.3.description'),
+    category: t('dashCatalog.items.3.category'),
     price: 0,
     date: '2026-05-25 09:00',
     spotsLeft: 200,
     capacity: 300,
-    duration: 'Journée',
-    location: 'Cité des Sciences',
+    duration: t('dashCatalog.items.3.duration'),
+    location: t('dashCatalog.items.3.location'),
   },
   {
     id: 4,
     kind: 'service',
-    title: 'Diagnostic mobilier à domicile',
-    description: 'Un expert vient évaluer vos meubles à restaurer.',
-    category: 'Service',
+    title: t('dashCatalog.items.4.title'),
+    description: t('dashCatalog.items.4.description'),
+    category: t('dashCatalog.items.4.category'),
     price: 60,
-    date: 'Sur RDV',
+    date: t('dashCatalog.items.4.date'),
     spotsLeft: 99,
     capacity: 99,
-    duration: '1h',
-    location: 'Île-de-France',
+    duration: t('dashCatalog.items.4.duration'),
+    location: t('dashCatalog.items.4.location'),
   },
   {
     id: 5,
     kind: 'training',
-    title: 'Workshop textile — couture upcycling',
-    description: 'Transformez vos vieux vêtements en pièces uniques.',
-    category: 'Textile',
+    title: t('dashCatalog.items.5.title'),
+    description: t('dashCatalog.items.5.description'),
+    category: t('dashCatalog.items.5.category'),
     price: 45,
     date: '2026-06-02 14:00',
     spotsLeft: 12,
     capacity: 15,
-    duration: '4h',
-    location: 'En ligne',
+    duration: t('dashCatalog.items.5.duration'),
+    location: t('dashCatalog.items.5.location'),
   },
   {
     id: 6,
     kind: 'event',
-    title: "Repair Café d'avril",
-    description: 'Apportez vos objets à réparer, on vous aide.',
-    category: 'Événement',
+    title: t('dashCatalog.items.6.title'),
+    description: t('dashCatalog.items.6.description'),
+    category: t('dashCatalog.items.6.category'),
     price: 0,
     date: '2026-04-30 10:00',
     spotsLeft: 30,
     capacity: 40,
-    duration: '4h',
-    location: 'Atelier Paris 11',
+    duration: t('dashCatalog.items.6.duration'),
+    location: t('dashCatalog.items.6.location'),
   },
 ])
 
 const kindLabels: Record<ItemKind, string> = {
-  service: 'Service',
-  training: 'Formation',
-  event: 'Événement',
+  service: t('dashCatalog.kinds.service'),
+  training: t('dashCatalog.kinds.training'),
+  event: t('dashCatalog.kinds.event'),
 }
 
 onMounted(async () => {
   try {
     const trainings = await getTrainings()
 
-    const validated = trainings.filter((t) => (t.status as string) === 'validated')
+    const validated = trainings.filter((tr) => (tr.status as string) === 'validated')
     if (Array.isArray(validated) && validated.length) {
       items.value = validated.map(
-        (t): CatalogItem => ({
-          id: t.id,
+        (tr): CatalogItem => ({
+          id: tr.id,
           kind: 'training',
-          title: (t.name as string) ?? 'Formation',
+          title: (tr.name as string) ?? t('dashCatalog.kinds.training'),
           description: '',
-          category: (t.type as string) ?? 'Formation',
+          category: (tr.type as string) ?? t('dashCatalog.kinds.training'),
           price: 0,
           date: '',
           spotsLeft: 0,
           capacity: 0,
-          duration: (t.duration as string) ?? '',
-          location: (t.location as string) ?? '',
+          duration: (tr.duration as string) ?? '',
+          location: (tr.location as string) ?? '',
         }),
       )
     }
   } catch {
-    toasts.error('Impossible de charger le catalogue, affichage des données de démonstration.')
+    toasts.error(t('dashCatalog.toastLoadError'))
   }
 })
 
@@ -158,10 +160,10 @@ const filtered = computed(() => {
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Catalogue</span>
-        <h1>Services, formations &amp; événements</h1>
+        <span class="eyebrow">{{ $t('dashCatalog.eyebrow') }}</span>
+        <h1>{{ $t('dashCatalog.title') }}</h1>
         <p class="muted measure">
-          Réservez, achetez, participez — tout ce que propose UpcycleConnect au même endroit.
+          {{ $t('dashCatalog.subtitle') }}
         </p>
       </div>
     </header>
@@ -171,7 +173,7 @@ const filtered = computed(() => {
         v-model="search"
         type="search"
         class="primary medium"
-        placeholder="Rechercher…"
+        :placeholder="$t('dashCatalog.searchPlaceholder')"
         style="flex: 1"
       />
       <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
@@ -180,33 +182,33 @@ const filtered = computed(() => {
           :class="{ active: activeKind === 'all' }"
           @click="activeKind = 'all'"
         >
-          Tout
+          {{ $t('dashCatalog.filters.all') }}
         </button>
         <button
           class="forum-tab"
           :class="{ active: activeKind === 'service' }"
           @click="activeKind = 'service'"
         >
-          Services
+          {{ $t('dashCatalog.filters.services') }}
         </button>
         <button
           class="forum-tab"
           :class="{ active: activeKind === 'training' }"
           @click="activeKind = 'training'"
         >
-          Formations
+          {{ $t('dashCatalog.filters.trainings') }}
         </button>
         <button
           class="forum-tab"
           :class="{ active: activeKind === 'event' }"
           @click="activeKind = 'event'"
         >
-          Événements
+          {{ $t('dashCatalog.filters.events') }}
         </button>
       </div>
       <select v-model="sortBy" class="primary medium" style="width: 180px">
-        <option value="date">Trier : date</option>
-        <option value="price">Trier : prix</option>
+        <option value="date">{{ $t('dashCatalog.sort.date') }}</option>
+        <option value="price">{{ $t('dashCatalog.sort.price') }}</option>
       </select>
     </div>
 
@@ -228,13 +230,13 @@ const filtered = computed(() => {
           <div class="catalog-meta">
             <div class="tiny muted"> {{ i.date }}</div>
             <div class="tiny muted"> {{ i.location }} · {{ i.duration }}</div>
-            <div class="tiny muted"> {{ i.spotsLeft }} places restantes</div>
+            <div class="tiny muted"> {{ $t('dashCatalog.spotsLeft', { count: i.spotsLeft }) }}</div>
           </div>
           <div
             class="layout-flex layout-justify-between layout-items-center"
             style="padding-top: var(--space-3); border-top: 1px solid var(--green-700)"
           >
-            <div v-if="i.price === 0" class="text-secondary" style="font-weight: 700">Gratuit</div>
+            <div v-if="i.price === 0" class="text-secondary" style="font-weight: 700">{{ $t('common.free') }}</div>
             <div v-else class="mono" style="font-size: var(--font-size-large); font-weight: 700">
               {{ i.price }}€
             </div>
@@ -249,7 +251,7 @@ const filtered = computed(() => {
                 color: var(--black);
                 font-weight: 600;
               "
-              >Réserver </span
+              >{{ $t('dashCatalog.book') }} </span
             >
           </div>
         </div>

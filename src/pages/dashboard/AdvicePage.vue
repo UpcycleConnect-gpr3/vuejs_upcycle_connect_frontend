@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import { getTrainingContents } from '@/services/training'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 interface Advice {
   id: number
@@ -22,19 +24,18 @@ const search = ref('')
 const activeCategory = ref<string | null>(null)
 
 const categories = [
-  { id: 'debutant', name: 'Débutant', count: 12 },
-  { id: 'outils', name: 'Outils', count: 8 },
-  { id: 'technique', name: 'Technique', count: 24 },
-  { id: 'tendances', name: 'Tendances', count: 6 },
-  { id: 'inspiration', name: 'Inspiration', count: 14 },
+  { id: 'debutant', name: t('dashAdvice.categories.debutant'), count: 12 },
+  { id: 'outils', name: t('dashAdvice.categories.outils'), count: 8 },
+  { id: 'technique', name: t('dashAdvice.categories.technique'), count: 24 },
+  { id: 'tendances', name: t('dashAdvice.categories.tendances'), count: 6 },
+  { id: 'inspiration', name: t('dashAdvice.categories.inspiration'), count: 14 },
 ]
 
 const articles = ref<Advice[]>([
   {
     id: 1,
-    title: '5 conseils pour bien démarrer votre premier projet',
-    excerpt:
-      "Avant de vous lancer dans votre premier projet d'upcycling, voici les 5 erreurs à éviter et les bonnes pratiques à adopter.",
+    title: t('dashAdvice.articles.1.title'),
+    excerpt: t('dashAdvice.articles.1.excerpt'),
     category: 'debutant',
     readTime: 5,
     publishedAt: '2026-04-22',
@@ -43,9 +44,8 @@ const articles = ref<Advice[]>([
   },
   {
     id: 2,
-    title: "Outils essentiels pour l'upcycling de meubles",
-    excerpt:
-      'Liste exhaustive des outils indispensables pour démarrer la rénovation de meubles en bois, métal ou textile.',
+    title: t('dashAdvice.articles.2.title'),
+    excerpt: t('dashAdvice.articles.2.excerpt'),
     category: 'outils',
     readTime: 8,
     publishedAt: '2026-04-18',
@@ -54,9 +54,8 @@ const articles = ref<Advice[]>([
   },
   {
     id: 3,
-    title: 'Comment poncer correctement',
-    excerpt:
-      'Grain 80  120  220 : la méthode pas-à-pas pour un fini parfait sur tous types de bois.',
+    title: t('dashAdvice.articles.3.title'),
+    excerpt: t('dashAdvice.articles.3.excerpt'),
     category: 'technique',
     readTime: 6,
     publishedAt: '2026-04-15',
@@ -65,9 +64,8 @@ const articles = ref<Advice[]>([
   },
   {
     id: 4,
-    title: 'Tendances 2026 : matériaux à privilégier',
-    excerpt:
-      'Le retour du laiton brossé, le textile recyclé technique, et les finitions huilées naturelles.',
+    title: t('dashAdvice.articles.4.title'),
+    excerpt: t('dashAdvice.articles.4.excerpt'),
     category: 'tendances',
     readTime: 4,
     publishedAt: '2026-04-10',
@@ -76,9 +74,8 @@ const articles = ref<Advice[]>([
   },
   {
     id: 5,
-    title: 'Galerie : 10 transformations spectaculaires',
-    excerpt:
-      'Sélection de la rédaction des projets les plus inspirants partagés par la communauté ce mois-ci.',
+    title: t('dashAdvice.articles.5.title'),
+    excerpt: t('dashAdvice.articles.5.excerpt'),
     category: 'inspiration',
     readTime: 3,
     publishedAt: '2026-04-05',
@@ -87,9 +84,8 @@ const articles = ref<Advice[]>([
   },
   {
     id: 6,
-    title: 'Sécurité : les EPI à avoir absolument',
-    excerpt:
-      'Lunettes, gants, masques : la liste minimale pour travailler en toute sécurité dans votre atelier.',
+    title: t('dashAdvice.articles.6.title'),
+    excerpt: t('dashAdvice.articles.6.excerpt'),
     category: 'debutant',
     readTime: 4,
     publishedAt: '2026-03-28',
@@ -105,18 +101,18 @@ onMounted(async () => {
       articles.value = contents.map(
         (c): Advice => ({
           id: c.id,
-          title: (c.name as string) ?? 'Article',
+          title: (c.name as string) ?? t('dashAdvice.defaultArticleTitle'),
           excerpt: (c.content as string)?.slice(0, 160) ?? '',
           category: (c.type as string) ?? 'debutant',
           readTime: 5,
           publishedAt: '',
-          author: 'Équipe',
+          author: t('dashAdvice.defaultAuthor'),
           bookmarked: false,
         }),
       )
     }
   } catch {
-    toasts.error('Conseils indisponibles, affichage des données de démonstration.')
+    toasts.error(t('dashAdvice.toastLoadError'))
   }
 })
 
@@ -146,10 +142,10 @@ function toggleBookmark(id: number) {
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Conseils &amp; News</span>
-        <h1>Espace Conseils</h1>
+        <span class="eyebrow">{{ $t('dashAdvice.eyebrow') }}</span>
+        <h1>{{ $t('dashAdvice.title') }}</h1>
         <p class="muted measure">
-          Guides, techniques et inspirations rédigés par notre équipe pour vous aider à progresser.
+          {{ $t('dashAdvice.subtitle') }}
         </p>
       </div>
     </header>
@@ -159,7 +155,7 @@ function toggleBookmark(id: number) {
         v-model="search"
         type="search"
         class="primary medium"
-        placeholder="Rechercher un article…"
+        :placeholder="$t('dashAdvice.searchPlaceholder')"
         style="flex: 1"
       />
       <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
@@ -168,7 +164,7 @@ function toggleBookmark(id: number) {
           :class="{ active: activeCategory === null }"
           @click="activeCategory = null"
         >
-          Tout
+          {{ $t('dashAdvice.all') }}
         </button>
         <button
           v-for="c in categories"
@@ -189,13 +185,13 @@ function toggleBookmark(id: number) {
     >
       <div class="advice-featured-image"></div>
       <div class="advice-featured-body">
-        <span class="eyebrow">À la une</span>
+        <span class="eyebrow">{{ $t('dashAdvice.featured') }}</span>
         <h2>{{ featured.title }}</h2>
         <p class="muted measure">{{ featured.excerpt }}</p>
         <div class="layout-flex layout-gap-small layout-items-center">
           <span class="badge">{{ categories.find((c) => c.id === featured?.category)?.name }}</span>
           <span class="tiny muted"
-            >{{ featured.readTime }} min · {{ featured.author }} · {{ featured.publishedAt }}</span
+            >{{ $t('dashAdvice.readTimeAuthorDate', { min: featured.readTime, author: featured.author, date: featured.publishedAt }) }}</span
           >
         </div>
       </div>
@@ -211,7 +207,7 @@ function toggleBookmark(id: number) {
               class="bookmark-btn"
               :class="{ active: a.bookmarked }"
               @click.stop="toggleBookmark(a.id)"
-              :aria-label="a.bookmarked ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+              :aria-label="a.bookmarked ? $t('dashAdvice.removeBookmark') : $t('dashAdvice.addBookmark')"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -228,7 +224,7 @@ function toggleBookmark(id: number) {
           </RouterLink>
           <p class="small muted">{{ a.excerpt }}</p>
           <div class="layout-flex layout-justify-between layout-items-center">
-            <span class="tiny muted">{{ a.readTime }} min · {{ a.author }}</span>
+            <span class="tiny muted">{{ $t('dashAdvice.readTimeAuthor', { min: a.readTime, author: a.author }) }}</span>
             <span class="tiny muted">{{ a.publishedAt }}</span>
           </div>
         </div>
@@ -236,7 +232,7 @@ function toggleBookmark(id: number) {
     </div>
 
     <p v-if="others.length === 0" class="muted center" style="padding: var(--space-10)">
-      Aucun article ne correspond à votre recherche.
+      {{ $t('dashAdvice.noResults') }}
     </p>
   </DashboardLayout>
 </template>

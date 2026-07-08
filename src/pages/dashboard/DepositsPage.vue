@@ -14,10 +14,12 @@ import {
 } from '@/api/clients/depositClient'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useToastsStore } from '@/stores/toasts'
+import { useI18n } from 'vue-i18n'
 import type { DeliverySummary, Locker, UpcycleObject } from '@/types'
 
 const toasts = useToastsStore()
 const { currentUserId } = useCurrentUser()
+const { t } = useI18n()
 
 const myObjects = ref<UpcycleObject[]>([])
 const lockers = ref<Locker[]>([])
@@ -40,10 +42,10 @@ const loadDeliveries = async () => {
 const confirmSaleDeposit = async (d: DeliverySummary) => {
   try {
     await confirmDeposit(d.code)
-    toasts.success('Objet déposé — le casier est ouvert')
+    toasts.success(t('dashDeposits.toastDeposited'))
     await loadDeliveries()
   } catch {
-    toasts.error('Dépôt impossible.')
+    toasts.error(t('dashDeposits.toastDepositError'))
   }
 }
 
@@ -62,10 +64,10 @@ const deliveryCodeValue = computed(() =>
 const retrievePurchase = async (d: DeliverySummary) => {
   try {
     await retrievePackage(d.retrieve_code)
-    toasts.success('Objet récupéré — le casier est ouvert')
+    toasts.success(t('dashDeposits.toastRetrieved'))
     await loadDeliveries()
   } catch {
-    toasts.error('Récupération impossible.')
+    toasts.error(t('dashDeposits.toastRetrieveError'))
   }
 }
 
@@ -89,7 +91,7 @@ const load = async () => {
     )
     lockers.value = avail
   } catch {
-    toasts.error('Impossible de charger vos objets et les conteneurs disponibles.')
+    toasts.error(t('dashDeposits.toastLoadError'))
   } finally {
     isLoading.value = false
   }
@@ -119,18 +121,18 @@ const submitDeposit = async () => {
     const locker = lockers.value.find((l) => l.id === form.lockerId)
     myDeposits.value.unshift({
       code: result.code,
-      objectName: obj?.name ?? 'Objet',
-      lockerName: locker?.name ?? 'Conteneur',
+      objectName: obj?.name ?? t('dashDeposits.defaultObjectName'),
+      lockerName: locker?.name ?? t('dashDeposits.defaultLockerName'),
       expiry: result.expiry_date,
       score: result.score,
     })
-    toasts.success('Objet déposé — voici votre code de récupération')
+    toasts.success(t('dashDeposits.toastDepositedWithCode'))
     showDeposit.value = false
     codeOpen.value = myDeposits.value[0] ?? null
     await load()
   } catch (e) {
     const msg = (e as { response?: { data?: { message?: string } } }).response?.data?.message
-    toasts.error(msg === 'Locker is full' ? 'Ce conteneur est plein.' : 'Dépôt impossible.')
+    toasts.error(msg === 'Locker is full' ? t('dashDeposits.toastLockerFull') : t('dashDeposits.toastDepositError'))
   } finally {
     isDepositing.value = false
   }
@@ -150,7 +152,7 @@ const submitRetrieve = async () => {
   isRetrieving.value = true
   try {
     await retrievePackage(code)
-    toasts.success('Objet récupéré avec succès !')
+    toasts.success(t('dashDeposits.toastRetrievedSuccess'))
     showRetrieve.value = false
     retrieveCode.value = ''
     await load()
@@ -158,10 +160,10 @@ const submitRetrieve = async () => {
     const msg = (e as { response?: { data?: { message?: string } } }).response?.data?.message
     const label =
       msg === 'Package has expired'
-        ? 'Ce code a expiré.'
+        ? t('dashDeposits.toastCodeExpired')
         : msg === 'Package already retrieved'
-          ? 'Cet objet a déjà été récupéré.'
-          : 'Code invalide.'
+          ? t('dashDeposits.toastAlreadyRetrieved')
+          : t('dashDeposits.toastInvalidCode')
     toasts.error(label)
   } finally {
     isRetrieving.value = false
@@ -180,27 +182,26 @@ onMounted(() => {
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Dépôt en conteneur</span>
-        <h1>Conteneurs</h1>
+        <span class="eyebrow">{{ $t('dashDeposits.eyebrow') }}</span>
+        <h1>{{ $t('dashDeposits.title') }}</h1>
         <p class="muted measure">
-          Déposez un de vos objets dans un conteneur et recevez un code. Un professionnel peut
-          ensuite le récupérer avec ce code.
+          {{ $t('dashDeposits.subtitle') }}
         </p>
       </div>
       <div class="layout-flex layout-gap-small">
-        <button class="ghost medium" @click="showRetrieve = true">Récupérer un objet</button>
+        <button class="ghost medium" @click="showRetrieve = true">{{ $t('dashDeposits.retrieveObject') }}</button>
         <button class="primary medium" :disabled="!myObjects.length || !lockers.length" @click="openDeposit">
-          + Déposer un objet
+          {{ $t('dashDeposits.depositObject') }}
         </button>
       </div>
     </header>
 
-    <p v-if="isLoading && !lockers.length" class="muted">Chargement…</p>
+    <p v-if="isLoading && !lockers.length" class="muted">{{ $t('common.loading') }}</p>
 
     <section v-if="sales.length" class="layout-flex layout-columns layout-gap-medium">
-      <h3>Mes ventes à déposer</h3>
+      <h3>{{ $t('dashDeposits.salesToDeposit') }}</h3>
       <p class="small muted">
-        Objets vendus : déposez-les dans le casier choisi par l'acheteur avec votre code de dépôt.
+        {{ $t('dashDeposits.salesHint') }}
       </p>
       <div class="layout-flex layout-columns layout-gap-small">
         <article
@@ -214,17 +215,17 @@ onMounted(() => {
             <span class="tiny muted">{{ d.locker_name }} · {{ d.locker_city }} · {{ d.price }}€</span>
           </div>
           <div class="layout-flex layout-gap-small">
-            <button class="ghost small" @click="openDeliveryCode(d, 'deposit')">Code + QR</button>
-            <button class="primary small" @click="confirmSaleDeposit(d)">J'ai déposé</button>
+            <button class="ghost small" @click="openDeliveryCode(d, 'deposit')">{{ $t('dashDeposits.codeAndQr') }}</button>
+            <button class="primary small" @click="confirmSaleDeposit(d)">{{ $t('dashDeposits.iDeposited') }}</button>
           </div>
         </article>
       </div>
     </section>
 
     <section v-if="purchases.length" class="layout-flex layout-columns layout-gap-medium">
-      <h3>Mes achats à récupérer</h3>
+      <h3>{{ $t('dashDeposits.purchasesToRetrieve') }}</h3>
       <p class="small muted">
-        Objets achetés, déposés en casier : récupérez-les avec votre code de retrait.
+        {{ $t('dashDeposits.purchasesHint') }}
       </p>
       <div class="layout-flex layout-columns layout-gap-small">
         <article
@@ -238,15 +239,15 @@ onMounted(() => {
             <span class="tiny muted">{{ d.locker_name }} · {{ d.locker_city }}</span>
           </div>
           <div class="layout-flex layout-gap-small">
-            <button class="ghost small" @click="openDeliveryCode(d, 'retrieve')">Code + QR</button>
-            <button class="primary small" @click="retrievePurchase(d)">Récupérer</button>
+            <button class="ghost small" @click="openDeliveryCode(d, 'retrieve')">{{ $t('dashDeposits.codeAndQr') }}</button>
+            <button class="primary small" @click="retrievePurchase(d)">{{ $t('dashDeposits.retrieve') }}</button>
           </div>
         </article>
       </div>
     </section>
 
     <section v-if="myDeposits.length" class="layout-flex layout-columns layout-gap-medium">
-      <h3>Mes dépôts récents</h3>
+      <h3>{{ $t('dashDeposits.recentDeposits') }}</h3>
       <div class="layout-flex layout-columns layout-gap-small">
         <article
           v-for="d in myDeposits"
@@ -256,62 +257,61 @@ onMounted(() => {
         >
           <div>
             <h4 style="margin: 0">{{ d.objectName }}</h4>
-            <span class="tiny muted">{{ d.lockerName }} · +{{ d.score }} kg CO₂ · expire le {{ d.expiry.slice(0, 10) }}</span>
+            <span class="tiny muted">{{ $t('dashDeposits.depositMeta', { locker: d.lockerName, score: d.score, expiry: d.expiry.slice(0, 10) }) }}</span>
           </div>
-          <button class="primary small" @click="codeOpen = d">Voir le code</button>
+          <button class="primary small" @click="codeOpen = d">{{ $t('dashDeposits.seeCode') }}</button>
         </article>
       </div>
     </section>
 
     <section class="layout-flex layout-columns layout-gap-medium">
-      <h3>Conteneurs disponibles</h3>
-      <p v-if="!lockers.length" class="muted small">Aucun conteneur disponible pour le moment.</p>
+      <h3>{{ $t('dashDeposits.availableLockers') }}</h3>
+      <p v-if="!lockers.length" class="muted small">{{ $t('dashDeposits.noLockersAvailable') }}</p>
       <div v-else class="dashboard-grid">
         <article v-for="l in lockers" :key="l.id" class="dashboard-card">
           <h4 style="margin: 0">{{ l.name }}</h4>
           <span class="tiny muted">{{ l.street }}, {{ l.zip_code }} {{ l.city }}</span>
           <div class="tiny" style="margin-top: var(--space-2)">
-             {{ l.available_slots }} / {{ l.capacity }} places libres
+             {{ $t('dashDeposits.freeSlots', { available: l.available_slots, capacity: l.capacity }) }}
           </div>
         </article>
       </div>
     </section>
 
-    <AppModal :open="showDeposit" title="Déposer un objet" @close="showDeposit = false">
+    <AppModal :open="showDeposit" :title="$t('dashDeposits.depositModalTitle')" @close="showDeposit = false">
       <form id="deposit-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitDeposit">
         <div class="form-group">
-          <label class="uppercase">Objet</label>
+          <label class="uppercase">{{ $t('dashDeposits.form.object') }}</label>
           <select v-model="form.objectId" class="primary medium full-width" required>
             <option v-for="o in myObjects" :key="o.id" :value="o.id">{{ o.name }}</option>
           </select>
-          <p v-if="!myObjects.length" class="tiny muted">Vous n'avez aucun objet disponible à déposer.</p>
+          <p v-if="!myObjects.length" class="tiny muted">{{ $t('dashDeposits.form.noObjectAvailable') }}</p>
         </div>
         <div class="form-group">
-          <label class="uppercase">Conteneur</label>
+          <label class="uppercase">{{ $t('dashDeposits.form.locker') }}</label>
           <select v-model="form.lockerId" class="primary medium full-width" required>
             <option v-for="l in lockers" :key="l.id" :value="l.id">
-              {{ l.name }} — {{ l.city }} ({{ l.available_slots }} libres)
+              {{ $t('dashDeposits.form.lockerOption', { name: l.name, city: l.city, available: l.available_slots }) }}
             </option>
           </select>
         </div>
         <div class="form-group">
-          <label class="uppercase">Poids (kg) — optionnel</label>
+          <label class="uppercase">{{ $t('dashDeposits.form.weight') }}</label>
           <input v-model.number="form.weight" type="number" min="0" class="primary medium full-width" />
         </div>
         <p v-if="selectedLocker" class="small muted">
-          Après validation, un code s'affichera pour ouvrir le tiroir du conteneur. Le code expire
-          sous 7 jours.
+          {{ $t('dashDeposits.form.codeExpiryNotice') }}
         </p>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showDeposit = false">Annuler</button>
+        <button class="ghost medium" @click="showDeposit = false">{{ $t('common.cancel') }}</button>
         <button
           type="submit"
           form="deposit-form"
           class="primary medium"
           :disabled="isDepositing || !form.objectId || !form.lockerId"
         >
-          {{ isDepositing ? 'Dépôt…' : 'Déposer' }}
+          {{ isDepositing ? $t('dashDeposits.depositing') : $t('dashDeposits.depositAction') }}
         </button>
       </template>
     </AppModal>
@@ -319,51 +319,51 @@ onMounted(() => {
     <AppModal :open="!!codeOpen" size="small" @close="codeOpen = null">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
-          <span class="eyebrow">Code de récupération</span>
+          <span class="eyebrow">{{ $t('dashDeposits.retrievalCode') }}</span>
           <h3>{{ codeOpen?.objectName }}</h3>
         </div>
       </template>
       <div v-if="codeOpen" class="layout-flex layout-columns layout-items-center layout-gap-large">
         <div class="container-code">
-          <span class="eyebrow">Code conteneur</span>
+          <span class="eyebrow">{{ $t('dashDeposits.containerCode') }}</span>
           <div class="container-code-digits">{{ codeOpen.code }}</div>
-          <p class="small muted">Tapez ce code sur le clavier du conteneur pour ouvrir le tiroir.</p>
+          <p class="small muted">{{ $t('dashDeposits.typeCodeOnKeypad') }}</p>
         </div>
         <QrCode ref="qrRef" :value="codeOpen.code" :size="160" />
         <p class="small muted center">
-          Le professionnel scanne ce QR (ou saisit le code) pour récupérer l'objet.
+          {{ $t('dashDeposits.professionalScanNotice') }}
         </p>
       </div>
       <template #footer>
-        <button class="ghost medium" @click="codeOpen = null">Fermer</button>
-        <button class="primary medium" @click="downloadQr">Imprimer / Télécharger</button>
+        <button class="ghost medium" @click="codeOpen = null">{{ $t('dashDeposits.close') }}</button>
+        <button class="primary medium" @click="downloadQr">{{ $t('dashDeposits.printDownload') }}</button>
       </template>
     </AppModal>
 
-    <AppModal :open="showRetrieve" title="Récupérer un objet" @close="showRetrieve = false">
+    <AppModal :open="showRetrieve" :title="$t('dashDeposits.retrieveModalTitle')" @close="showRetrieve = false">
       <form id="retrieve-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitRetrieve">
         <div class="form-group">
-          <label class="uppercase">Code de récupération</label>
+          <label class="uppercase">{{ $t('dashDeposits.form.retrievalCodeLabel') }}</label>
           <input
             v-model="retrieveCode"
             type="text"
             class="primary medium full-width mono"
-            placeholder="Ex : XSWFVMVX"
+            :placeholder="$t('dashDeposits.form.retrievalCodePlaceholder')"
             style="text-transform: uppercase"
             required
           />
         </div>
-        <p class="small muted">Saisissez le code fourni au dépôt pour récupérer l'objet.</p>
+        <p class="small muted">{{ $t('dashDeposits.form.retrievalCodeHint') }}</p>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showRetrieve = false">Annuler</button>
+        <button class="ghost medium" @click="showRetrieve = false">{{ $t('common.cancel') }}</button>
         <button
           type="submit"
           form="retrieve-form"
           class="primary medium"
           :disabled="isRetrieving || !retrieveCode.trim()"
         >
-          {{ isRetrieving ? 'Récupération…' : 'Récupérer' }}
+          {{ isRetrieving ? $t('dashDeposits.retrieving') : $t('dashDeposits.retrieve') }}
         </button>
       </template>
     </AppModal>
@@ -372,7 +372,7 @@ onMounted(() => {
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
           <span class="eyebrow">{{
-            deliveryCodeKind === 'deposit' ? 'Code de dépôt' : 'Code de retrait'
+            deliveryCodeKind === 'deposit' ? $t('dashDeposits.depositCode') : $t('dashDeposits.withdrawalCode')
           }}</span>
           <h3>{{ deliveryCodeOpen?.object_name }}</h3>
         </div>
@@ -383,16 +383,16 @@ onMounted(() => {
       >
         <div class="container-code">
           <span class="eyebrow">{{
-            deliveryCodeKind === 'deposit' ? 'Ouvrir le casier pour déposer' : 'Ouvrir le casier pour récupérer'
+            deliveryCodeKind === 'deposit' ? $t('dashDeposits.openLockerToDeposit') : $t('dashDeposits.openLockerToRetrieve')
           }}</span>
           <div class="container-code-digits">{{ deliveryCodeValue }}</div>
           <p class="small muted">{{ deliveryCodeOpen.locker_name }} · {{ deliveryCodeOpen.locker_city }}</p>
         </div>
         <QrCode :value="deliveryCodeValue" :size="160" />
-        <p class="small muted center">Tapez le code ou scannez le QR sur le casier.</p>
+        <p class="small muted center">{{ $t('dashDeposits.typeOrScanCode') }}</p>
       </div>
       <template #footer>
-        <button class="ghost medium" @click="deliveryCodeOpen = null">Fermer</button>
+        <button class="ghost medium" @click="deliveryCodeOpen = null">{{ $t('dashDeposits.close') }}</button>
       </template>
     </AppModal>
   </DashboardLayout>

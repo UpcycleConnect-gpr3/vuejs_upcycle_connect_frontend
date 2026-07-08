@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
+
+const { t } = useI18n()
 
 const stats = {
   score: 482,
@@ -13,23 +16,23 @@ const stats = {
 const upcoming = [
   {
     id: 1,
-    title: 'Atelier transformation palettes',
-    date: '12 mai · 14h00',
-    location: 'Salle A',
-    kind: 'Atelier',
+    title: t('dashHome.upcoming.item1.title'),
+    date: t('dashHome.upcoming.item1.date'),
+    location: t('dashHome.upcoming.item1.location'),
+    kind: t('dashHome.upcoming.item1.kind'),
   },
   {
     id: 2,
-    title: 'Webinaire textile éco-responsable',
-    date: '18 mai · 19h00',
-    location: 'En ligne',
-    kind: 'Conseil',
+    title: t('dashHome.upcoming.item2.title'),
+    date: t('dashHome.upcoming.item2.date'),
+    location: t('dashHome.upcoming.item2.location'),
+    kind: t('dashHome.upcoming.item2.kind'),
   },
 ]
 
 const alerts = [
-  { type: 'success', text: 'Annonce "Table basse palette" approuvée par l\'équipe.' },
-  { type: 'accent', text: 'Code conteneur reçu pour votre dépôt #DEP-204.' },
+  { type: 'success', text: t('dashHome.alerts.listingApproved', { title: 'Table basse palette' }) },
+  { type: 'accent', text: t('dashHome.alerts.depositCodeReceived', { code: '#DEP-204' }) },
 ]
 </script>
 
@@ -37,47 +40,51 @@ const alerts = [
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Tableau de bord</span>
-        <h1>Bonjour Jean </h1>
-        <p class="muted measure">Voici un aperçu de votre activité sur UpcycleConnect.</p>
+        <span class="eyebrow">{{ $t('dashHome.eyebrow') }}</span>
+        <h1>{{ $t('dashHome.greeting', { name: 'Jean' }) }}</h1>
+        <p class="muted measure">{{ $t('dashHome.subtitle') }}</p>
       </div>
       <div class="layout-flex layout-gap-medium">
-        <RouterLink to="/dashboard/deposits/new" class="ghost medium">+ Dépôt conteneur</RouterLink>
+        <RouterLink to="/dashboard/deposits/new" class="ghost medium">{{
+          $t('dashHome.ctaDeposit')
+        }}</RouterLink>
         <RouterLink to="/dashboard/listings/new" class="primary medium" data-tour="new-listing"
-          >+ Nouvelle annonce</RouterLink
+          >{{ $t('dashHome.ctaNewListing') }}</RouterLink
         >
       </div>
     </header>
 
     <div class="stats-row">
       <RouterLink to="/dashboard/score" class="stat-tile" data-tour="score">
-        <span class="stat-tile-label">Upcycling Score</span>
+        <span class="stat-tile-label">{{ $t('dashHome.stats.scoreLabel') }}</span>
         <div class="stat-tile-value-row">
           <span class="stat-tile-value">{{ stats.score }}</span>
-          <span class="badge badge--success">{{ stats.scoreDelta }} ce mois</span>
+          <span class="badge badge--success">{{
+            $t('dashHome.stats.scoreDelta', { delta: stats.scoreDelta })
+          }}</span>
         </div>
-        <p class="small muted">Top 12% de la communauté</p>
+        <p class="small muted">{{ $t('dashHome.stats.scoreRank') }}</p>
       </RouterLink>
 
       <RouterLink to="/dashboard/listings" class="stat-tile">
-        <span class="stat-tile-label">Annonces actives</span>
+        <span class="stat-tile-label">{{ $t('dashHome.stats.listingsLabel') }}</span>
         <span class="stat-tile-value">{{ stats.listingsActive }}</span>
-        <p class="small muted">2 en validation</p>
+        <p class="small muted">{{ $t('dashHome.stats.listingsPending', { count: 2 }) }}</p>
       </RouterLink>
 
       <RouterLink to="/dashboard/planning" class="stat-tile">
-        <span class="stat-tile-label">Prochaines sessions</span>
+        <span class="stat-tile-label">{{ $t('dashHome.stats.sessionsLabel') }}</span>
         <span class="stat-tile-value">{{ stats.upcomingEvents }}</span>
-        <p class="small muted">cette semaine</p>
+        <p class="small muted">{{ $t('dashHome.stats.sessionsThisWeek') }}</p>
       </RouterLink>
 
       <RouterLink to="/dashboard/deposits" class="stat-tile">
-        <span class="stat-tile-label">Dépôts en attente</span>
+        <span class="stat-tile-label">{{ $t('dashHome.stats.depositsLabel') }}</span>
         <div class="stat-tile-value-row">
           <span class="stat-tile-value">{{ stats.pendingDeposits }}</span>
-          <span class="badge badge--accent">Action</span>
+          <span class="badge badge--accent">{{ $t('dashHome.stats.action') }}</span>
         </div>
-        <p class="small muted">1 code disponible</p>
+        <p class="small muted">{{ $t('dashHome.stats.depositsAvailable', { count: 1 }) }}</p>
       </RouterLink>
     </div>
 
@@ -94,8 +101,8 @@ const alerts = [
     <div class="dashboard-grid">
       <article class="dashboard-card">
         <div class="card-header">
-          <span class="eyebrow">Cette semaine</span>
-          <h3>Prochains rendez-vous</h3>
+          <span class="eyebrow">{{ $t('dashHome.thisWeek') }}</span>
+          <h3>{{ $t('dashHome.upcomingAppointments') }}</h3>
         </div>
         <ul class="layout-flex layout-columns layout-gap-medium">
           <li v-for="e in upcoming" :key="e.id" class="event-row">
@@ -107,33 +114,39 @@ const alerts = [
               <div style="font-weight: 600">{{ e.title }}</div>
               <div class="tiny muted">{{ e.location }}</div>
             </div>
-            <RouterLink to="/dashboard/planning" class="ghost small">Détail</RouterLink>
+            <RouterLink to="/dashboard/planning" class="ghost small">{{
+              $t('dashHome.detail')
+            }}</RouterLink>
           </li>
         </ul>
         <RouterLink to="/dashboard/planning" class="ghost small" style="align-self: flex-start"
-          >Voir tous mes rendez-vous </RouterLink
+          >{{ $t('dashHome.seeAllAppointments') }} </RouterLink
         >
       </article>
 
       <article class="dashboard-card">
         <div class="card-header">
-          <span class="eyebrow">Conseils</span>
-          <h3>À lire cette semaine</h3>
+          <span class="eyebrow">{{ $t('dashHome.adviceEyebrow') }}</span>
+          <h3>{{ $t('dashHome.readThisWeek') }}</h3>
         </div>
         <ul class="layout-flex layout-columns layout-gap-medium">
           <li class="advice-mini">
-            <span class="badge">Débutant</span>
-            <span style="font-weight: 600">5 conseils pour bien démarrer</span>
-            <span class="tiny muted">5 min de lecture</span>
+            <span class="badge">{{ $t('dashHome.adviceMini.item1.badge') }}</span>
+            <span style="font-weight: 600">{{ $t('dashHome.adviceMini.item1.title') }}</span>
+            <span class="tiny muted">{{
+              $t('dashHome.adviceMini.readTime', { min: 5 })
+            }}</span>
           </li>
           <li class="advice-mini">
-            <span class="badge">Outils</span>
-            <span style="font-weight: 600">Outils essentiels pour l'upcycling</span>
-            <span class="tiny muted">8 min de lecture</span>
+            <span class="badge">{{ $t('dashHome.adviceMini.item2.badge') }}</span>
+            <span style="font-weight: 600">{{ $t('dashHome.adviceMini.item2.title') }}</span>
+            <span class="tiny muted">{{
+              $t('dashHome.adviceMini.readTime', { min: 8 })
+            }}</span>
           </li>
         </ul>
         <RouterLink to="/dashboard/advice" class="ghost small" style="align-self: flex-start"
-          >Voir tous les conseils </RouterLink
+          >{{ $t('dashHome.seeAllAdvice') }} </RouterLink
         >
       </article>
     </div>

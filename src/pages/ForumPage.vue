@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useTalkStore } from '@/stores/talkStore'
@@ -14,18 +15,26 @@ const categoryStore = useCategoryStore()
 const toasts = useToastsStore()
 const authModal = useUiAuthModalStore()
 const { currentUserId } = useCurrentUser()
+const { t, locale } = useI18n()
 
 const { talks, isLoading } = storeToRefs(talkStore)
 const { categories } = storeToRefs(categoryStore)
 
-const categoryName = (id: number) => categories.value.find((c) => c.id === id)?.name ?? 'Général'
+const categoryName = (id: number) =>
+  categories.value.find((c) => c.id === id)?.name ?? t('forumPage.defaultCategory')
 
 const visibleTalks = computed(() =>
   [...talks.value].sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
 )
 
 const formatDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''
+  iso
+    ? new Date(iso).toLocaleDateString(locale.value === 'en' ? 'en-US' : 'fr-FR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
+    : ''
 
 const showForm = ref(false)
 const isSubmitting = ref(false)
@@ -44,7 +53,7 @@ const openForm = () => {
 
 const submit = async () => {
   if (!form.title.trim() || !form.content.trim() || !form.category_id) {
-    toasts.error('Titre, message et catégorie sont requis.')
+    toasts.error(t('forumPage.toast.validation'))
     return
   }
   isSubmitting.value = true
@@ -58,11 +67,11 @@ const submit = async () => {
   })
   isSubmitting.value = false
   if (created) {
-    toasts.success('Discussion publiée')
+    toasts.success(t('forumPage.toast.published'))
     showForm.value = false
     await talkStore.fetchTalks()
   } else {
-    toasts.error('Impossible de publier la discussion.')
+    toasts.error(t('forumPage.toast.publishError'))
   }
 }
 
@@ -80,23 +89,23 @@ onMounted(() => {
       <div class="container layout-flex layout-columns layout-gap-large">
         <div class="layout-flex layout-justify-between layout-items-center" style="flex-wrap: wrap; gap: var(--space-4)">
           <hgroup>
-            <span class="eyebrow">Communauté</span>
-            <h1>Forum</h1>
-            <p class="lead measure">Posez vos questions, partagez vos astuces d'upcycling et échangez avec la communauté.</p>
+            <span class="eyebrow">{{ $t('forumPage.eyebrow') }}</span>
+            <h1>{{ $t('nav.forum') }}</h1>
+            <p class="lead measure">{{ $t('forumPage.subtitle') }}</p>
           </hgroup>
-          <button class="primary medium" @click="openForm">+ Nouvelle discussion</button>
+          <button class="primary medium" @click="openForm">+ {{ $t('forumPage.newDiscussion') }}</button>
         </div>
 
-        <p v-if="isLoading && !visibleTalks.length" class="muted">Chargement des discussions…</p>
+        <p v-if="isLoading && !visibleTalks.length" class="muted">{{ $t('forumPage.loading') }}</p>
 
         <div
           v-else-if="!visibleTalks.length"
           class="card layout-flex layout-columns layout-items-center layout-gap-medium"
           style="padding: var(--space-12); text-align: center"
         >
-          <h3>Aucune discussion pour le moment</h3>
-          <p class="muted">Lancez la première conversation de la communauté.</p>
-          <button class="primary medium" @click="openForm">Créer une discussion</button>
+          <h3>{{ $t('forumPage.empty.title') }}</h3>
+          <p class="muted">{{ $t('forumPage.empty.subtitle') }}</p>
+          <button class="primary medium" @click="openForm">{{ $t('forumPage.empty.cta') }}</button>
         </div>
 
         <div v-else class="layout-flex layout-columns layout-gap-medium">
@@ -120,38 +129,43 @@ onMounted(() => {
   <div v-if="showForm" class="forum-modal-backdrop" @click.self="showForm = false">
     <div class="card forum-modal">
       <hgroup>
-        <span class="eyebrow">Nouvelle discussion</span>
-        <h3>Partager avec la communauté</h3>
+        <span class="eyebrow">{{ $t('forumPage.newDiscussion') }}</span>
+        <h3>{{ $t('forumPage.modal.title') }}</h3>
       </hgroup>
 
       <div class="form-group">
-        <label>Titre</label>
-        <input v-model="form.title" type="text" class="primary medium full-width" placeholder="Titre de la discussion" />
+        <label>{{ $t('forumPage.modal.titleLabel') }}</label>
+        <input
+          v-model="form.title"
+          type="text"
+          class="primary medium full-width"
+          :placeholder="$t('forumPage.modal.titlePlaceholder')"
+        />
       </div>
 
       <div class="form-group">
-        <label>Catégorie</label>
+        <label>{{ $t('forumPage.modal.categoryLabel') }}</label>
         <select v-model.number="form.category_id" class="primary medium full-width">
           <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
         </select>
-        <p v-if="!categories.length" class="tiny muted">Aucune catégorie disponible.</p>
+        <p v-if="!categories.length" class="tiny muted">{{ $t('forumPage.modal.noCategoriesAvailable') }}</p>
       </div>
 
       <div class="form-group">
-        <label>Message</label>
+        <label>{{ $t('forumPage.modal.messageLabel') }}</label>
         <textarea
           v-model="form.content"
           rows="5"
           class="primary medium full-width"
-          placeholder="Votre message…"
+          :placeholder="$t('forumPage.modal.messagePlaceholder')"
           style="resize: vertical"
         ></textarea>
       </div>
 
       <div class="layout-flex layout-gap-medium layout-justify-end">
-        <button class="ghost medium" @click="showForm = false">Annuler</button>
+        <button class="ghost medium" @click="showForm = false">{{ $t('common.cancel') }}</button>
         <button class="primary medium" :disabled="isSubmitting || !categories.length" @click="submit">
-          {{ isSubmitting ? 'Publication…' : 'Publier' }}
+          {{ isSubmitting ? $t('forumPage.modal.publishing') : $t('forumPage.modal.publish') }}
         </button>
       </div>
     </div>

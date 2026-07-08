@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { getCategories, createTalk, type ForumCategory } from '@/services/forum'
@@ -8,6 +9,7 @@ import { useToastsStore } from '@/stores/toasts'
 
 const router = useRouter()
 const toasts = useToastsStore()
+const { t } = useI18n()
 const isSubmitting = ref(false)
 
 const form = reactive({
@@ -16,13 +18,14 @@ const form = reactive({
   categoryId: '' as string,
 })
 
-const categories = ref<{ id: string; name: string }[]>([
-  { id: 'tips', name: 'Tips & Tricks' },
-  { id: 'questions', name: 'Questions' },
-  { id: 'show', name: 'Show & Tell' },
-  { id: 'partners', name: 'Partners' },
-  { id: 'general', name: 'General' },
-])
+const defaultCategoryIds = ['tips', 'questions', 'show', 'partners', 'general']
+const remoteCategories = ref<{ id: string; name: string }[] | null>(null)
+
+const categories = computed(
+  () =>
+    remoteCategories.value ??
+    defaultCategoryIds.map((id) => ({ id, name: t(`forumNew.categories.${id}`) })),
+)
 
 onMounted(async () => {
   try {
@@ -31,13 +34,13 @@ onMounted(async () => {
       (c: ForumCategory) => c.name !== 'private',
     )
     if (visible.length) {
-      categories.value = visible.map((c: ForumCategory) => ({
+      remoteCategories.value = visible.map((c: ForumCategory) => ({
         id: String(c.id),
         name: c.name,
       }))
     }
   } catch {
-    toasts.error('Catégories indisponibles, valeurs par défaut affichées.')
+    toasts.error(t('forumNew.toasts.categoriesFailed'))
   }
 })
 
@@ -50,10 +53,10 @@ async function handleSubmit() {
       content: form.content,
       category_id: Number(form.categoryId) || 0,
     })
-    toasts.success('Discussion publiée')
+    toasts.success(t('forumNew.toasts.published'))
     router.push('/forum')
   } catch {
-    toasts.error('Publication impossible, réessayez plus tard.')
+    toasts.error(t('forumNew.toasts.publishFailed'))
   } finally {
     isSubmitting.value = false
   }
@@ -71,14 +74,14 @@ async function handleSubmit() {
           style="max-width: 760px; margin-inline: auto"
         >
           <RouterLink to="/forum" class="ghost" style="align-self: flex-start"
-            > Retour au forum</RouterLink
+            > {{ t('forumNew.backToForum') }}</RouterLink
           >
 
           <hgroup>
-            <span class="eyebrow">Nouvelle discussion</span>
-            <h1>Démarrer une discussion</h1>
+            <span class="eyebrow">{{ t('forumNew.eyebrow') }}</span>
+            <h1>{{ t('forumNew.title') }}</h1>
             <p class="lead measure">
-              Posez votre question ou partagez votre projet avec la communauté.
+              {{ t('forumNew.subtitle') }}
             </p>
           </hgroup>
 
@@ -88,48 +91,48 @@ async function handleSubmit() {
             style="padding: var(--space-8)"
           >
             <div class="form-group">
-              <label for="category" class="uppercase">Catégorie</label>
+              <label for="category" class="uppercase">{{ t('forumNew.form.category') }}</label>
               <select id="category" v-model="form.categoryId" class="primary medium full-width">
-                <option value="" disabled>Choisissez une catégorie</option>
+                <option value="" disabled>{{ t('forumNew.form.categoryPlaceholder') }}</option>
                 <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
               </select>
-              <span class="tiny muted">Indicatif — non enregistré pour le moment.</span>
+              <span class="tiny muted">{{ t('forumNew.form.categoryHint') }}</span>
             </div>
 
             <div class="form-group">
-              <label for="title" class="uppercase">Titre</label>
+              <label for="title" class="uppercase">{{ t('forumNew.form.title') }}</label>
               <input
                 id="title"
                 v-model="form.title"
                 type="text"
                 class="primary medium full-width"
-                placeholder="Ex: Comment transformer une palette en table basse ?"
+                :placeholder="t('forumNew.form.titlePlaceholder')"
                 maxlength="120"
                 required
               />
-              <span class="tiny muted">{{ form.title.length }} / 120</span>
+              <span class="tiny muted">{{ t('forumNew.form.titleCount', { count: form.title.length }) }}</span>
             </div>
 
             <div class="form-group">
-              <label for="content" class="uppercase">Contenu</label>
+              <label for="content" class="uppercase">{{ t('forumNew.form.content') }}</label>
               <textarea
                 id="content"
                 v-model="form.content"
                 class="primary full-width"
                 rows="10"
-                placeholder="Décrivez votre projet, votre question, partagez vos photos…"
+                :placeholder="t('forumNew.form.contentPlaceholder')"
                 required
               ></textarea>
-              <span class="tiny muted">Markdown supporté · 5000 caractères max</span>
+              <span class="tiny muted">{{ t('forumNew.form.contentHint') }}</span>
             </div>
 
             <div
               class="layout-flex layout-justify-end layout-gap-medium"
               style="padding-top: var(--space-3); border-top: 1px solid var(--border-color)"
             >
-              <RouterLink to="/forum" class="ghost medium">Annuler</RouterLink>
+              <RouterLink to="/forum" class="ghost medium">{{ t('common.cancel') }}</RouterLink>
               <button type="submit" class="primary medium" :disabled="isSubmitting">
-                {{ isSubmitting ? 'Publication…' : 'Publier la discussion' }}
+                {{ isSubmitting ? t('forumNew.form.publishing') : t('forumNew.form.submit') }}
               </button>
             </div>
           </form>

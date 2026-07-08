@@ -1,19 +1,45 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { getTrainingContents } from '@/services/training'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 const resources = ref([
-  { type: 'GUIDE', title: "Beginner's guide to upcycling", date: '28 Février 2026' },
-  { type: 'TUTORIAL', title: 'Transform old furniture in 5 steps', date: '12 Mars 2026' },
-  { type: 'CASE STUDY', title: 'How Company X reduced waste by 80%', date: '20 Mars 2026' },
-  { type: 'REPORT', title: 'State of the circular economy 2026', date: '1 Avril 2026' },
-  { type: 'GUIDE', title: 'Sustainable material sourcing', date: '8 Avril 2026' },
-  { type: 'TUTORIAL', title: "Packaging that doesn't cost the earth", date: '15 Avril 2026' },
+  {
+    type: t('resourcesPage.types.guide'),
+    title: t('resourcesPage.items.beginnerGuide.title'),
+    date: t('resourcesPage.items.beginnerGuide.date'),
+  },
+  {
+    type: t('resourcesPage.types.tutorial'),
+    title: t('resourcesPage.items.furnitureTransform.title'),
+    date: t('resourcesPage.items.furnitureTransform.date'),
+  },
+  {
+    type: t('resourcesPage.types.case_study'),
+    title: t('resourcesPage.items.caseStudyWaste.title'),
+    date: t('resourcesPage.items.caseStudyWaste.date'),
+  },
+  {
+    type: t('resourcesPage.types.report'),
+    title: t('resourcesPage.items.circularEconomyReport.title'),
+    date: t('resourcesPage.items.circularEconomyReport.date'),
+  },
+  {
+    type: t('resourcesPage.types.guide'),
+    title: t('resourcesPage.items.materialSourcing.title'),
+    date: t('resourcesPage.items.materialSourcing.date'),
+  },
+  {
+    type: t('resourcesPage.types.tutorial'),
+    title: t('resourcesPage.items.sustainablePackaging.title'),
+    date: t('resourcesPage.items.sustainablePackaging.date'),
+  },
 ])
 
 onMounted(async () => {
@@ -22,12 +48,12 @@ onMounted(async () => {
     if (Array.isArray(contents) && contents.length) {
       resources.value = contents.map((c) => ({
         type: ((c.type as string) ?? 'GUIDE').toUpperCase(),
-        title: (c.name as string) ?? 'Ressource',
+        title: (c.name as string) ?? t('resourcesPage.fallbackTitle'),
         date: '',
       }))
     }
   } catch {
-    toasts.error('Ressources indisponibles, affichage des données de démonstration.')
+    toasts.error(t('resourcesPage.error'))
   }
 })
 </script>
@@ -38,11 +64,11 @@ onMounted(async () => {
   <main>
     <section class="loose">
       <div class="container layout-flex layout-columns layout-items-center layout-gap-large">
-        <span class="eyebrow">Resources</span>
+        <span class="eyebrow">{{ $t('resourcesPage.hero.eyebrow') }}</span>
         <hgroup class="center">
-          <h1 class="center">Guides, tutorials &amp; reports</h1>
+          <h1 class="center">{{ $t('resourcesPage.hero.title') }}</h1>
           <p class="lead center measure" style="margin-inline: auto">
-            Curated knowledge from the UpcycleConnect community, ready to apply.
+            {{ $t('resourcesPage.hero.subtitle') }}
           </p>
         </hgroup>
       </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import StaffDashboardLayout from '@/components/StaffDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import {
@@ -11,6 +12,7 @@ import {
 } from '@/services/training'
 import { useToastsStore } from '@/stores/toasts'
 
+const { t } = useI18n()
 const toasts = useToastsStore()
 
 const articles = ref<TrainingContent[]>([])
@@ -33,7 +35,7 @@ const load = async () => {
   try {
     articles.value = await getTrainingContents()
   } catch {
-    toasts.error('Impossible de charger les conseils.')
+    toasts.error(t('staffAdvice.toasts.loadFailed'))
   } finally {
     isLoading.value = false
   }
@@ -58,16 +60,16 @@ const submit = async () => {
   try {
     if (editingId.value !== null) {
       await updateTrainingContent(editingId.value, payload)
-      toasts.success('Conseil modifié')
+      toasts.success(t('staffAdvice.toasts.updated'))
     } else {
       await createTrainingContent(payload)
-      toasts.success('Conseil publié')
+      toasts.success(t('staffAdvice.toasts.created'))
     }
     showModal.value = false
     editingId.value = null
     await load()
   } catch {
-    toasts.error('Enregistrement impossible.')
+    toasts.error(t('staffAdvice.toasts.saveFailed'))
   } finally {
     isSaving.value = false
   }
@@ -76,10 +78,10 @@ const submit = async () => {
 const remove = async (a: TrainingContent) => {
   try {
     await deleteTrainingContent(a.id)
-    toasts.success('Conseil supprimé')
+    toasts.success(t('staffAdvice.toasts.deleted'))
     await load()
   } catch {
-    toasts.error('Suppression impossible.')
+    toasts.error(t('staffAdvice.toasts.deleteFailed'))
   }
 }
 
@@ -90,26 +92,26 @@ onMounted(load)
   <StaffDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Conseils & ressources</span>
-        <h1>Conseils</h1>
+        <span class="eyebrow">{{ t('staffAdvice.eyebrow') }}</span>
+        <h1>{{ t('staffAdvice.title') }}</h1>
         <p class="muted measure">
-          Rédigez et publiez les conseils et ressources pédagogiques de la communauté.
+          {{ t('staffAdvice.subtitle') }}
         </p>
       </div>
-      <button class="primary medium" @click="openCreate">+ Nouveau conseil</button>
+      <button class="primary medium" @click="openCreate">{{ t('staffAdvice.newAdvice') }}</button>
     </header>
 
     <input
       v-model="search"
       type="search"
       class="primary medium"
-      placeholder="Rechercher un conseil…"
+      :placeholder="t('staffAdvice.searchPlaceholder')"
       style="max-width: 300px"
     />
 
-    <p v-if="isLoading && !articles.length" class="muted">Chargement…</p>
+    <p v-if="isLoading && !articles.length" class="muted">{{ t('common.loading') }}</p>
     <p v-else-if="!filtered.length" class="muted center" style="padding: var(--space-8)">
-      Aucun conseil ne correspond.
+      {{ t('staffAdvice.empty') }}
     </p>
 
     <div v-else class="dashboard-grid">
@@ -120,8 +122,8 @@ onMounted(load)
         </div>
         <p class="small muted annonce-description">{{ a.content }}</p>
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3)">
-          <button class="ghost small" @click="openEdit(a)">Modifier</button>
-          <button class="ghost small" @click="remove(a)">Supprimer</button>
+          <button class="ghost small" @click="openEdit(a)">{{ t('common.edit') }}</button>
+          <button class="ghost small" @click="remove(a)">{{ t('common.delete') }}</button>
         </div>
       </article>
     </div>
@@ -129,7 +131,7 @@ onMounted(load)
     <AppModal
       :open="showModal"
       size="medium"
-      :title="editingId !== null ? 'Modifier le conseil' : 'Nouveau conseil'"
+      :title="editingId !== null ? t('staffAdvice.modal.editTitle') : t('staffAdvice.modal.createTitle')"
       @close="showModal = false"
     >
       <form
@@ -138,42 +140,42 @@ onMounted(load)
         @submit.prevent="submit"
       >
         <div class="form-group">
-          <label class="uppercase">Titre</label>
+          <label class="uppercase">{{ t('staffAdvice.form.title') }}</label>
           <input
             v-model="form.name"
             type="text"
             class="primary medium full-width"
-            placeholder="Ex : Bien poncer le bois"
+            :placeholder="t('staffAdvice.form.titlePlaceholder')"
             required
           />
         </div>
         <div class="form-group">
-          <label class="uppercase">Type</label>
+          <label class="uppercase">{{ t('staffAdvice.form.type') }}</label>
           <select v-model="form.type" class="primary medium full-width">
-            <option value="conseil">Conseil</option>
-            <option value="news">News</option>
-            <option value="ressource">Ressource</option>
+            <option value="conseil">{{ t('staffAdvice.form.typeAdvice') }}</option>
+            <option value="news">{{ t('staffAdvice.form.typeNews') }}</option>
+            <option value="ressource">{{ t('staffAdvice.form.typeResource') }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="uppercase">Contenu</label>
+          <label class="uppercase">{{ t('staffAdvice.form.content') }}</label>
           <textarea
             v-model="form.content"
             class="primary full-width"
             rows="6"
-            placeholder="Rédigez le conseil…"
+            :placeholder="t('staffAdvice.form.contentPlaceholder')"
           ></textarea>
         </div>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showModal = false">Annuler</button>
+        <button class="ghost medium" @click="showModal = false">{{ t('common.cancel') }}</button>
         <button
           type="submit"
           form="advice-form"
           class="primary medium"
           :disabled="isSaving || !form.name.trim()"
         >
-          {{ isSaving ? 'Enregistrement…' : editingId !== null ? 'Enregistrer' : 'Publier' }}
+          {{ isSaving ? t('staffAdvice.form.saving') : editingId !== null ? t('common.save') : t('staffAdvice.form.publish') }}
         </button>
       </template>
     </AppModal>

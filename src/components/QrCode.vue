@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
 import QRCode from 'qrcode'
+
+const { t } = useI18n()
 
 const props = withDefaults(
   defineProps<{
@@ -30,7 +33,7 @@ watchEffect(async () => {
     })
     error.value = ''
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'QR generation failed'
+    error.value = e instanceof Error ? e.message : t('qrCode.generationFailed')
     svg.value = ''
   }
 })

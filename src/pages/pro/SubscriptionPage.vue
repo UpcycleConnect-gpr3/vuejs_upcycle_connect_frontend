@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { createSubscriptionCheckout } from '@/services/billing'
@@ -9,6 +10,7 @@ import { useToastsStore } from '@/stores/toasts'
 import type { Invoice, Subscription } from '@/types'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 const invoices = ref<Invoice[]>([])
 const downloadingRef = ref<string | null>(null)
@@ -26,7 +28,7 @@ const downloadPdf = async (inv: Invoice) => {
   try {
     await downloadInvoicePdf(inv.ref)
   } catch {
-    toasts.error('Téléchargement du PDF impossible.')
+    toasts.error(t('proSubscription.errors.downloadFailed'))
   } finally {
     downloadingRef.value = null
   }
@@ -45,7 +47,7 @@ const currentPlan = computed(() => {
   if (!sub) return null
   if (sub.price_id === PRICE_BUSINESS) return { name: 'Business', price: 30 }
   if (sub.price_id === PRICE_BASIC) return { name: 'Basic', price: 15 }
-  return { name: 'Abonnement', price: 0 }
+  return { name: t('proSubscription.genericPlanName'), price: 0 }
 })
 
 const isActive = computed(() => subscription.value?.status === 'active')
@@ -63,38 +65,42 @@ const showChangeModal = ref(false)
 const showCancelModal = ref(false)
 const selectedPlan = ref<'starter' | 'premium'>('premium')
 
-const plans = [
+const plans = computed(() => [
   {
     key: 'starter' as const,
     name: 'Starter',
     price: 15,
-    features: ['Accès aux annonces', 'Alertes de collecte', '1 projet mis en avant / mois'],
+    features: [
+      t('proSubscription.plans.starterFeatures.listings'),
+      t('proSubscription.plans.starterFeatures.alerts'),
+      t('proSubscription.plans.starterFeatures.featured'),
+    ],
   },
   {
     key: 'premium' as const,
     name: 'Premium',
     price: 29,
     features: [
-      'Accès prioritaire aux annonces',
-      'Alertes en temps réel',
-      'Statistiques avancées',
-      '3 projets mis en avant / mois',
-      'Support prioritaire',
+      t('proSubscription.plans.premiumFeatures.listings'),
+      t('proSubscription.plans.premiumFeatures.alerts'),
+      t('proSubscription.plans.premiumFeatures.stats'),
+      t('proSubscription.plans.premiumFeatures.featured'),
+      t('proSubscription.plans.premiumFeatures.support'),
     ],
   },
-]
+])
 
 async function confirmPlanChange() {
   const priceId = PRICE_IDS[selectedPlan.value]
   if (!priceId) {
-    toasts.error('Cette formule n’est pas configurée.')
+    toasts.error(t('proSubscription.errors.planNotConfigured'))
     return
   }
   try {
     const { url } = await createSubscriptionCheckout(priceId)
     window.location.href = url
   } catch {
-    toasts.error('Impossible de démarrer le paiement. Réessayez.')
+    toasts.error(t('proSubscription.errors.checkoutFailed'))
   }
 }
 
@@ -107,16 +113,16 @@ function confirmCancel() {
   <ProDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Mon abonnement</span>
-        <h1>Abonnement & facturation</h1>
+        <span class="eyebrow">{{ $t('proSubscription.eyebrow') }}</span>
+        <h1>{{ $t('proSubscription.title') }}</h1>
         <p class="muted measure">
-          Gérez votre formule, consultez vos factures et téléchargez vos justificatifs.
+          {{ $t('proSubscription.subtitle') }}
         </p>
       </div>
     </header>
 
     <section class="layout-flex layout-columns layout-gap-medium">
-      <h3>Formule actuelle</h3>
+      <h3>{{ $t('proSubscription.currentPlan.title') }}</h3>
       <div class="dashboard-card">
         <div v-if="currentPlan">
           <div
@@ -125,20 +131,20 @@ function confirmCancel() {
           >
             <h2 style="margin: 0">{{ currentPlan.name }}</h2>
             <span class="badge" :class="isActive ? 'badge--success' : 'badge--muted'">
-              {{ isActive ? 'Actif' : 'En attente' }}
+              {{ isActive ? $t('proSubscription.currentPlan.active') : $t('proSubscription.currentPlan.pending') }}
             </span>
           </div>
           <div class="mono" style="font-size: var(--font-size-xlarge); font-weight: 700">
-            {{ currentPlan.price }}€ / mois
+            {{ $t('proSubscription.currentPlan.priceMonthly', { price: currentPlan.price }) }}
           </div>
         </div>
         <p v-else class="muted">
-          Vous n'avez pas d'abonnement actif. Choisissez une formule pour accéder aux outils Pro.
+          {{ $t('proSubscription.currentPlan.none') }}
         </p>
 
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-4)">
           <button class="primary medium" @click="showChangeModal = true">
-            {{ currentPlan ? 'Changer de formule' : 'Choisir une formule' }}
+            {{ currentPlan ? $t('proSubscription.currentPlan.change') : $t('proSubscription.currentPlan.choose') }}
           </button>
           <button
             v-if="currentPlan"
@@ -146,23 +152,23 @@ function confirmCancel() {
             style="color: var(--destructive-color)"
             @click="showCancelModal = true"
           >
-            Résilier l'abonnement
+            {{ $t('proSubscription.currentPlan.cancelSubscription') }}
           </button>
         </div>
       </div>
     </section>
 
     <section class="layout-flex layout-columns layout-gap-medium">
-      <h3>Historique de facturation</h3>
-      <p v-if="!invoices.length" class="muted small">Aucune facture pour le moment.</p>
+      <h3>{{ $t('proSubscription.billing.title') }}</h3>
+      <p v-if="!invoices.length" class="muted small">{{ $t('proSubscription.billing.empty') }}</p>
       <div v-else class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Référence</th>
-              <th>Désignation</th>
-              <th>Montant</th>
+              <th>{{ $t('proSubscription.billing.date') }}</th>
+              <th>{{ $t('proSubscription.billing.reference') }}</th>
+              <th>{{ $t('proSubscription.billing.label') }}</th>
+              <th>{{ $t('proSubscription.billing.amount') }}</th>
               <th></th>
             </tr>
           </thead>
@@ -180,7 +186,7 @@ function confirmCancel() {
                   :disabled="downloadingRef === inv.ref"
                   @click="downloadPdf(inv)"
                 >
-                  {{ downloadingRef === inv.ref ? '…' : 'PDF' }}
+                  {{ downloadingRef === inv.ref ? '…' : $t('proSubscription.billing.pdf') }}
                 </button>
               </td>
             </tr>
@@ -191,11 +197,11 @@ function confirmCancel() {
 
     <AppModal :open="showChangeModal" size="medium" @close="showChangeModal = false">
       <template #header>
-        <h3>Changer de formule</h3>
+        <h3>{{ $t('proSubscription.changeModal.title') }}</h3>
       </template>
 
       <div class="layout-flex layout-columns layout-gap-medium">
-        <p class="muted">Sélectionnez la formule qui correspond à votre activité.</p>
+        <p class="muted">{{ $t('proSubscription.changeModal.description') }}</p>
         <div class="layout-flex layout-gap-medium" style="flex-wrap: wrap">
           <div
             v-for="plan in plans"
@@ -210,7 +216,7 @@ function confirmCancel() {
               style="align-items: center; margin-bottom: var(--space-2)"
             >
               <h4 style="margin: 0">{{ plan.name }}</h4>
-              <span v-if="plan.key === 'premium'" class="badge badge--accent">Recommandé</span>
+              <span v-if="plan.key === 'premium'" class="badge badge--accent">{{ $t('proSubscription.changeModal.recommended') }}</span>
             </div>
             <div
               class="mono"
@@ -220,7 +226,7 @@ function confirmCancel() {
                 margin-bottom: var(--space-2);
               "
             >
-              {{ plan.price }}€ / mois
+              {{ $t('proSubscription.changeModal.priceMonthly', { price: plan.price }) }}
             </div>
             <ul class="layout-flex layout-columns layout-gap-small">
               <li
@@ -238,15 +244,15 @@ function confirmCancel() {
       </div>
 
       <template #footer>
-        <button class="ghost medium" @click="showChangeModal = false">Annuler</button>
-        <button class="primary medium" @click="confirmPlanChange">Confirmer le changement</button>
+        <button class="ghost medium" @click="showChangeModal = false">{{ $t('common.cancel') }}</button>
+        <button class="primary medium" @click="confirmPlanChange">{{ $t('proSubscription.changeModal.confirm') }}</button>
       </template>
     </AppModal>
 
     <AppModal
       :open="showCancelModal"
       size="small"
-      title="Résilier l'abonnement"
+      :title="$t('proSubscription.cancelModal.title')"
       @close="showCancelModal = false"
     >
       <div class="layout-flex layout-columns layout-gap-medium">
@@ -256,20 +262,19 @@ function confirmCancel() {
             <path d="M12 8v4M12 16h.01" />
           </svg>
           <span>
-            En résiliant, vous perdrez l'accès aux fonctionnalités Pro à la fin de la période en
-            cours.
+            {{ $t('proSubscription.cancelModal.warning') }}
           </span>
         </div>
         <p class="muted small">
-          Vous pouvez vous réabonner à tout moment. Votre historique de projets sera conservé.
+          {{ $t('proSubscription.cancelModal.note') }}
         </p>
       </div>
       <template #footer>
         <button class="ghost medium" @click="showCancelModal = false">
-          Conserver mon abonnement
+          {{ $t('proSubscription.cancelModal.keep') }}
         </button>
         <button class="ghost medium" style="color: var(--destructive-color)" @click="confirmCancel">
-          Confirmer la résiliation
+          {{ $t('proSubscription.cancelModal.confirm') }}
         </button>
       </template>
     </AppModal>

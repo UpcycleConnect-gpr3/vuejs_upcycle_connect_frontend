@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { getTraining, getTrainingSchedules, createTrainingCheckout } from '@/services/training'
@@ -10,20 +11,19 @@ import { useToastsStore } from '@/stores/toasts'
 const route = useRoute()
 const router = useRouter()
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 const item = ref({
   id: Number(route.params.id),
   kind: 'training' as const,
-  title: "Initiation à l'upcycling — Niveau 1",
-  description:
-    "Workshop d'introduction sur 3h pour découvrir les bases de l'upcycling : matériaux, outils, techniques fondamentales.",
-  category: 'Débutant',
+  title: t('dashCatalogDetail.demo.title'),
+  description: t('dashCatalogDetail.demo.description'),
+  category: t('dashCatalogDetail.demo.category'),
   price: 35,
   duration: '3h',
-  location: 'Atelier Paris 11',
+  location: t('dashCatalogDetail.demo.location'),
   trainer: 'Marie L.',
-  longText:
-    "Cette formation s'adresse à toutes les personnes qui souhaitent débuter dans l'upcycling. Vous découvrirez les outils essentiels, apprendrez les techniques de base de ponçage et de finition, et repartirez avec un petit objet que vous aurez transformé.\n\nLe matériel est fourni. Apportez juste vos vêtements de travail.",
+  longText: t('dashCatalogDetail.demo.longText'),
   slots: [
     { id: 1, date: '2026-05-12 14:00', spotsLeft: 4, capacity: 12 },
     { id: 2, date: '2026-05-19 14:00', spotsLeft: 8, capacity: 12 },
@@ -54,14 +54,16 @@ onMounted(async () => {
       }
     }
   } catch {
-    toasts.error('Détail indisponible, affichage des données de démonstration.')
+    toasts.error(t('dashCatalogDetail.toastDetailError'))
   }
   try {
     const schedules = await getTrainingSchedules(route.params.id as string)
     if (Array.isArray(schedules) && schedules.length) {
       item.value.slots = schedules.map((s) => ({
         id: s.id,
-        date: s.title ? `${s.title} (jour ${s.day_number})` : `Jour ${s.day_number}`,
+        date: s.title
+          ? t('dashCatalogDetail.scheduleTitled', { title: s.title, day: s.day_number })
+          : t('dashCatalogDetail.scheduleDay', { day: s.day_number }),
         spotsLeft: 0,
         capacity: 0,
       }))
@@ -80,7 +82,7 @@ async function pay() {
     })
     isPaid.value = true
   } catch {
-    toasts.error('Réservation impossible, réessayez plus tard.')
+    toasts.error(t('dashCatalogDetail.toastBookingError'))
   } finally {
     isProcessing.value = false
   }
@@ -97,7 +99,7 @@ async function payWithStripe() {
     )
     window.location.href = url
   } catch {
-    toasts.error('Le paiement en ligne est indisponible. Réessayez plus tard.')
+    toasts.error(t('dashCatalogDetail.toastPaymentUnavailable'))
     isProcessing.value = false
   }
 }
@@ -111,7 +113,7 @@ function close() {
 <template>
   <DashboardLayout>
     <RouterLink to="/dashboard/catalog" class="ghost" style="align-self: flex-start"
-      > Retour au catalogue</RouterLink
+      > {{ $t('dashCatalogDetail.backToCatalog') }}</RouterLink
     >
 
     <article class="catalog-detail">
@@ -119,7 +121,7 @@ function close() {
 
       <div class="catalog-detail-body">
         <div class="layout-flex layout-gap-small layout-items-center">
-          <span class="badge">Formation</span>
+          <span class="badge">{{ $t('dashCatalogDetail.trainingBadge') }}</span>
           <span class="badge">{{ item.category }}</span>
         </div>
         <h1>{{ item.title }}</h1>
@@ -127,22 +129,22 @@ function close() {
 
         <div class="catalog-detail-meta">
           <div>
-            <span class="tiny uppercase muted">Durée</span><span>{{ item.duration }}</span>
+            <span class="tiny uppercase muted">{{ $t('dashCatalogDetail.duration') }}</span><span>{{ item.duration }}</span>
           </div>
           <div>
-            <span class="tiny uppercase muted">Lieu</span><span>{{ item.location }}</span>
+            <span class="tiny uppercase muted">{{ $t('dashCatalogDetail.location') }}</span><span>{{ item.location }}</span>
           </div>
           <div>
-            <span class="tiny uppercase muted">Formateur</span><span>{{ item.trainer }}</span>
+            <span class="tiny uppercase muted">{{ $t('dashCatalogDetail.trainer') }}</span><span>{{ item.trainer }}</span>
           </div>
         </div>
 
-        <h3 style="margin-top: var(--space-5)">Description</h3>
+        <h3 style="margin-top: var(--space-5)">{{ $t('dashCatalogDetail.descriptionHeading') }}</h3>
         <p v-for="(p, i) in item.longText.split('\n\n')" :key="i" style="white-space: pre-wrap">
           {{ p }}
         </p>
 
-        <h3 style="margin-top: var(--space-8)">Choisissez votre créneau</h3>
+        <h3 style="margin-top: var(--space-8)">{{ $t('dashCatalogDetail.chooseSlot') }}</h3>
         <div class="slots-grid">
           <button
             v-for="s in item.slots"
@@ -153,7 +155,7 @@ function close() {
             @click="selectedSlot = s.id"
           >
             <span style="font-weight: 700">{{ s.date }}</span>
-            <span class="tiny muted">{{ s.spotsLeft }} / {{ s.capacity }} places</span>
+            <span class="tiny muted">{{ $t('dashCatalogDetail.spotsOfCapacity', { left: s.spotsLeft, capacity: s.capacity }) }}</span>
           </button>
         </div>
       </div>
@@ -164,7 +166,7 @@ function close() {
           class="text-secondary"
           style="font-size: var(--font-size-xxlarge); font-weight: 900"
         >
-          Gratuit
+          {{ $t('common.free') }}
         </div>
         <div
           v-else
@@ -173,19 +175,19 @@ function close() {
         >
           {{ item.price }}€
         </div>
-        <p class="small muted">par participant</p>
+        <p class="small muted">{{ $t('dashCatalogDetail.perParticipant') }}</p>
         <button
           class="primary medium full-width"
           :disabled="!selectedSlot"
           @click="showCheckout = true"
         >
-          {{ item.price === 0 ? 'Réserver gratuitement' : 'Réserver ma place' }}
+          {{ item.price === 0 ? $t('dashCatalogDetail.bookFree') : $t('dashCatalogDetail.bookSpot') }}
         </button>
-        <p class="tiny muted center">Annulation gratuite jusqu'à 48h avant.</p>
+        <p class="tiny muted center">{{ $t('dashCatalogDetail.freeCancellation') }}</p>
       </aside>
     </article>
 
-    <AppModal :open="showCheckout" :title="isPaid ? '' : 'Paiement sécurisé'" @close="close">
+    <AppModal :open="showCheckout" :title="isPaid ? '' : $t('dashCatalogDetail.securePayment')" @close="close">
       <div v-if="!isPaid" class="layout-flex layout-columns layout-gap-large">
         <div class="checkout-summary">
           <div class="layout-flex layout-justify-between">
@@ -198,14 +200,13 @@ function close() {
           </div>
           <div class="divider"></div>
           <div class="layout-flex layout-justify-between" style="font-weight: 700">
-            <span>Total</span>
+            <span>{{ $t('dashCatalogDetail.total') }}</span>
             <span class="mono">{{ item.price }}€</span>
           </div>
         </div>
 
         <p v-if="item.price > 0" class="small muted">
-          Le paiement s'effectue sur une page sécurisée Stripe. Vous allez être redirigé pour
-          finaliser votre réservation.
+          {{ $t('dashCatalogDetail.stripeNotice') }}
         </p>
       </div>
 
@@ -219,15 +220,14 @@ function close() {
             <path d="m5 12 5 5L20 7" />
           </svg>
         </div>
-        <h3 class="center">Réservation confirmée </h3>
+        <h3 class="center">{{ $t('dashCatalogDetail.bookingConfirmed') }} </h3>
         <p class="center muted measure">
-          Un email de confirmation vient de vous être envoyé. La session a été ajoutée à votre
-          planning.
+          {{ $t('dashCatalogDetail.confirmationEmailSent') }}
         </p>
       </div>
 
       <template #footer>
-        <button v-if="!isPaid" class="ghost medium" @click="close">Annuler</button>
+        <button v-if="!isPaid" class="ghost medium" @click="close">{{ $t('common.cancel') }}</button>
         <button
           v-if="!isPaid"
           class="primary medium"
@@ -236,13 +236,13 @@ function close() {
         >
           {{
             isProcessing
-              ? 'Traitement…'
+              ? $t('dashCatalogDetail.processing')
               : item.price === 0
-                ? 'Confirmer ma réservation'
-                : `Payer ${item.price}€ via Stripe`
+                ? $t('dashCatalogDetail.confirmFreeBooking')
+                : $t('dashCatalogDetail.payViaStripe', { amount: item.price })
           }}
         </button>
-        <button v-else class="primary medium" @click="close">Voir mon planning </button>
+        <button v-else class="primary medium" @click="close">{{ $t('dashCatalogDetail.seeMyPlanning') }} </button>
       </template>
     </AppModal>
   </DashboardLayout>

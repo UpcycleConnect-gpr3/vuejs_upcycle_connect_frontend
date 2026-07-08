@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ProDashboardLayout from '@/components/ProDashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { getAds, createAd, updateAd, deleteAd } from '@/api/clients/adClient'
@@ -7,6 +8,7 @@ import { useToastsStore } from '@/stores/toasts'
 import type { Ad } from '@/types'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 const ads = ref<Ad[]>([])
 const isLoading = ref(false)
@@ -18,14 +20,14 @@ const form = reactive({ title: '', description: '', budget: 100 })
 const totalBudget = computed(() => ads.value.reduce((sum, a) => sum + a.budget, 0))
 const activeCount = computed(() => ads.value.filter((a) => a.status === 'active').length)
 
-const statusLabel = (s: string) => (s === 'active' ? 'Active' : 'En pause')
+const statusLabel = (s: string) => (s === 'active' ? t('proAds.status.active') : t('proAds.status.paused'))
 
 const load = async () => {
   isLoading.value = true
   try {
     ads.value = await getAds()
   } catch {
-    toasts.error('Impossible de charger les publicités.')
+    toasts.error(t('proAds.toasts.loadFailed'))
   } finally {
     isLoading.value = false
   }
@@ -41,12 +43,12 @@ const submitCreate = async () => {
       budget: form.budget,
       status: 'active',
     })
-    toasts.success('Publicité créée')
+    toasts.success(t('proAds.toasts.created'))
     showNewModal.value = false
     Object.assign(form, { title: '', description: '', budget: 100 })
     await load()
   } catch {
-    toasts.error('Création impossible.')
+    toasts.error(t('proAds.toasts.createFailed'))
   } finally {
     isSaving.value = false
   }
@@ -63,17 +65,17 @@ const toggleStatus = async (ad: Ad) => {
     })
     await load()
   } catch {
-    toasts.error('Mise à jour impossible.')
+    toasts.error(t('proAds.toasts.updateFailed'))
   }
 }
 
 const remove = async (ad: Ad) => {
   try {
     await deleteAd(ad.id)
-    toasts.success('Publicité supprimée')
+    toasts.success(t('proAds.toasts.deleted'))
     await load()
   } catch {
-    toasts.error('Suppression impossible.')
+    toasts.error(t('proAds.toasts.deleteFailed'))
   }
 }
 
@@ -84,27 +86,27 @@ onMounted(load)
   <ProDashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Publicité</span>
-        <h1>Mes campagnes</h1>
+        <span class="eyebrow">{{ $t('proAds.eyebrow') }}</span>
+        <h1>{{ $t('proAds.title') }}</h1>
         <p class="muted measure">
-          Sponsorisez vos objets et projets pour gagner en visibilité auprès de la communauté.
+          {{ $t('proAds.subtitle') }}
         </p>
       </div>
-      <button class="primary medium" @click="showNewModal = true">+ Nouvelle campagne</button>
+      <button class="primary medium" @click="showNewModal = true">{{ $t('proAds.newCampaign') }}</button>
     </header>
 
     <div class="stats-row">
       <div class="stat-tile">
-        <span class="stat-tile-label">Campagnes actives</span>
+        <span class="stat-tile-label">{{ $t('proAds.stats.activeCampaigns') }}</span>
         <span class="stat-tile-value">{{ activeCount }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Budget total</span>
+        <span class="stat-tile-label">{{ $t('proAds.stats.totalBudget') }}</span>
         <span class="stat-tile-value">{{ totalBudget }}€</span>
       </div>
     </div>
 
-    <p v-if="isLoading && !ads.length" class="muted">Chargement…</p>
+    <p v-if="isLoading && !ads.length" class="muted">{{ $t('common.loading') }}</p>
 
     <div v-else-if="ads.length" class="dashboard-grid">
       <article v-for="ad in ads" :key="ad.id" class="dashboard-card">
@@ -116,28 +118,28 @@ onMounted(load)
           </div>
           <h4 style="margin-top: var(--space-1)">{{ ad.title }}</h4>
         </div>
-        <p class="small muted">{{ ad.description || 'Sans description' }}</p>
-        <div class="tiny muted" style="margin-top: var(--space-2)">Budget : {{ ad.budget }}€</div>
+        <p class="small muted">{{ ad.description || $t('proAds.noDescription') }}</p>
+        <div class="tiny muted" style="margin-top: var(--space-2)">{{ $t('proAds.budget', { amount: ad.budget }) }}</div>
         <div class="layout-flex layout-gap-small" style="margin-top: var(--space-3); flex-wrap: wrap">
           <button class="ghost small" @click="toggleStatus(ad)">
-            {{ ad.status === 'active' ? ' Mettre en pause' : '▶ Activer' }}
+            {{ ad.status === 'active' ? ' ' + $t('proAds.pause') : '▶ ' + $t('proAds.activate') }}
           </button>
-          <button class="ghost small" @click="remove(ad)">Supprimer</button>
+          <button class="ghost small" @click="remove(ad)">{{ $t('common.delete') }}</button>
         </div>
       </article>
     </div>
 
     <div v-else class="empty-state">
-      <p>Aucune campagne pour l'instant.</p>
+      <p>{{ $t('proAds.empty.message') }}</p>
       <button class="primary medium" @click="showNewModal = true">
-        + Créer ma première campagne
+        {{ $t('proAds.empty.cta') }}
       </button>
     </div>
 
     <AppModal
       :open="showNewModal"
       size="medium"
-      title="Nouvelle campagne"
+      :title="$t('proAds.modal.title')"
       @close="showNewModal = false"
     >
       <form
@@ -146,26 +148,26 @@ onMounted(load)
         @submit.prevent="submitCreate"
       >
         <div class="form-group">
-          <label class="uppercase">Titre de la campagne</label>
+          <label class="uppercase">{{ $t('proAds.modal.titleLabel') }}</label>
           <input
             v-model="form.title"
             type="text"
             class="primary medium full-width"
-            placeholder="Ex : Mise en avant chaise design"
+            :placeholder="$t('proAds.modal.titlePlaceholder')"
             required
           />
         </div>
         <div class="form-group">
-          <label class="uppercase">Description</label>
+          <label class="uppercase">{{ $t('proAds.modal.descriptionLabel') }}</label>
           <textarea
             v-model="form.description"
             class="primary full-width"
             rows="3"
-            placeholder="Objet ou projet sponsorisé, message…"
+            :placeholder="$t('proAds.modal.descriptionPlaceholder')"
           ></textarea>
         </div>
         <div class="form-group">
-          <label class="uppercase">Budget (€)</label>
+          <label class="uppercase">{{ $t('proAds.modal.budgetLabel') }}</label>
           <input
             v-model.number="form.budget"
             type="number"
@@ -176,14 +178,14 @@ onMounted(load)
         </div>
       </form>
       <template #footer>
-        <button class="ghost medium" @click="showNewModal = false">Annuler</button>
+        <button class="ghost medium" @click="showNewModal = false">{{ $t('common.cancel') }}</button>
         <button
           type="submit"
           form="new-ad-form"
           class="primary medium"
           :disabled="isSaving || !form.title.trim()"
         >
-          {{ isSaving ? 'Création…' : 'Lancer la campagne' }}
+          {{ isSaving ? $t('proAds.modal.creating') : $t('proAds.modal.launch') }}
         </button>
       </template>
     </AppModal>

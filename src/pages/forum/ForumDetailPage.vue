@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { getTalk, getTalkMessages, createTalkMessage } from '@/services/forum'
@@ -8,21 +9,24 @@ import { useToastsStore } from '@/stores/toasts'
 
 const route = useRoute()
 const toasts = useToastsStore()
+const { t } = useI18n()
 const talkId = computed(() => Number(route.params.id))
 
 const talk = ref({
   id: 1,
-  title: 'Comment transformer une vieille palette en table basse ?',
+  title: t('forumDetail.seed.title'),
   category: 'questions',
-  author: { name: 'Marie L.', initials: 'ML', joined: 'Mai 2025' },
-  createdAt: 'il y a 5 heures',
-  content: `J'ai récupéré 3 palettes de chantier en bon état et je voudrais en faire une table basse pour mon salon.\n\nQuestions :\n- Faut-il poncer les palettes avant assemblage ?\n- Quelle finition pour usage intérieur ?\n- Comment fixer les roulettes ?\n\nMerci d'avance !`,
+  author: { name: 'Marie L.', initials: 'ML', joined: t('forumDetail.seed.authorJoined') },
+  createdAt: t('forumDetail.seed.createdAt'),
+  content: t('forumDetail.seed.content'),
   reactions: { like: 12, fire: 6, idea: 4, total: 22 },
   userReactions: { like: false, fire: false, idea: false } as Record<
     'like' | 'fire' | 'idea',
     boolean
   >,
 })
+
+const categoryLabel = computed(() => t(`forumDetail.categories.${talk.value.category}`))
 
 const reactionTypes = [
   { key: 'like', icon: '', label: 'Like' },
@@ -41,8 +45,8 @@ const messages = ref([
   {
     id: 1,
     author: { name: 'Thomas M.', initials: 'TM' },
-    createdAt: 'il y a 4h',
-    content: `Salut Marie, super projet !\n\n1. Oui ponçage essentiel : grain 80  120  220.\n2. Pour intérieur, huile dure type Rubio Monocoat.\n3. Roulettes pivotantes 75mm avec tire-fond + écrous noyés.`,
+    createdAt: t('forumDetail.seed.messages.m1.createdAt'),
+    content: t('forumDetail.seed.messages.m1.content'),
     reactions: 8,
     isOp: false,
     userLiked: true,
@@ -50,8 +54,8 @@ const messages = ref([
   {
     id: 2,
     author: { name: 'Julie B.', initials: 'JB' },
-    createdAt: 'il y a 2h',
-    content: 'Attention aux palettes traitées (marquage HT = OK, MB = à éviter pour intérieur).',
+    createdAt: t('forumDetail.seed.messages.m2.createdAt'),
+    content: t('forumDetail.seed.messages.m2.content'),
     reactions: 5,
     isOp: false,
     userLiked: false,
@@ -59,8 +63,8 @@ const messages = ref([
   {
     id: 3,
     author: { name: 'Marie L.', initials: 'ML' },
-    createdAt: 'il y a 1h',
-    content: 'Merci à vous deux ! Mes palettes sont bien marquées HT ',
+    createdAt: t('forumDetail.seed.messages.m3.createdAt'),
+    content: t('forumDetail.seed.messages.m3.content'),
     reactions: 2,
     isOp: true,
     userLiked: false,
@@ -82,7 +86,7 @@ onMounted(async () => {
       }
     }
   } catch {
-    toasts.error('Discussion indisponible, affichage des données de démonstration.')
+    toasts.error(t('forumDetail.toasts.talkUnavailable'))
   }
   try {
     const msgs = await getTalkMessages(talkId.value)
@@ -90,7 +94,7 @@ onMounted(async () => {
       messages.value = msgs.map((m) => ({
         id: m.id,
         author: {
-          name: (m.author as string) ?? 'Membre',
+          name: (m.author as string) ?? t('forumDetail.seed.memberFallback'),
           initials: ((m.author as string) ?? 'M').slice(0, 2).toUpperCase(),
         },
         createdAt: (m.created_at as string) ?? '',
@@ -116,14 +120,14 @@ async function handleReply() {
   const content = reply.content
   try {
     await createTalkMessage(talkId.value, { content })
-    toasts.success('Réponse publiée')
+    toasts.success(t('forumDetail.toasts.replyPublished'))
   } catch {
-    toasts.error('Envoi impossible, réponse affichée localement.')
+    toasts.error(t('forumDetail.toasts.replyFailed'))
   }
   messages.value.push({
     id: Date.now(),
-    author: { name: 'Vous', initials: 'VS' },
-    createdAt: "à l'instant",
+    author: { name: t('forumDetail.you'), initials: 'VS' },
+    createdAt: t('forumDetail.justNow'),
     content,
     reactions: 0,
     isOp: false,
@@ -145,12 +149,12 @@ async function handleReply() {
           class="layout-flex layout-columns layout-gap-large"
         >
           <RouterLink to="/forum" class="ghost" style="align-self: flex-start"
-            > Retour au forum</RouterLink
+            > {{ t('forumDetail.backToForum') }}</RouterLink
           >
 
           <article class="card discussion-detail">
             <div class="layout-flex layout-gap-small layout-items-center">
-              <span class="badge">{{ talk.category }}</span>
+              <span class="badge">{{ categoryLabel }}</span>
               <span class="small muted">· {{ talk.createdAt }}</span>
             </div>
             <h1 class="discussion-detail-title">{{ talk.title }}</h1>
@@ -159,7 +163,7 @@ async function handleReply() {
               <div class="avatar">{{ talk.author.initials }}</div>
               <div class="layout-flex layout-columns" style="gap: 2px">
                 <span style="font-weight: 600">{{ talk.author.name }}</span>
-                <span class="tiny muted">Membre depuis {{ talk.author.joined }}</span>
+                <span class="tiny muted">{{ t('forumDetail.memberSince', { joined: talk.author.joined }) }}</span>
               </div>
             </div>
 
@@ -189,14 +193,14 @@ async function handleReply() {
               <div style="flex: 1"></div>
 
               <span class="small muted"
-                >{{ messages.length }} réponse{{ messages.length > 1 ? 's' : '' }} ·
-                {{ talk.reactions.total }} réaction{{ talk.reactions.total > 1 ? 's' : '' }}</span
+                >{{ t('forumDetail.repliesCount', messages.length) }} ·
+                {{ t('forumDetail.reactionsCount', talk.reactions.total) }}</span
               >
             </div>
           </article>
 
           <section class="layout-flex layout-columns layout-gap-large">
-            <h3>{{ messages.length }} réponse{{ messages.length > 1 ? 's' : '' }}</h3>
+            <h3>{{ t('forumDetail.repliesCount', messages.length) }}</h3>
 
             <article
               v-for="m in messages"
@@ -210,7 +214,7 @@ async function handleReply() {
                   <div class="layout-flex layout-columns" style="gap: 2px">
                     <div class="layout-flex layout-gap-small layout-items-center">
                       <span style="font-weight: 600">{{ m.author.name }}</span>
-                      <span v-if="m.isOp" class="badge badge--accent">Auteur</span>
+                      <span v-if="m.isOp" class="badge badge--accent">{{ t('forumDetail.authorBadge') }}</span>
                     </div>
                     <span class="tiny muted">{{ m.createdAt }}</span>
                   </div>
@@ -239,24 +243,24 @@ async function handleReply() {
             style="padding: var(--space-6)"
             @submit.prevent="handleReply"
           >
-            <h4>Votre réponse</h4>
+            <h4>{{ t('forumDetail.yourReply') }}</h4>
             <div class="form-group">
               <textarea
                 v-model="reply.content"
                 class="primary full-width"
                 rows="5"
-                placeholder="Partagez votre avis, vos conseils, vos questions…"
+                :placeholder="t('forumDetail.replyPlaceholder')"
                 required
               ></textarea>
             </div>
             <div class="layout-flex layout-justify-between layout-items-center">
-              <span class="tiny muted">Markdown supporté</span>
+              <span class="tiny muted">{{ t('forumDetail.markdownSupported') }}</span>
               <button
                 type="submit"
                 class="primary medium"
                 :disabled="!reply.content.trim() || isReplying"
               >
-                {{ isReplying ? 'Envoi…' : 'Répondre' }}
+                {{ isReplying ? t('forumDetail.sending') : t('forumDetail.submitReply') }}
               </button>
             </div>
           </form>

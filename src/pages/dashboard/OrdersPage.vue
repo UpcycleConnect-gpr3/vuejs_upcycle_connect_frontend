@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import { getMyOrders } from '@/services/upcycle'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 interface Order {
   id: string
@@ -52,7 +54,7 @@ onMounted(async () => {
       )
     }
   } catch {
-    toasts.error('Impossible de charger vos commandes, affichage des données de démonstration.')
+    toasts.error(t('dashOrders.toastLoadError'))
   }
 })
 </script>
@@ -61,19 +63,19 @@ onMounted(async () => {
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Historique</span>
-        <h1>Mes commandes</h1>
-        <p class="muted measure">Toutes vos réservations payées et factures téléchargeables.</p>
+        <span class="eyebrow">{{ $t('dashOrders.eyebrow') }}</span>
+        <h1>{{ $t('dashOrders.title') }}</h1>
+        <p class="muted measure">{{ $t('dashOrders.subtitle') }}</p>
       </div>
     </header>
 
     <div class="stats-row">
       <div class="stat-tile">
-        <span class="stat-tile-label">Commandes</span>
+        <span class="stat-tile-label">{{ $t('dashOrders.stats.orders') }}</span>
         <span class="stat-tile-value">{{ orders.length }}</span>
       </div>
       <div class="stat-tile">
-        <span class="stat-tile-label">Cette année</span>
+        <span class="stat-tile-label">{{ $t('dashOrders.stats.thisYear') }}</span>
         <span class="stat-tile-value">{{ orders.length }}</span>
       </div>
     </div>
@@ -82,10 +84,10 @@ onMounted(async () => {
       <table>
         <thead>
           <tr>
-            <th>Référence</th>
-            <th>Date</th>
-            <th>Adresse</th>
-            <th style="text-align: right">Action</th>
+            <th>{{ $t('dashOrders.table.reference') }}</th>
+            <th>{{ $t('dashOrders.table.date') }}</th>
+            <th>{{ $t('dashOrders.table.address') }}</th>
+            <th style="text-align: right">{{ $t('dashOrders.table.action') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -94,7 +96,7 @@ onMounted(async () => {
             <td class="mono">{{ o.date }}</td>
             <td>{{ o.address }}</td>
             <td style="text-align: right">
-              <a class="ghost small">Facture PDF</a>
+              <a class="ghost small">{{ $t('dashOrders.table.invoicePdf') }}</a>
             </td>
           </tr>
         </tbody>

@@ -1,41 +1,37 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
 
-interface Step {
+interface StepDef {
   selector: string | null
-  title: string
-  description: string
+  titleKey: string
+  descriptionKey: string
 }
 
-const steps: Step[] = [
+const steps: StepDef[] = [
   {
     selector: null,
-    title: 'Bienvenue sur UpcycleConnect ',
-    description:
-      'Visite express en 5 étapes pour prendre vos repères. Vous pouvez passer à tout moment.',
+    titleKey: 'onboarding.steps.welcome.title',
+    descriptionKey: 'onboarding.steps.welcome.description',
   },
   {
     selector: '[data-tour="listings"]',
-    title: 'Vos annonces',
-    description:
-      'Déposez une annonce de don ou de vente. Elles passent en validation rapide par notre équipe.',
+    titleKey: 'onboarding.steps.listings.title',
+    descriptionKey: 'onboarding.steps.listings.description',
   },
   {
     selector: '[data-tour="deposits"]',
-    title: 'Dépôt conteneur',
-    description:
-      'Demandez un dépôt en conteneur. Une fois validé, vous recevez un code et un QR pour le retrait.',
+    titleKey: 'onboarding.steps.deposits.title',
+    descriptionKey: 'onboarding.steps.deposits.description',
   },
   {
     selector: '[data-tour="catalog"]',
-    title: 'Catalogue',
-    description: 'Parcourez les services, formations et événements achetables ou réservables.',
+    titleKey: 'onboarding.steps.catalog.title',
+    descriptionKey: 'onboarding.steps.catalog.description',
   },
   {
     selector: '[data-tour="score"]',
-    title: 'Upcycling Score',
-    description:
-      'Suivez votre impact circulaire et débloquez des badges au fil de vos contributions.',
+    titleKey: 'onboarding.steps.score.title',
+    descriptionKey: 'onboarding.steps.score.description',
   },
 ]
 
@@ -43,7 +39,7 @@ const visible = ref(false)
 const stepIdx = ref(0)
 const target = ref<{ top: number; left: number; width: number; height: number } | null>(null)
 
-const current = computed(() => steps[stepIdx.value] as Step)
+const current = computed(() => steps[stepIdx.value] as StepDef)
 const isLast = computed(() => stepIdx.value === steps.length - 1)
 
 async function updateTarget() {
@@ -125,14 +121,16 @@ const tooltipStyle = computed(() => {
         <div v-if="target" class="onboarding-spot" :style="spotStyle"></div>
         <div class="onboarding-tooltip" :style="tooltipStyle">
           <div class="onboarding-step">{{ stepIdx + 1 }} / {{ steps.length }}</div>
-          <h4>{{ current.title }}</h4>
-          <p>{{ current.description }}</p>
+          <h4>{{ $t(current.titleKey) }}</h4>
+          <p>{{ $t(current.descriptionKey) }}</p>
           <div class="onboarding-actions">
-            <button class="ghost small" @click="finish">Passer</button>
+            <button class="ghost small" @click="finish">{{ $t('onboarding.actions.skip') }}</button>
             <div class="layout-flex layout-gap-small">
-              <button v-if="stepIdx > 0" class="ghost small" @click="prev"> Précédent</button>
+              <button v-if="stepIdx > 0" class="ghost small" @click="prev">
+                {{ $t('onboarding.actions.previous') }}
+              </button>
               <button class="primary small" @click="next">
-                {{ isLast ? 'Terminer' : 'Suivant ' }}
+                {{ isLast ? $t('onboarding.actions.finish') : $t('onboarding.actions.next') }}
               </button>
             </div>
           </div>

@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useObjectStore } from '@/stores/objectStore'
@@ -20,27 +21,28 @@ const toasts = useToastsStore()
 const { currentObject, currentObjectDeliveryMethods, currentObjectUsers, isLoading, error } =
   storeToRefs(objectStore)
 const { currentUserId } = useCurrentUser()
+const { t } = useI18n()
 
 const UPCYCLE_URL = import.meta.env.VITE_UPCYCLE_URL ?? 'http://localhost:4343'
 
 const CATEGORY_LABELS: Record<string, string> = {
-  clothing: 'Vêtements',
-  electronics: 'Électronique',
-  furniture: 'Mobilier',
-  books: 'Livres',
-  toys: 'Jouets',
-  appliances: 'Électroménager',
-  sports: 'Sport',
-  other: 'Autre',
+  clothing: t('annonceDetail.category.clothing'),
+  electronics: t('annonceDetail.category.electronics'),
+  furniture: t('annonceDetail.category.furniture'),
+  books: t('annonceDetail.category.books'),
+  toys: t('annonceDetail.category.toys'),
+  appliances: t('annonceDetail.category.appliances'),
+  sports: t('annonceDetail.category.sports'),
+  other: t('annonceDetail.category.other'),
 }
 const CONDITION_LABELS: Record<string, string> = {
-  new: 'Neuf',
-  like_new: 'Comme neuf',
-  good: 'Bon état',
-  used: 'Usagé',
+  new: t('annonceDetail.condition.new'),
+  like_new: t('annonceDetail.condition.likeNew'),
+  good: t('annonceDetail.condition.good'),
+  used: t('annonceDetail.condition.used'),
 }
-const categoryLabel = (c?: string) => (c ? (CATEGORY_LABELS[c] ?? c) : '—')
-const conditionLabel = (c?: string) => (c ? (CONDITION_LABELS[c] ?? c) : '—')
+const categoryLabel = (c?: string) => (c ? (CATEGORY_LABELS[c] ?? c) : t('annonceDetail.meta.noValue'))
+const conditionLabel = (c?: string) => (c ? (CONDITION_LABELS[c] ?? c) : t('annonceDetail.meta.noValue'))
 
 const objectId = computed(() => String(route.params.id))
 const isContacting = ref(false)
@@ -74,7 +76,7 @@ const buyObject = async () => {
     return
   }
   if (!selectedLocker.value) {
-    toasts.error('Choisissez un casier de retrait.')
+    toasts.error(t('annonceDetail.toast.chooseLocker'))
     return
   }
   isBuying.value = true
@@ -82,7 +84,7 @@ const buyObject = async () => {
     const { url } = await createObjectPayment(String(currentObject.value.id), selectedLocker.value)
     window.location.href = url
   } catch {
-    toasts.error('Impossible de démarrer le paiement pour le moment.')
+    toasts.error(t('annonceDetail.toast.paymentError'))
     isBuying.value = false
   }
 }
@@ -102,7 +104,7 @@ const seller = computed(() => {
   if (linked) return linked
   const ownerId = currentObject.value?.user_id
   if (ownerId && ownerId !== currentUserId.value) {
-    return { id: ownerId, username: 'le vendeur' }
+    return { id: ownerId, username: t('annonceDetail.fallbackSellerName') }
   }
   return null
 })
@@ -112,13 +114,13 @@ const contactSeller = async () => {
   isContacting.value = true
   const conversation = await conversationStore.startConversation(
     seller.value.id,
-    `Annonce : ${currentObject.value.name}`,
+    t('annonceDetail.conversationTitlePrefix', { name: currentObject.value.name }),
   )
   isContacting.value = false
   if (conversation) {
     await router.push('/dashboard/messages')
   } else {
-    toasts.error('Impossible de contacter le vendeur pour le moment.')
+    toasts.error(t('annonceDetail.toast.contactError'))
   }
 }
 
@@ -137,11 +139,11 @@ onMounted(() => {
     <section>
       <div class="container layout-flex layout-columns layout-gap-large">
         <RouterLink to="/annonces" class="ghost" style="align-self: flex-start"
-          > Retour aux annonces</RouterLink
+          > {{ $t('annonceDetail.backToListings') }}</RouterLink
         >
 
         <p v-if="error" class="small" style="color: var(--destructive-color)">{{ error }}</p>
-        <p v-else-if="isLoading && !currentObject" class="muted">Chargement de l'annonce…</p>
+        <p v-else-if="isLoading && !currentObject" class="muted">{{ $t('annonceDetail.loading') }}</p>
 
         <div v-else-if="currentObject" class="card" style="padding: 0; overflow: hidden">
           <div class="annonce-gallery">
@@ -159,7 +161,8 @@ onMounted(() => {
 
           <div class="layout-flex layout-columns layout-gap-large" style="padding: var(--space-12)">
             <span class="eyebrow"
-              >{{ isDon ? 'Don' : 'Vente' }} · {{ currentObject.quantity }} disponible(s)</span
+              >{{ isDon ? $t('annonceDetail.donationLabel') : $t('annonceDetail.saleLabel') }} ·
+              {{ $t('annonceDetail.available', { count: currentObject.quantity }) }}</span
             >
             <hgroup>
               <h1>{{ currentObject.name }}</h1>
@@ -168,43 +171,45 @@ onMounted(() => {
 
             <div class="annonce-detail-meta">
               <div>
-                <span class="tiny uppercase muted">Prix</span>
+                <span class="tiny uppercase muted">{{ $t('annonceDetail.meta.price') }}</span>
                 <span class="annonce-detail-price">{{
-                  isDon ? 'Gratuit' : `${currentObject.price}€`
+                  isDon ? $t('common.free') : `${currentObject.price}€`
                 }}</span>
               </div>
               <div>
-                <span class="tiny uppercase muted">Upcycler Score</span>
+                <span class="tiny uppercase muted">{{ $t('annonceDetail.meta.score') }}</span>
                 <span class="annonce-detail-score">{{
-                  currentObject.score > 0 ? ` ${currentObject.score} kg CO₂` : '—'
+                  currentObject.score > 0
+                    ? ` ${$t('annonceDetail.meta.scoreValue', { score: currentObject.score })}`
+                    : $t('annonceDetail.meta.noValue')
                 }}</span>
               </div>
               <div>
-                <span class="tiny uppercase muted">Catégorie / État</span>
+                <span class="tiny uppercase muted">{{ $t('annonceDetail.meta.categoryCondition') }}</span>
                 <span>{{ categoryLabel(currentObject.category) }} · {{ conditionLabel(currentObject.condition) }}</span>
               </div>
               <div>
-                <span class="tiny uppercase muted">Livraison</span>
+                <span class="tiny uppercase muted">{{ $t('annonceDetail.meta.delivery') }}</span>
                 <span>{{
                   currentObjectDeliveryMethods.length
                     ? currentObjectDeliveryMethods.map((d) => d.name).join(', ')
-                    : 'À convenir'
+                    : $t('annonceDetail.meta.deliveryTBD')
                 }}</span>
               </div>
               <div>
-                <span class="tiny uppercase muted">Proposé par</span>
-                <span>{{ seller?.username ?? '—' }}</span>
+                <span class="tiny uppercase muted">{{ $t('annonceDetail.meta.proposedBy') }}</span>
+                <span>{{ seller?.username ?? $t('annonceDetail.meta.noValue') }}</span>
               </div>
             </div>
 
             <div v-if="canBuy" class="form-group" style="margin-bottom: var(--space-3)">
-              <label class="uppercase tiny">Casier de retrait (livraison)</label>
+              <label class="uppercase tiny">{{ $t('annonceDetail.locker.label') }}</label>
               <select v-model="selectedLocker" class="primary medium full-width">
                 <option v-for="l in lockers" :key="l.id" :value="l.id">
-                  {{ l.name }} — {{ l.city }} ({{ l.available_slots }} libres)
+                  {{ l.name }} — {{ l.city }} ({{ $t('annonceDetail.locker.slotsFree', { count: l.available_slots }) }})
                 </option>
               </select>
-              <p v-if="!lockers.length" class="tiny muted">Aucun casier disponible.</p>
+              <p v-if="!lockers.length" class="tiny muted">{{ $t('annonceDetail.locker.none') }}</p>
             </div>
 
             <div class="layout-flex layout-gap-medium">
@@ -214,7 +219,7 @@ onMounted(() => {
                 :disabled="isBuying || !selectedLocker"
                 @click="buyObject"
               >
-                {{ isBuying ? 'Redirection…' : `Acheter · ${currentObject.price}€` }}
+                {{ isBuying ? $t('annonceDetail.buy.redirecting') : $t('annonceDetail.buy.cta', { price: currentObject.price }) }}
               </button>
               <button
                 v-if="seller"
@@ -222,14 +227,14 @@ onMounted(() => {
                 :disabled="isContacting"
                 @click="contactSeller"
               >
-                {{ isContacting ? 'Ouverture…' : 'Contacter le vendeur' }}
+                {{ isContacting ? $t('annonceDetail.contact.opening') : $t('annonceDetail.contact.cta') }}
               </button>
-              <RouterLink to="/annonces" class="ghost medium">Voir d'autres annonces</RouterLink>
+              <RouterLink to="/annonces" class="ghost medium">{{ $t('annonceDetail.seeOthers') }}</RouterLink>
             </div>
           </div>
         </div>
 
-        <p v-else class="muted center" style="padding: var(--space-8)">Annonce introuvable.</p>
+        <p v-else class="muted center" style="padding: var(--space-8)">{{ $t('annonceDetail.notFound') }}</p>
       </div>
     </section>
   </main>

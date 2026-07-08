@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import DashboardLayout from '@/components/DashboardLayout.vue'
 import AppModal from '@/components/AppModal.vue'
 import { getObjects, createObject } from '@/services/upcycle'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
+const { t } = useI18n()
 
 type Status = 'pending' | 'approved' | 'rejected' | 'sold'
 
@@ -29,9 +31,9 @@ const filter = ref<'all' | Status>('all')
 const listings = ref<Listing[]>([
   {
     id: 1,
-    title: 'Table basse palette',
+    title: t('dashListings.demo.1.title'),
     type: 'don',
-    category: 'Mobilier',
+    category: t('dashListings.demo.1.category'),
     price: null,
     status: 'approved',
     views: 142,
@@ -40,9 +42,9 @@ const listings = ref<Listing[]>([
   },
   {
     id: 2,
-    title: "Lot d'outils main",
+    title: t('dashListings.demo.2.title'),
     type: 'vente',
-    category: 'Outils',
+    category: t('dashListings.demo.2.category'),
     price: 35,
     status: 'pending',
     views: 0,
@@ -51,9 +53,9 @@ const listings = ref<Listing[]>([
   },
   {
     id: 3,
-    title: 'Vélo enfant 16"',
+    title: t('dashListings.demo.3.title'),
     type: 'vente',
-    category: 'Sport',
+    category: t('dashListings.demo.3.category'),
     price: 80,
     status: 'approved',
     views: 87,
@@ -62,9 +64,9 @@ const listings = ref<Listing[]>([
   },
   {
     id: 4,
-    title: 'Vieille télé tube',
+    title: t('dashListings.demo.4.title'),
     type: 'don',
-    category: 'Électronique',
+    category: t('dashListings.demo.4.category'),
     price: null,
     status: 'rejected',
     views: 0,
@@ -73,9 +75,9 @@ const listings = ref<Listing[]>([
   },
   {
     id: 5,
-    title: 'Étagère bois massif',
+    title: t('dashListings.demo.5.title'),
     type: 'vente',
-    category: 'Mobilier',
+    category: t('dashListings.demo.5.category'),
     price: 60,
     status: 'sold',
     views: 234,
@@ -85,10 +87,15 @@ const listings = ref<Listing[]>([
 ])
 
 const statusMeta: Record<Status, { label: string; badge: string }> = {
-  pending: { label: 'En validation', badge: 'badge--accent' },
-  approved: { label: 'En ligne', badge: 'badge--success' },
-  rejected: { label: 'Refusée', badge: 'badge--danger' },
-  sold: { label: 'Vendue', badge: 'badge--muted' },
+  pending: { label: t('dashListings.status.pending'), badge: 'badge--accent' },
+  approved: { label: t('dashListings.status.approved'), badge: 'badge--success' },
+  rejected: { label: t('dashListings.status.rejected'), badge: 'badge--danger' },
+  sold: { label: t('dashListings.status.sold'), badge: 'badge--muted' },
+}
+
+const typeLabels: Record<'don' | 'vente', string> = {
+  don: t('dashListings.type.don'),
+  vente: t('dashListings.type.vente'),
 }
 
 onMounted(async () => {
@@ -98,9 +105,9 @@ onMounted(async () => {
       listings.value = objects.map(
         (o): Listing => ({
           id: Number(o.id),
-          title: o.title ?? o.name ?? 'Objet',
+          title: o.title ?? o.name ?? t('dashListings.defaultObjectName'),
           type: (o.price ?? null) ? 'vente' : 'don',
-          category: o.category ?? 'Autre',
+          category: o.category ?? t('dashListings.otherCategory'),
           price: typeof o.price === 'number' ? o.price : null,
           status: ((o.status as Status) ?? 'pending') as Status,
           views: (o.views as number) ?? 0,
@@ -110,7 +117,7 @@ onMounted(async () => {
       )
     }
   } catch {
-    toasts.error('Impossible de charger vos annonces, affichage des données de démonstration.')
+    toasts.error(t('dashListings.toastLoadError'))
   }
 })
 
@@ -177,9 +184,9 @@ async function submitListing() {
         description: form.description,
         price: form.type === 'vente' ? form.price : null,
       })
-      toasts.success('Annonce envoyée pour validation')
+      toasts.success(t('dashListings.toastSubmitted'))
     } catch {
-      toasts.error('Envoi impossible, annonce enregistrée localement.')
+      toasts.error(t('dashListings.toastSubmitError'))
     }
   }
   if (editingId.value !== null) {
@@ -226,18 +233,18 @@ async function submitListing() {
   <DashboardLayout>
     <header class="dashboard-page-header">
       <div>
-        <span class="eyebrow">Annonces</span>
-        <h1>Mes annonces</h1>
+        <span class="eyebrow">{{ $t('dashListings.eyebrow') }}</span>
+        <h1>{{ $t('dashListings.title') }}</h1>
         <p class="muted measure">
-          Déposez vos objets en don ou en vente. Validation par l'équipe sous 24-48h.
+          {{ $t('dashListings.subtitle') }}
         </p>
       </div>
-      <button class="primary medium" @click="showModal = true">+ Nouvelle annonce</button>
+      <button class="primary medium" @click="showModal = true">{{ $t('dashListings.newListing') }}</button>
     </header>
 
     <div class="layout-flex layout-gap-small" style="flex-wrap: wrap">
       <button class="forum-tab" :class="{ active: filter === 'all' }" @click="filter = 'all'">
-        Tout · {{ listings.length }}
+        {{ $t('dashListings.allCount', { count: listings.length }) }}
       </button>
       <button
         v-for="(meta, key) in statusMeta"
@@ -253,14 +260,18 @@ async function submitListing() {
     <div class="listings-grid">
       <article v-for="l in filtered" :key="l.id" class="listing-card">
         <div class="listing-photo">
-          <span class="tiny muted">{{ l.photoCount }} photo{{ l.photoCount > 1 ? 's' : '' }}</span>
+          <span class="tiny muted">{{
+            l.photoCount > 1
+              ? $t('dashListings.photoCountPlural', { count: l.photoCount })
+              : $t('dashListings.photoCountSingular', { count: l.photoCount })
+          }}</span>
         </div>
         <div class="listing-body">
           <div class="layout-flex layout-gap-small layout-items-center" style="flex-wrap: wrap">
             <span class="badge" :class="statusMeta[l.status].badge">{{
               statusMeta[l.status].label
             }}</span>
-            <span class="badge">{{ l.type }}</span>
+            <span class="badge">{{ typeLabels[l.type] }}</span>
             <span class="badge">{{ l.category }}</span>
           </div>
           <h4>{{ l.title }}</h4>
@@ -273,11 +284,11 @@ async function submitListing() {
               >
                 {{ l.price }}€
               </div>
-              <div v-else class="text-secondary" style="font-weight: 700">Gratuit</div>
-              <div class="tiny muted">{{ l.views }} vues · {{ l.createdAt }}</div>
+              <div v-else class="text-secondary" style="font-weight: 700">{{ $t('common.free') }}</div>
+              <div class="tiny muted">{{ $t('dashListings.viewsCreatedAt', { views: l.views, date: l.createdAt }) }}</div>
             </div>
             <div class="layout-flex layout-gap-small">
-              <button class="secondary small" @click="openEdit(l)">Modifier</button>
+              <button class="secondary small" @click="openEdit(l)">{{ $t('common.edit') }}</button>
             </div>
           </div>
         </div>
@@ -285,17 +296,17 @@ async function submitListing() {
     </div>
 
     <div v-if="filtered.length === 0" class="empty-state">
-      <p>Aucune annonce dans cette catégorie.</p>
+      <p>{{ $t('dashListings.emptyState') }}</p>
       <button class="primary medium" @click="showModal = true">
-        + Déposer ma première annonce
+        {{ $t('dashListings.depositFirst') }}
       </button>
     </div>
 
     <AppModal :open="showModal" size="medium" @close="close">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
-          <span class="eyebrow">Étape {{ step }} / 3</span>
-          <h3>Déposer une annonce</h3>
+          <span class="eyebrow">{{ $t('dashListings.stepOf', { step }) }}</span>
+          <h3>{{ $t('dashListings.modalTitle') }}</h3>
         </div>
       </template>
 
@@ -305,7 +316,7 @@ async function submitListing() {
         @submit.prevent="step = 2"
       >
         <div class="form-group">
-          <label class="uppercase">Type d'annonce</label>
+          <label class="uppercase">{{ $t('dashListings.form.type') }}</label>
           <div class="layout-flex layout-gap-small">
             <button
               type="button"
@@ -313,7 +324,7 @@ async function submitListing() {
               :class="{ active: form.type === 'don' }"
               @click="form.type = 'don'"
             >
-              Don gratuit
+              {{ $t('dashListings.form.freeDonation') }}
             </button>
             <button
               type="button"
@@ -321,46 +332,46 @@ async function submitListing() {
               :class="{ active: form.type === 'vente' }"
               @click="form.type = 'vente'"
             >
-              Vente
+              {{ $t('dashListings.form.sale') }}
             </button>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="uppercase">Titre</label>
+          <label class="uppercase">{{ $t('dashListings.form.titleLabel') }}</label>
           <input
             v-model="form.title"
             type="text"
             class="primary medium full-width"
-            placeholder="Ex: Table basse en palette restaurée"
+            :placeholder="$t('dashListings.form.titlePlaceholder')"
             required
           />
         </div>
 
         <div class="layout-flex layout-gap-medium">
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">Catégorie</label>
+            <label class="uppercase">{{ $t('dashListings.form.category') }}</label>
             <select v-model="form.category" class="primary medium full-width" required>
-              <option value="" disabled>Choisir…</option>
-              <option>Mobilier</option>
-              <option>Outils</option>
-              <option>Électronique</option>
-              <option>Textile</option>
-              <option>Vaisselle</option>
-              <option>Autre</option>
+              <option value="" disabled>{{ $t('dashListings.form.choose') }}</option>
+              <option>{{ $t('dashListings.categories.furniture') }}</option>
+              <option>{{ $t('dashListings.categories.tools') }}</option>
+              <option>{{ $t('dashListings.categories.electronics') }}</option>
+              <option>{{ $t('dashListings.categories.textile') }}</option>
+              <option>{{ $t('dashListings.categories.tableware') }}</option>
+              <option>{{ $t('dashListings.categories.other') }}</option>
             </select>
           </div>
           <div class="form-group" style="flex: 1">
-            <label class="uppercase">État</label>
+            <label class="uppercase">{{ $t('dashListings.form.condition') }}</label>
             <select v-model="form.condition" class="primary medium full-width">
-              <option value="new">Comme neuf</option>
-              <option value="good">Bon état</option>
-              <option value="fair">Moyen</option>
-              <option value="repair">À réparer</option>
+              <option value="new">{{ $t('dashListings.condition.new') }}</option>
+              <option value="good">{{ $t('dashListings.condition.good') }}</option>
+              <option value="fair">{{ $t('dashListings.condition.fair') }}</option>
+              <option value="repair">{{ $t('dashListings.condition.repair') }}</option>
             </select>
           </div>
           <div v-if="form.type === 'vente'" class="form-group" style="width: 140px">
-            <label class="uppercase">Prix (€)</label>
+            <label class="uppercase">{{ $t('dashListings.form.priceLabel') }}</label>
             <input
               v-model.number="form.price"
               type="number"
@@ -371,12 +382,12 @@ async function submitListing() {
         </div>
 
         <div class="form-group">
-          <label class="uppercase">Description</label>
+          <label class="uppercase">{{ $t('dashListings.form.description') }}</label>
           <textarea
             v-model="form.description"
             class="primary full-width"
             rows="5"
-            placeholder="Détaillez l'objet, son histoire, ses dimensions…"
+            :placeholder="$t('dashListings.form.descriptionPlaceholder')"
             required
           ></textarea>
         </div>
@@ -384,56 +395,60 @@ async function submitListing() {
 
       <div v-else-if="step === 2" class="layout-flex layout-columns layout-gap-medium">
         <p class="muted">
-          Ajoutez au moins une photo. Les annonces avec photos sont 5× plus consultées.
+          {{ $t('dashListings.form.photoHint') }}
         </p>
         <label class="dropzone">
           <input type="file" multiple accept="image/*" @change="addPhotos" hidden />
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
           </svg>
-          <span>Glissez-déposez ou cliquez pour choisir</span>
-          <span class="tiny muted">JPG, PNG · 5 Mo max par photo</span>
+          <span>{{ $t('dashListings.form.dropzoneLabel') }}</span>
+          <span class="tiny muted">{{ $t('dashListings.form.dropzoneHint') }}</span>
         </label>
         <div v-if="form.photos.length" class="photo-list">
           <div v-for="(p, i) in form.photos" :key="i" class="photo-chip">
             <span class="tiny mono">{{ p.name }}</span>
-            <button class="ghost small" @click="removePhoto(i)"></button>
+            <button class="ghost small" :aria-label="$t('common.delete')" @click="removePhoto(i)"></button>
           </div>
         </div>
       </div>
 
       <div v-else-if="step === 3" class="layout-flex layout-columns layout-gap-medium">
         <div class="recap-row">
-          <span class="tiny uppercase muted">Type</span
-          ><span>{{ form.type === 'don' ? 'Don gratuit' : `Vente · ${form.price}€` }}</span>
+          <span class="tiny uppercase muted">{{ $t('dashListings.form.type') }}</span
+          ><span>{{
+            form.type === 'don'
+              ? $t('dashListings.form.freeDonation')
+              : $t('dashListings.form.saleAt', { price: form.price })
+          }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Titre</span><span>{{ form.title }}</span>
+          <span class="tiny uppercase muted">{{ $t('dashListings.form.titleLabel') }}</span><span>{{ form.title }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Catégorie</span><span>{{ form.category }}</span>
+          <span class="tiny uppercase muted">{{ $t('dashListings.form.category') }}</span><span>{{ form.category }}</span>
         </div>
         <div class="recap-row">
-          <span class="tiny uppercase muted">Photos</span><span>{{ form.photos.length }}</span>
+          <span class="tiny uppercase muted">{{ $t('dashListings.form.photos') }}</span><span>{{ form.photos.length }}</span>
         </div>
         <p class="small muted">
-          Votre annonce sera examinée par l'équipe. Vous serez notifié dès validation.
+          {{ $t('dashListings.form.reviewNotice') }}
         </p>
       </div>
 
       <template #footer>
-        <button class="ghost medium" @click="close">Annuler</button>
+        <button class="ghost medium" @click="close">{{ $t('common.cancel') }}</button>
         <div class="layout-flex layout-gap-small">
-          <button v-if="step > 1" class="ghost medium" @click="step--"> Précédent</button>
+          <button v-if="step > 1" class="ghost medium" @click="step--"> {{ $t('dashListings.form.previous') }}</button>
           <button
             v-if="step < 3"
             class="primary medium"
             @click="step++"
             :disabled="step === 1 && !form.title"
           >
-            Suivant
+            {{ $t('dashListings.form.next') }}
           </button>
-          <button v-else class="primary medium" @click="submitListing">Publier</button>
+          <button v-else class="primary medium" @click="submitListing">{{ $t('dashListings.form.publish') }}</button>
         </div>
       </template>
     </AppModal>
