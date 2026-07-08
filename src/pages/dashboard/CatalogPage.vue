@@ -224,9 +224,9 @@ const filtered = computed(() => {
           <h4>{{ i.title }}</h4>
           <p class="small muted">{{ i.description }}</p>
           <div class="catalog-meta">
-            <div class="tiny muted">📅 {{ i.date }}</div>
-            <div class="tiny muted">📍 {{ i.location }} · {{ i.duration }}</div>
-            <div class="tiny muted">👥 {{ i.spotsLeft }} places restantes</div>
+            <div class="tiny muted"> {{ i.date }}</div>
+            <div class="tiny muted"> {{ i.location }} · {{ i.duration }}</div>
+            <div class="tiny muted"> {{ i.spotsLeft }} places restantes</div>
           </div>
           <div
             class="layout-flex layout-justify-between layout-items-center"
@@ -247,7 +247,7 @@ const filtered = computed(() => {
                 color: var(--black);
                 font-weight: 600;
               "
-              >Réserver →</span
+              >Réserver </span
             >
           </div>
         </div>

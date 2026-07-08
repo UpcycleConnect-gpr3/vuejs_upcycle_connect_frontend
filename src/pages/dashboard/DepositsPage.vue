@@ -23,7 +23,6 @@ const myObjects = ref<UpcycleObject[]>([])
 const lockers = ref<Locker[]>([])
 const isLoading = ref(false)
 
-// Livraisons casier : ventes à déposer + achats à récupérer.
 const sales = ref<DeliverySummary[]>([])
 const purchases = ref<DeliverySummary[]>([])
 
@@ -70,7 +69,6 @@ const retrievePurchase = async (d: DeliverySummary) => {
   }
 }
 
-// Dépôts réalisés dans cette session (on garde leur code de récupération).
 interface DepositedItem {
   code: string
   objectName: string
@@ -85,7 +83,7 @@ const load = async () => {
   try {
     const [objects, avail] = await Promise.all([getObjects(), getAvailableLockers()])
     const me = currentUserId.value
-    // On ne peut déposer que ses propres objets encore disponibles.
+
     myObjects.value = objects.filter(
       (o) => o.user_id === me && (!o.status || o.status === 'available'),
     )
@@ -97,7 +95,6 @@ const load = async () => {
   }
 }
 
-// ---- Déposer ----
 const showDeposit = ref(false)
 const isDepositing = ref(false)
 const form = reactive({ objectId: '', lockerId: '', weight: 0 })
@@ -139,12 +136,10 @@ const submitDeposit = async () => {
   }
 }
 
-// ---- Voir un code ----
 const codeOpen = ref<DepositedItem | null>(null)
 const qrRef = ref<InstanceType<typeof QrCode> | null>(null)
 const downloadQr = () => qrRef.value?.download()
 
-// ---- Récupérer ----
 const showRetrieve = ref(false)
 const isRetrieving = ref(false)
 const retrieveCode = ref('')
@@ -202,7 +197,6 @@ onMounted(() => {
 
     <p v-if="isLoading && !lockers.length" class="muted">Chargement…</p>
 
-    <!-- Ventes à déposer (le vendeur ouvre le casier avec son code de dépôt) -->
     <section v-if="sales.length" class="layout-flex layout-columns layout-gap-medium">
       <h3>Mes ventes à déposer</h3>
       <p class="small muted">
@@ -227,7 +221,6 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- Achats à récupérer (l'acheteur ouvre le casier avec son code de retrait) -->
     <section v-if="purchases.length" class="layout-flex layout-columns layout-gap-medium">
       <h3>Mes achats à récupérer</h3>
       <p class="small muted">
@@ -278,13 +271,12 @@ onMounted(() => {
           <h4 style="margin: 0">{{ l.name }}</h4>
           <span class="tiny muted">{{ l.street }}, {{ l.zip_code }} {{ l.city }}</span>
           <div class="tiny" style="margin-top: var(--space-2)">
-            📦 {{ l.available_slots }} / {{ l.capacity }} places libres
+             {{ l.available_slots }} / {{ l.capacity }} places libres
           </div>
         </article>
       </div>
     </section>
 
-    <!-- Déposer -->
     <AppModal :open="showDeposit" title="Déposer un objet" @close="showDeposit = false">
       <form id="deposit-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitDeposit">
         <div class="form-group">
@@ -324,7 +316,6 @@ onMounted(() => {
       </template>
     </AppModal>
 
-    <!-- Code -->
     <AppModal :open="!!codeOpen" size="small" @close="codeOpen = null">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">
@@ -349,7 +340,6 @@ onMounted(() => {
       </template>
     </AppModal>
 
-    <!-- Récupérer -->
     <AppModal :open="showRetrieve" title="Récupérer un objet" @close="showRetrieve = false">
       <form id="retrieve-form" class="layout-flex layout-columns layout-gap-medium" @submit.prevent="submitRetrieve">
         <div class="form-group">
@@ -378,7 +368,6 @@ onMounted(() => {
       </template>
     </AppModal>
 
-    <!-- Code + QR d'une livraison (dépôt ou retrait) -->
     <AppModal :open="!!deliveryCodeOpen" size="small" @close="deliveryCodeOpen = null">
       <template #header>
         <div class="layout-flex layout-columns" style="gap: 4px">

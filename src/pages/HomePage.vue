@@ -86,7 +86,7 @@ const features = [
             </hgroup>
             <div class="layout-flex layout-gap-medium">
               <button class="primary medium" @click="ui.open('register')">Get started</button>
-              <button class="ghost medium">Learn more →</button>
+              <button class="ghost medium">Learn more </button>
             </div>
           </div>
         </div>

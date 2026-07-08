@@ -48,7 +48,6 @@ const isBuying = ref(false)
 
 const isDon = computed(() => !currentObject.value?.price)
 
-// Achat possible seulement si prix > 0 et que l'utilisateur n'est pas le vendeur.
 const canBuy = computed(
   () =>
     !isDon.value &&
@@ -138,7 +137,7 @@ onMounted(() => {
     <section>
       <div class="container layout-flex layout-columns layout-gap-large">
         <RouterLink to="/annonces" class="ghost" style="align-self: flex-start"
-          >← Retour aux annonces</RouterLink
+          > Retour aux annonces</RouterLink
         >
 
         <p v-if="error" class="small" style="color: var(--destructive-color)">{{ error }}</p>
@@ -177,7 +176,7 @@ onMounted(() => {
               <div>
                 <span class="tiny uppercase muted">Upcycler Score</span>
                 <span class="annonce-detail-score">{{
-                  currentObject.score > 0 ? `🌱 ${currentObject.score} kg CO₂` : '—'
+                  currentObject.score > 0 ? ` ${currentObject.score} kg CO₂` : '—'
                 }}</span>
               </div>
               <div>

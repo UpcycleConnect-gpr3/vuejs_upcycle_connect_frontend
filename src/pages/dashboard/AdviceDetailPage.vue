@@ -84,7 +84,7 @@ function toggleBookmark() {
 <template>
   <DashboardLayout>
     <RouterLink to="/dashboard/advice" class="ghost" style="align-self: flex-start"
-      >← Retour aux conseils</RouterLink
+      > Retour aux conseils</RouterLink
     >
 
     <article class="advice-article">

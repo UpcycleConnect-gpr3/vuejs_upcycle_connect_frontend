@@ -56,7 +56,7 @@ const articles = ref<Advice[]>([
     id: 3,
     title: 'Comment poncer correctement',
     excerpt:
-      'Grain 80 → 120 → 220 : la méthode pas-à-pas pour un fini parfait sur tous types de bois.',
+      'Grain 80  120  220 : la méthode pas-à-pas pour un fini parfait sur tous types de bois.',
     category: 'technique',
     readTime: 6,
     publishedAt: '2026-04-15',
