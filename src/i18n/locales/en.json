@@ -69,7 +69,7 @@
         "name_label": "Name",
         "name_placeholder": "Your name",
         "email_label": "Email",
-        "email_placeholder": "you@example.com",
+        "email_placeholder": "you{'@'}example.com",
         "message_label": "Message",
         "message_placeholder": "Type your message here...",
         "submit": "Send message",
