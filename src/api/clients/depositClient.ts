@@ -1,5 +1,5 @@
 import { upcycleApiClient } from '../axios'
-import type { ApiResponse, DepositResult, Locker, PackageInfo } from '@/types'
+import type { ApiResponse, DepositResult, DepositedPackage, Locker, PackageInfo } from '@/types'
 
 // Lockers ayant au moins un slot libre (filtrables par ville).
 export const getAvailableLockers = async (city?: string): Promise<Locker[]> => {
@@ -36,5 +36,11 @@ export const retrievePackage = async (
 // Vérifie un code (écran locker) et renvoie l'état du package.
 export const getPackageByCode = async (code: string): Promise<PackageInfo> => {
   const { data } = await upcycleApiClient.get<ApiResponse<PackageInfo>>(`/packages/code/${code}`)
+  return data.data
+}
+
+// Objets actuellement en conteneur (pour l'espace pro : parcourir puis recuperer).
+export const getDepositedPackages = async (): Promise<DepositedPackage[]> => {
+  const { data } = await upcycleApiClient.get<ApiResponse<DepositedPackage[]>>('/packages/deposited')
   return data.data
 }
