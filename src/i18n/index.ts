@@ -1,8 +1,5 @@
 import { createI18n } from 'vue-i18n'
 
-// Chargement AUTOMATIQUE de tous les fichiers de langue.
-// => Ajouter une langue = déposer un fichier src/i18n/locales/<code>.json.
-//    Aucune modification de code n'est nécessaire (exigence du sujet).
 const files = import.meta.glob('./locales/*.json', { eager: true }) as Record<
   string,
   { default: Record<string, unknown> }
@@ -17,7 +14,6 @@ for (const path in files) {
 
 export const AVAILABLE_LOCALES = Object.keys(messages)
 
-// Nom affiché de chaque langue (clé `_name` dans le fichier), fallback = code.
 export const localeName = (code: string): string =>
   (messages[code]?._name as string) || code.toUpperCase()
 

@@ -117,7 +117,7 @@ const kindLabels: Record<ItemKind, string> = {
 onMounted(async () => {
   try {
     const trainings = await getTrainings()
-    // Seules les formations validées par un responsable sont réservables.
+
     const validated = trainings.filter((t) => (t.status as string) === 'validated')
     if (Array.isArray(validated) && validated.length) {
       items.value = validated.map(

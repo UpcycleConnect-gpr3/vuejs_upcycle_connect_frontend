@@ -6,7 +6,6 @@ export const getMyInvoices = async (): Promise<Invoice[]> => {
   return data.data
 }
 
-// Télécharge le PDF de la facture (requête authentifiée -> blob -> download).
 export const downloadInvoicePdf = async (ref: string): Promise<void> => {
   const response = await upcycleApiClient.get(`/invoices/${ref}/pdf`, {
     responseType: 'blob',
