@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import DashboardLayout from '@/components/DashboardLayout.vue'
-import { getOrders } from '@/services/upcycle'
+import { getMyOrders } from '@/services/upcycle'
 import { useToastsStore } from '@/stores/toasts'
 
 const toasts = useToastsStore()
@@ -41,7 +41,7 @@ const orders = ref<Order[]>([
 
 onMounted(async () => {
   try {
-    const data = await getOrders()
+    const data = await getMyOrders()
     if (Array.isArray(data) && data.length) {
       orders.value = data.map(
         (o): Order => ({

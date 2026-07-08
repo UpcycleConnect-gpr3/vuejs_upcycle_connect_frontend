@@ -77,6 +77,12 @@ export const getOrders = async (): Promise<Order[]> => {
   return data.data
 }
 
+// Commandes de l'utilisateur connecté uniquement.
+export const getMyOrders = async (): Promise<Order[]> => {
+  const { data } = await apiUpcycle.get<ApiResponse<Order[]>>('/orders/me')
+  return data.data
+}
+
 export const createOrder = async (payload: Record<string, unknown>): Promise<Order> => {
   const { data } = await apiUpcycle.post<ApiResponse<Order>>('/orders', payload)
   return data.data
