@@ -51,11 +51,15 @@ const readCookieFallback = (name: string): string | null => {
 }
 
 export const getTokenFromCookies = async (): Promise<string | null> => {
+  // Lecture prioritaire de document.cookie : le token est ecrit ainsi sur
+  // localhost, et cookieStore.get peut ne pas le voir de maniere fiable.
+  const fromDocument = readCookieFallback(TOKEN_COOKIE_NAME)
+  if (fromDocument) return fromDocument
   if (hasCookieStore()) {
     const cookie = await cookieStore.get(TOKEN_COOKIE_NAME)
     return cookie?.value ?? null
   }
-  return readCookieFallback(TOKEN_COOKIE_NAME)
+  return null
 }
 
 export const useAuthStore = defineStore(
